@@ -59,10 +59,8 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
     "AWS_DEFAULT_REGION" = init_file$AWS_DEFAULT_REGION
   )
   init_file=fromJSON("../sensitive-data/init_file.json")
-  soilModelling_RepositoryPath <- init_file$soil_loc
-  CO2emissions_RepositoryPath <- init_file$co2_emissions_loc
-  source(file.path(soilModelling_RepositoryPath,"scripts","run_soil_model.R"), local = TRUE)
-  source(file.path(CO2emissions_RepositoryPath, "scripts", "call_lca.R"), local = TRUE)
+  source(file.path("soil","run_soil_model.R"), local = TRUE)
+  source(file.path("emissions_leakage", "call_lca.R"), local = TRUE)
   
   
   ## Get the farm data from the JSON file or MongoDB ---------------------------
@@ -221,25 +219,6 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
     xlab("Time")+
     ylab("SOC (in tonnes per hectare)")
   print(graph)
-  # # png(file.path(project_loc,project_name,"results",paste(name,".png",sep="")))
-  # # print(graph)
-  # # dev.off()
-  # 
-  #   name<-paste("Results_farm_",project_name,sep = "")
-  #   graph <- ggplot(data = yearly_results, aes(x=year, group = 1)) +
-  #     geom_bar(aes(y = baseline_step_total_CO2_mean), stat="identity", fill="darkred", alpha=0.7)+
-  #     geom_errorbar(aes(ymin = baseline_step_total_CO2_mean-1.96*sqrt(baseline_step_total_CO2_var),
-  #                       ymax = baseline_step_total_CO2_mean+1.96*sqrt(baseline_step_total_CO2_var)), colour="black", width=.5)+
-  #     geom_bar(aes(y = holistic_step_total_CO2_mean), stat="identity", fill="#5CB85C", alpha=0.7)+
-  #     geom_errorbar(aes(ymin = holistic_step_total_CO2_mean-1.96*sqrt(holistic_step_total_CO2_var),
-  #                       ymax = holistic_step_total_CO2_mean+1.96*sqrt(holistic_step_total_CO2_var), color = "95% CI"), colour="black", width=.5, show.legend = T)+
-  #     labs(title = name)+
-  #     xlab("Time")+
-  #     ylab("tCO2 sequestered (each year)")
-  #   print(graph)
-  #   # png(file.path(project_loc,project_name,"results",paste(name,".png",sep="")))
-  #   # print(graph)
-  #   # dev.off()
   
   histogram <- ggplot(yearly_results, aes(x=year, group = 1)) +
     geom_bar(aes(y=CO2eq_soil_mean), stat="identity", fill="#5CB85C", alpha=0.7) +
@@ -250,9 +229,6 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
     xlab("Time")+
     ylab("Number of certificates issuable (per year)")
   print(histogram)
-  # png(file.path(project_loc, project_name, "results", paste0(farmId, ".png")))
-  # print(histogram)
-  # dev.off()
   
   ## End function --------------------------------------------------------------
   return(yearly_results)

@@ -2,19 +2,13 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ){
   # browser()  # debugging
   ## Log starting run message
   log4r::info(my_logger, "run_soil_model.R started running")
-  
-  ## Define paths
-  soil_loc <- init_file$soil_loc
-  modelling_data_loc <- init_file$soil_loc
-  climatic_zone_loc <- init_file$climatic_zone_loc
 
   ## Sourcing code from files
-  source(file.path(soil_loc, "model_semiArid_functions.R"), local = TRUE)
-  source(file.path(soil_loc, "modified_semiArid_functions.R"), local = TRUE)
-  source(file.path(soil_loc, "scripts/calc_functions_soil_modelling.R"), local = TRUE)
-  source(file.path(soil_loc, "scripts/mongodb_extraction_functions.R"), local = TRUE)
-  #source(file.path(modelling_data_loc, "legacy/scripts/Climatic_zone_check_function.R"), local = TRUE)
-  source(file.path(soil_loc, "scripts/weather_data_pulling_functions.R"), local = TRUE)
+  source(file.path("soil", "model_semiArid_functions.R"), local = TRUE)
+  source(file.path("soil", "modified_semiArid_functions.R"), local = TRUE)
+  source(file.path("soil", "calc_functions_soil_modelling.R"), local = TRUE)
+  source("mongodb_extraction_functions.R", local = TRUE)
+  source("weather_data_pulling_functions.R", local = TRUE)
 
   ## Extracting livestock, landUseSummaryOrPractices and soilAnalysis from the farms_everything variable
   livestock = farms_everything$liveStock
@@ -38,18 +32,18 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ){
   }
   
   ## Reading in calculation factors (parameters) from csv files
-  animal_factors <- read_csv(file.path(modelling_data_loc,"data", "carbon_share_manure.csv")) %>%
+  animal_factors <- read_csv(file.path("data", "carbon_share_manure.csv")) %>%
     filter(type=="manure") %>% rename(species=manure_source)
-  agroforestry_factors <- read_csv(file.path(modelling_data_loc,"data", "agroforestry_factors.csv")) 
-  crop_data <- read_csv(file.path(modelling_data_loc,"data", "crop_factors.csv"))
-  grazing_factors <- read_csv(file.path(modelling_data_loc,"data", "grazing_factors.csv"))
-  manure_factors <- read_csv(file.path(modelling_data_loc,"data", "carbon_share_manure.csv"))
+  agroforestry_factors <- read_csv(file.path("data", "agroforestry_factors.csv")) 
+  crop_data <- read_csv(file.path("data", "crop_factors.csv"))
+  grazing_factors <- read_csv(file.path("data", "grazing_factors.csv"))
+  manure_factors <- read_csv(file.path("data", "carbon_share_manure.csv"))
   natural_area_factors <- read_csv(
-    file.path(modelling_data_loc, "data", "natural_area_factors.csv")
+    file.path( "data", "natural_area_factors.csv")
     ) %>% filter(pedo_climatic_area==farm_EnZ) 
-  pasture_data <- read_csv(file.path(modelling_data_loc,"data", "pasture_factors.csv"))
-  tilling_factors <- read_csv(file.path(modelling_data_loc,"data", "tilling_factors.csv"))
-  soil_cover_data <- read_csv(file.path(modelling_data_loc,"data", "soil_cover_factors.csv"))
+  pasture_data <- read_csv(file.path("data", "pasture_factors.csv"))
+  tilling_factors <- read_csv(file.path("data", "tilling_factors.csv"))
+  soil_cover_data <- read_csv(file.path("data", "soil_cover_factors.csv"))
   
   ## Creating a data frame to hold soil data
   #soilMapsData <- data.frame(SOC=c(1), clay=c(25), silt =c(30), bulk_density=c(1.2)) # to be pulled and processed from S3 bucket
@@ -149,7 +143,7 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ){
   } else {
     log4r::error(my_logger, paste(length(apply(is.na(parcel_Cinputs), 2, which)),'NAs were found in parcel C inputs calculation results.'))
   }
-  #write.csv(parcel_Cinputs,file.path(project_loc,project_name,"results/parcel_Cinputs.csv"), row.names = TRUE)
+
   ################# Calculations of additional C inputs compared to baseline per parcel and scenario
 
   parcel_Cinputs_addition = merge(x= parcel_Cinputs, 
@@ -167,7 +161,6 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ){
   parcel_Cinputs_addition = parcel_Cinputs_addition %>%
     mutate(absolute_contribution_perc = round(100*additional_Cinput_total/additional_Cinput_total_farm)) %>%
     select(parcel_ID, farm_frac, additional_Cinput_per_ha, relative_increase, additional_Cinput_total, absolute_contribution_perc)
-  #write.csv(parcel_Cinputs_addition,file.path(project_loc,project_name,"results/parcel_Cinputs_addition.csv"), row.names = TRUE)
   
   ## Calculation of total c inputs for the whole farm
   # Sum over all parcels
@@ -185,7 +178,7 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ){
   ################# Weather data pulling
   if(exists("debug_mode")) {
     if(debug_mode){  # will skip fetching climate data and use dummy data if debug_mode is set
-      weather_data <- read_csv("test_weather_data.csv") # For testing only
+      weather_data <- read_csv(file.path("data","test_weather_data.csv")) # For testing only
     } else {
       weather_data=cbind(get_past_weather_data(init_file, lat_farmer, lon_farmer),
                          get_future_weather_data(init_file, lat_farmer, lon_farmer, scenario="rcp4.5"),
@@ -493,18 +486,14 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ){
                      paste("\nCAUTION: Duplicated and applied livestock from 'year",
                            yearX_livestock,"' to ALL following years.",sep=""),""),sep="")
   
-  write.csv(landUseType, file.path(init_file$soil_loc, "logs",
+  write.csv(landUseType, file.path("logs",
                                     paste("landUseType_", 
                                           farms_everything$farmInfo$farmManagerFirstName, 
                                           farms_everything$farmInfo$farmManagerLastName,
                                           ".csv",sep="")
                                    ), row.names = FALSE)
   
-  # write.csv(all_results_final, file.path(project_loc, project_name, "results", paste0(name,"_per_parcel.csv")), row.names = TRUE)
-  # write.csv(farm_results_final, file.path(project_loc, project_name, "results", paste0(name,".csv")), row.names = TRUE)
-  # write.csv(step_in_table_final, file.path(project_loc, project_name, "results", paste0(name,"_yearly_steps.csv")), row.names = TRUE)
-  # save.image(file.path(project_loc, project_name, "results", paste0(project_name, ".RData")))
-  
+
   # Use of parcels coordinates for other applications like co-benefits
   #jsonFileOfParcelsCoordinates = toJSON(landUseSummaryOrPractices[[1]]$coordinates[c(2,3)])
   #write(jsonFileOfParcelsCoordinates, paste("parcelsCoordinates_",farmId,".json",sep=""))
