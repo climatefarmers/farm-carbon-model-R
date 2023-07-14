@@ -38,19 +38,22 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
     n_run = 30,
     sd_future_mod=1,
     sd_field_carbon_in=0.10,
-    CFmade_grazing_estimations_Yes_No="No"
-    )
+    CFmade_grazing_estimations_Yes_No="No",
+    
+    debug_mode = FALSE,  # Skip some steps. For now just skip fetching and use dummy climate data.
+    
+    # To copy the practice of a single year to all others
+    yearX_landuse=1,  # setting to 0 will copy baseline
+    yearX_livestock=1,  # setting to 0 will copy baseline
+    copy_yearX_to_following_years_landUse=FALSE,
+    copy_yearX_to_following_years_livestock=FALSE,
+    
+    server="dev"  # One of: "prod", dev", "test"
+  )
+
+  list2env(pars, envir = environment())
   
-  # To copy the practice of a single year to all others
-  yearX_landuse <- 1  # setting to 0 will copy baseline
-  yearX_livestock <- 1  # setting to 0 will copy baseline
-  copy_yearX_to_following_years_landUse <- FALSE
-  copy_yearX_to_following_years_livestock <- FALSE
-  
-  server <- "dev"  # One of: "prod", dev", "test"
-  
-  
-  ## General setting -----------------------------------------------------------
+  ## Fetching Data -----------------------------------------------------------
   
   # Set environmental variables for AWS 
   Sys.setenv(
@@ -59,10 +62,8 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
     "AWS_DEFAULT_REGION" = init_file$AWS_DEFAULT_REGION
   )
   init_file=fromJSON("../sensitive-data/init_file.json")
-  soilModelling_RepositoryPath <- init_file$soil_loc
-  CO2emissions_RepositoryPath <- init_file$co2_emissions_loc
-  source(file.path(soilModelling_RepositoryPath,"scripts","run_soil_model.R"), local = TRUE)
-  source(file.path(CO2emissions_RepositoryPath, "scripts", "call_lca.R"), local = TRUE)
+  source(file.path("soil","run_soil_model.R"), local = TRUE)
+  source(file.path("emissions_leakage", "call_lca.R"), local = TRUE)
   
   
   ## Get the farm data from the JSON file or MongoDB ---------------------------
@@ -151,18 +152,20 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   
   ## Running the soil model and emissions calculations ---------------------
   
+  lca_out <- call_lca(init_file=init_file,
+                      farms_everything=farms_everything,
+                      farm_EnZ = farm_EnZ)
+  emissions <- lca_out[['emissions']]
+  emissions_detailed <- lca_out[['emissions_detailed']]
+  productivity <- lca_out[['productivity']]
+  
   soil_results_out <- run_soil_model(init_file=init_file,
                                         pars=pars,
                                         farms_everything=farms_everything,
                                         farm_EnZ=farm_EnZ)
-  
   soil_results_yearly <- soil_results_out[[1]]
   soil_results_monthly <- soil_results_out[[2]]
   
-  emissions <- call_lca(init_file=init_file,
-                        farms_everything=farms_everything,
-                        farm_EnZ = farm_EnZ)
-
   yearly_results <- soil_results_yearly %>%
     mutate(CO2eq_soil_final=yearly_CO2diff_final,
            CO2eq_soil_mean=yearly_CO2diff_mean,
@@ -188,20 +191,23 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   farms_everything$modelInfo <- data.frame(
     modelVersion=full_tag,
     resultsGenerationYear=currentYear,
-    resultsGenerationTime=currentTime,
-    n_runs=pars['n_run']
+    resultsGenerationTime=currentTime
   )
 
   farms_everything$modelResults <- data.frame(
     yearlyCO2eqTotal=NA,
     yearlyCO2eqSoil=NA,
     yearlyCO2eqEmissions=NA,
-    yearlyCO2eqLeakage=NA
+    yearlyCO2eqLeakage=NA,
+    yearlyCO2eqEmissions_detailed=NA,
+    yearlyProductivity=NA
   )
   farms_everything$modelResults$yearlyCO2eqTotal=list(c(yearly_results$CO2eq_total))
   farms_everything$modelResults$yearlyCO2eqSoil=list(c(yearly_results$CO2eq_soil_final))
   farms_everything$modelResults$yearlyCO2eqEmissions=list(c(yearly_results$CO2eq_emissions))
   farms_everything$modelResults$yearlyCO2eqLeakage=list(c(yearly_results$CO2eq_leakage))
+  farms_everything$modelResults$yearlyCO2eqEmissions_detailed=list(c(emissions_detailed))
+  farms_everything$modelResults$yearlyProductivity=list(c(productivity))
   
   farms_everything$modelParameters <- data.frame(pars) 
 
@@ -221,25 +227,6 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
     xlab("Time")+
     ylab("SOC (in tonnes per hectare)")
   print(graph)
-  # # png(file.path(project_loc,project_name,"results",paste(name,".png",sep="")))
-  # # print(graph)
-  # # dev.off()
-  # 
-  #   name<-paste("Results_farm_",project_name,sep = "")
-  #   graph <- ggplot(data = yearly_results, aes(x=year, group = 1)) +
-  #     geom_bar(aes(y = baseline_step_total_CO2_mean), stat="identity", fill="darkred", alpha=0.7)+
-  #     geom_errorbar(aes(ymin = baseline_step_total_CO2_mean-1.96*sqrt(baseline_step_total_CO2_var),
-  #                       ymax = baseline_step_total_CO2_mean+1.96*sqrt(baseline_step_total_CO2_var)), colour="black", width=.5)+
-  #     geom_bar(aes(y = holistic_step_total_CO2_mean), stat="identity", fill="#5CB85C", alpha=0.7)+
-  #     geom_errorbar(aes(ymin = holistic_step_total_CO2_mean-1.96*sqrt(holistic_step_total_CO2_var),
-  #                       ymax = holistic_step_total_CO2_mean+1.96*sqrt(holistic_step_total_CO2_var), color = "95% CI"), colour="black", width=.5, show.legend = T)+
-  #     labs(title = name)+
-  #     xlab("Time")+
-  #     ylab("tCO2 sequestered (each year)")
-  #   print(graph)
-  #   # png(file.path(project_loc,project_name,"results",paste(name,".png",sep="")))
-  #   # print(graph)
-  #   # dev.off()
   
   histogram <- ggplot(yearly_results, aes(x=year, group = 1)) +
     geom_bar(aes(y=CO2eq_soil_mean), stat="identity", fill="#5CB85C", alpha=0.7) +
@@ -250,9 +237,6 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
     xlab("Time")+
     ylab("Number of certificates issuable (per year)")
   print(histogram)
-  # png(file.path(project_loc, project_name, "results", paste0(farmId, ".png")))
-  # print(histogram)
-  # dev.off()
   
   ## End function --------------------------------------------------------------
   return(yearly_results)

@@ -8,15 +8,12 @@ rm(list=ls())
 library(tidyverse)
 library(jsonlite)
 
-debug_mode = FALSE  # Skip some steps. For now just skip fetching and use dummy climate data.
-
 source("carbonplus_main.R")
 
 sensitive_data_loc <- "../sensitive-data"
 init_file <- fromJSON(file.path(sensitive_data_loc,"init_file.json"))
 
-farmIds <- read_csv(file.path(sensitive_data_loc,"farmIds.csv"), show_col_types = FALSE)
-
+# farmIds <- read_csv(file.path(sensitive_data_loc,"farmIds.csv"), show_col_types = FALSE)
 # farmId <- farmIds$farmId[2]
 # farmId <- "a9f9b719-b301-4a7d-a89c-824f73e2c966" # This is a test Id from user Suhas
 # farmId <- 'edf5cce8-eee2-40a8-af32-520d2b93ab5c' # Troya
