@@ -40,6 +40,7 @@ get_yearly_productivity_table <- function(productivity_table, crop_data, scenari
   # This can only happen when there are results to compare to. 
   ## Join crop data /ha and area in parcel_input
   
+  # Fernando: Issue: The code doesn't seem to make sense 
   crops <- merge(x = filter(crop_data,scenario==scenario_selected), 
                  y = parcel_data, by = "parcel_ID", all.x = TRUE)
   crops <- merge(x = crops, 
