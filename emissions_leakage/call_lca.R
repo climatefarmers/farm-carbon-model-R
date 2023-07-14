@@ -83,7 +83,7 @@ call_lca <- function(init_file, farms_everything, farm_EnZ){
 
   ## Calculation of yearly results
   # Preparation of data frames
-  CO2emissions_detailled_yearly_results = data.frame(scenario_selected = c(), source = c(), value = c(), 
+  CO2emissions_detailed_yearly_results = data.frame(scenario_selected = c(), source = c(), value = c(), 
                               gas = c(), co2eq_factor = c(), kgCO2_eq = c())
   productivity_table = data.frame(year = c(), crop = c(), productivity = c())
   
@@ -161,24 +161,27 @@ call_lca <- function(init_file, farms_everything, farm_EnZ){
       mutate(kgCO2_eq = co2eq_factor * value)
     all_results$scenario_selected=scenario_selected
     all_results$year = i
-    CO2emissions_detailled_yearly_results = rbind(CO2emissions_detailled_yearly_results, 
+    CO2emissions_detailed_yearly_results = rbind(CO2emissions_detailed_yearly_results, 
                                                   all_results)
   }
 
+  CO2emissions_detailed_yearly_results <- CO2emissions_detailed_yearly_results %>%
+    mutate(tCO2_eq=kgCO2_eq/1000) %>% select(!c(kgCO2_eq))
+  
   write_csv(productivity_table, file.path("logs", paste0(farmId,"_productivity_table.csv")))
-  write_csv(CO2emissions_detailled_yearly_results, file.path("logs", paste0(farmId,"_CO2emissions_detailled_yearly_results.csv")))
+  write_csv(CO2emissions_detailed_yearly_results, file.path("logs", paste0(farmId,"_CO2emissions_detailed_yearly_results.csv")))
   
-  yearly_aggregated_results = CO2emissions_detailled_yearly_results %>% group_by(year) %>% 
+  yearly_aggregated_results = CO2emissions_detailed_yearly_results %>% group_by(year) %>% 
     filter(source != "leakage" & source != "crops_productivity_tCO2eq") %>%
-    summarise(emissions_tCO2_eq=sum(kgCO2_eq)*1e-3)
+    summarise(emissions_tCO2_eq=sum(tCO2_eq))
   
-  yearly_aggregated_results$leakage_tCO2_eq <- round((CO2emissions_detailled_yearly_results %>% group_by(year) %>% 
+  yearly_aggregated_results$leakage_tCO2_eq <- round((CO2emissions_detailed_yearly_results %>% group_by(year) %>% 
                                                  filter(source=="leakage") %>%
-                                                 summarise(leakage_tCO2_eq=kgCO2_eq*1e-3))$leakage_tCO2_eq)
+                                                 summarise(leakage_tCO2_eq=tCO2_eq))$leakage_tCO2_eq)
   
   # Fernando: The lines below are not working!!!
   # summarise(total_emissions_without_leakage_tCO2_eq=sum(kgCO2_eq)*1e-3) # Fernando: what is this line doing here!
-  # yearly_aggregated_results$crops_productivity_tCO2eq = (CO2emissions_detailled_yearly_results %>% group_by(scenario_selected) %>% 
+  # yearly_aggregated_results$crops_productivity_tCO2eq = (CO2emissions_detailed_yearly_results %>% group_by(scenario_selected) %>% 
   #                                                filter(source=="crops_productivity_tCO2eq")%>%
   #                                                summarise(leakage_tCO2_eq=kgCO2_eq))$leakage_tCO2_eq
   
@@ -186,7 +189,7 @@ call_lca <- function(init_file, farms_everything, farm_EnZ){
     round(yearly_aggregated_results$emissions_tCO2_eq -
     yearly_aggregated_results$emissions_tCO2_eq[1])
   
-  return(yearly_aggregated_results)
+  return(list(emissions=yearly_aggregated_results, emissions_detailed=CO2emissions_detailed_yearly_results))
 }
 
 

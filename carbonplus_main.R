@@ -152,18 +152,19 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   
   ## Running the soil model and emissions calculations ---------------------
   
+  lca_out <- call_lca(init_file=init_file,
+                      farms_everything=farms_everything,
+                      farm_EnZ = farm_EnZ)
+  emissions = lca_out[['emissions']]
+  emissions_detailed = lca_out[['emissions_detailed']]
+  
   soil_results_out <- run_soil_model(init_file=init_file,
                                         pars=pars,
                                         farms_everything=farms_everything,
                                         farm_EnZ=farm_EnZ)
-  
   soil_results_yearly <- soil_results_out[[1]]
   soil_results_monthly <- soil_results_out[[2]]
   
-  emissions <- call_lca(init_file=init_file,
-                        farms_everything=farms_everything,
-                        farm_EnZ = farm_EnZ)
-
   yearly_results <- soil_results_yearly %>%
     mutate(CO2eq_soil_final=yearly_CO2diff_final,
            CO2eq_soil_mean=yearly_CO2diff_mean,
@@ -196,12 +197,14 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
     yearlyCO2eqTotal=NA,
     yearlyCO2eqSoil=NA,
     yearlyCO2eqEmissions=NA,
-    yearlyCO2eqLeakage=NA
+    yearlyCO2eqLeakage=NA,
+    yearlyCO2eqEmissions_detailed=NA
   )
   farms_everything$modelResults$yearlyCO2eqTotal=list(c(yearly_results$CO2eq_total))
   farms_everything$modelResults$yearlyCO2eqSoil=list(c(yearly_results$CO2eq_soil_final))
   farms_everything$modelResults$yearlyCO2eqEmissions=list(c(yearly_results$CO2eq_emissions))
   farms_everything$modelResults$yearlyCO2eqLeakage=list(c(yearly_results$CO2eq_leakage))
+  farms_everything$modelResults$yearlyCO2eqEmissions_detailed=list(c(emissions_detailed))
   
   farms_everything$modelParameters <- data.frame(pars) 
 
