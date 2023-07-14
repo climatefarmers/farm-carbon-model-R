@@ -155,8 +155,9 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   lca_out <- call_lca(init_file=init_file,
                       farms_everything=farms_everything,
                       farm_EnZ = farm_EnZ)
-  emissions = lca_out[['emissions']]
-  emissions_detailed = lca_out[['emissions_detailed']]
+  emissions <- lca_out[['emissions']]
+  emissions_detailed <- lca_out[['emissions_detailed']]
+  productivity <- lca_out[['productivity']]
   
   soil_results_out <- run_soil_model(init_file=init_file,
                                         pars=pars,
@@ -198,13 +199,15 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
     yearlyCO2eqSoil=NA,
     yearlyCO2eqEmissions=NA,
     yearlyCO2eqLeakage=NA,
-    yearlyCO2eqEmissions_detailed=NA
+    yearlyCO2eqEmissions_detailed=NA,
+    yearlyProductivity=NA
   )
   farms_everything$modelResults$yearlyCO2eqTotal=list(c(yearly_results$CO2eq_total))
   farms_everything$modelResults$yearlyCO2eqSoil=list(c(yearly_results$CO2eq_soil_final))
   farms_everything$modelResults$yearlyCO2eqEmissions=list(c(yearly_results$CO2eq_emissions))
   farms_everything$modelResults$yearlyCO2eqLeakage=list(c(yearly_results$CO2eq_leakage))
   farms_everything$modelResults$yearlyCO2eqEmissions_detailed=list(c(emissions_detailed))
+  farms_everything$modelResults$yearlyProductivity=list(c(productivity))
   
   farms_everything$modelParameters <- data.frame(pars) 
 

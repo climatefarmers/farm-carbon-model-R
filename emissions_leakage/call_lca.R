@@ -189,7 +189,9 @@ call_lca <- function(init_file, farms_everything, farm_EnZ){
     round(yearly_aggregated_results$emissions_tCO2_eq -
     yearly_aggregated_results$emissions_tCO2_eq[1])
   
-  return(list(emissions=yearly_aggregated_results, emissions_detailed=CO2emissions_detailed_yearly_results))
+  return(list(emissions=yearly_aggregated_results, 
+              emissions_detailed=CO2emissions_detailed_yearly_results,
+              productivity=productivity_table))
 }
 
 
