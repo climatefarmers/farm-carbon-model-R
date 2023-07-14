@@ -35,22 +35,25 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   ## Soil model settings -------------------------------------------------------
   
   pars = list(
-    n_run = 30,
+    n_run = 2,
     sd_future_mod=1,
     sd_field_carbon_in=0.10,
-    CFmade_grazing_estimations_Yes_No="No"
-    )
+    CFmade_grazing_estimations_Yes_No="No",
+    
+    debug_mode = FALSE,  # Skip some steps. For now just skip fetching and use dummy climate data.
+    
+    # To copy the practice of a single year to all others
+    yearX_landuse=1,  # setting to 0 will copy baseline
+    yearX_livestock=1,  # setting to 0 will copy baseline
+    copy_yearX_to_following_years_landUse=FALSE,
+    copy_yearX_to_following_years_livestock=FALSE,
+    
+    server="dev"  # One of: "prod", dev", "test"
+  )
+
+  list2env(pars, envir = environment())
   
-  # To copy the practice of a single year to all others
-  yearX_landuse <- 1  # setting to 0 will copy baseline
-  yearX_livestock <- 1  # setting to 0 will copy baseline
-  copy_yearX_to_following_years_landUse <- FALSE
-  copy_yearX_to_following_years_livestock <- FALSE
-  
-  server <- "dev"  # One of: "prod", dev", "test"
-  
-  
-  ## General setting -----------------------------------------------------------
+  ## Fetching Data -----------------------------------------------------------
   
   # Set environmental variables for AWS 
   Sys.setenv(
@@ -186,8 +189,7 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   farms_everything$modelInfo <- data.frame(
     modelVersion=full_tag,
     resultsGenerationYear=currentYear,
-    resultsGenerationTime=currentTime,
-    n_runs=pars['n_run']
+    resultsGenerationTime=currentTime
   )
 
   farms_everything$modelResults <- data.frame(
