@@ -591,7 +591,7 @@ get_crop_inputs <- function(landUseSummaryOrPractices, pars){
                                             dry_grazing_yield = c(ifelse(dryOrFresh=="Dry", grazing_yield,0)), 
                                             fresh_grazing_yield = c(ifelse(dryOrFresh=="Fresh", grazing_yield,0)), 
                                             dry_residue = c(ifelse(dryOrFresh=="Dry", residue_left+grazing_yield*0.15,0)), 
-                                            fresh_residue = c(ifelse(dryOrFresh=="Fresh", residue_left+grazing_yield*0.15,0)), 
+                                            fresh_residue = c(ifelse(dryOrFresh=="Fresh", residue_left+grazing_yield*0.15,0)),
                                             dry_agb_peak = c(ifelse(dryOrFresh=="Dry", max((monthly_harvesting_yield %>% filter(crop==crop_chosen))$harvesting_yield+
                                                                                              new.as_numeric((monthly_harvesting_yield %>% filter(crop==crop_chosen))$grazing_yield)+
                                                                                              (monthly_harvesting_yield %>% filter(crop==crop_chosen))$residue_left),0)), 
@@ -651,6 +651,7 @@ get_baseline_crop_inputs <- function(landUseSummaryOrPractices, crop_inputs, cro
                                filter(parcel_ID==landUseSummaryOrPractices[[1]]$parcelName[i], scenario=='year0')%>%
                                mutate(scenario='baseline')) # arable crop baseline is based on previous years
       } else {
+        # If 3 years or less, assume common practices. Use provided wheat yield data if given. Else take from factors table.
         if(nrow(crop_inputs %>% filter(crop=='Wheat' | crop=='Winter wheat' | crop=='Spring wheat'))>0){#if we have wheat data from the farmer
           crop_inputs_temp <- crop_inputs %>% filter(crop=='Wheat' | crop=='Winter wheat' | crop=='Spring wheat') %>%
             summarize(parcel_ID=landUseSummaryOrPractices[[1]]$parcelName[i], scenario='baseline',
@@ -804,25 +805,33 @@ get_parcel_inputs = function(landUseSummaryOrPractices){
 }
 
 get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_EnZ, total_grazing_table, my_logger, pars){
- #takes a landUseSummaryOrPractices from farms collection
+  #takes a landUseSummaryOrPractices from farms collection
   #extracts yield and residues left on site when grazing happened
   pasture_efficiency_potential_difference = unique((grazing_factors %>% filter(pedo_climatic_area==farm_EnZ))$pasture_efficiency_potential_difference)
   pasture_inputs = data.frame(scenario = c(), parcel_ID = c(), grass = c(), perennial_frac = c(), n_fixing_frac = c(), 
                               dry_yield = c(), fresh_yield = c(), dry_residual = c(), fresh_residual = c(), 
                               dry_agb_peak = c(), fresh_agb_peak = c(), pasture_efficiency = c())
   for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
-    if(landUseSummaryOrPractices[[1]]$year0$applyingThesePracticesInYears[i]==""){
+    year0_is_AMP <- landUseSummaryOrPractices[[1]][['year0']]$adaptiveMultiPaddockGrazing[i]
+    year0_since_years <- landUseSummaryOrPractices[[1]][['year0']]$applyingThesePracticesInYears[i]
+    
+    if(year0_since_years==""){
       log4r::error(my_logger,"Number of years that practices have been applied until now is NOT entered.")
     } else {
-      nbYears_initialLandUse_wasApplied = new.as_numeric(landUseSummaryOrPractices[[1]][['year0']]$applyingThesePracticesInYears[i])
+      baseline_since_years = new.as_numeric(year0_since_years)
+    }
+    if(year0_is_AMP){
+      previous_AMP_years = baseline_since_years
+    } else {
+      previous_AMP_years = 0
       }
-    previous_AMP_years = ifelse(is.null(landUseSummaryOrPractices[[1]][['year0']]$adaptiveMultiPaddockGrazing[i]), 0,
-                                ifelse(is.na(landUseSummaryOrPractices[[1]][['year0']]$adaptiveMultiPaddockGrazing[i]), 0,
-                                       ifelse(landUseSummaryOrPractices[[1]][['year0']]$adaptiveMultiPaddockGrazing[i]==FALSE, 0,
-                                              nbYears_initialLandUse_wasApplied)))
+    }
+
     current_AMP_years = 0
+    years_lost_by_tilling = 1
     for (j in c(0:10)){
       year_chosen = landUseSummaryOrPractices[[1]][[paste('year',j,sep="")]]
+      year_is_AMP <- landUseSummaryOrPractices[[1]][[paste('year',j,sep="")]]$adaptiveMultiPaddockGrazing[i]
       ## counting AMP years to calculate related efficiency
       # efficiency is assumed to be reversible
       # if AMP is not happening, efficiency will go backward
@@ -833,15 +842,17 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
         current_AMP_years = - previous_AMP_years
       } else if (sum(minTill)>0){ # in case of minimum tillage
         # AMP related productivity benefits got penalized
-        years_lost_by_tilling = 1
-        for (k in c(1:years_lost_by_tilling)){
-          current_AMP_years = current_AMP_years + ifelse(previous_AMP_years+current_AMP_years>0,-1,0)
-        }
+        if(previous_AMP_years+current_AMP_years>0) current_AMP_years = current_AMP_years - years_lost_by_tilling
       } else {
-        current_AMP_years = current_AMP_years + ifelse(is.na(landUseSummaryOrPractices[[1]][[paste('year',j,sep="")]]$adaptiveMultiPaddockGrazing[i]), ifelse(previous_AMP_years+current_AMP_years>0,-1,0),
-                                                       ifelse(landUseSummaryOrPractices[[1]][[paste('year',j,sep="")]]$adaptiveMultiPaddockGrazing[i]==FALSE, ifelse(previous_AMP_years+current_AMP_years>0,-1,0),
-                                                              1))
+        if(year_is_AMP) {
+          current_AMP_years = current_AMP_years + 1
+        } else {
+          if(previous_AMP_years+current_AMP_years>0) {
+            current_AMP_years = current_AMP_years - 1
+          }
+        }
       }
+      
       # Calculation of pasture_efficiency: an index of enhanced productivity due to AMP grazing
       pasture_efficiency = 1 + pasture_efficiency_potential_difference *
         (exp(-0.36*previous_AMP_years)-exp(-0.36*(previous_AMP_years+current_AMP_years)))#0.36 factor allows to reach 2/3 of potential efficiency increase after 3 years of AMP
@@ -873,7 +884,7 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
         if (is.na(year_chosen$yieldsResiduesDryOrFresh[i])){
           dryOrFresh = "Dry"
           log4r::info(my_logger, paste("CAUTION: dryOrFresh is NA in parcel ",landUseSummaryOrPractices[[1]]$parcelName[i],
-                                        " for year ",j,". Was ASSUMED to be dry.", sep=""))
+                                       " for year ",j,". Was ASSUMED to be dry.", sep=""))
         } else {
           dryOrFresh = year_chosen$yieldsResiduesDryOrFresh[i]
         }
@@ -914,10 +925,10 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
                                                dry_agb_peak = c(ifelse(dryOrFresh=="Dry", max(monthly_grazing_yield$grazing_yield[c(1:endWinterSeason,endSummerSeason:12)]+monthly_grazing_yield$residue_left[c(1:endWinterSeason,endSummerSeason:12)]) +
                                                                          max(monthly_grazing_yield$grazing_yield[c(endWinterSeason:endSummerSeason)]+monthly_grazing_yield$residue_left[c(endWinterSeason:endSummerSeason)]),0)), 
                                                fresh_agb_peak = c(ifelse(dryOrFresh=="Fresh", max(monthly_grazing_yield$grazing_yield[c(1:endWinterSeason,endSummerSeason:12)]+monthly_grazing_yield$residue_left[c(1:endWinterSeason,endSummerSeason:12)]) +
-                                                                    max(monthly_grazing_yield$grazing_yield[c(endWinterSeason:endSummerSeason)]+monthly_grazing_yield$residue_left[c(endWinterSeason:endSummerSeason)]),0)), 
+                                                                           max(monthly_grazing_yield$grazing_yield[c(endWinterSeason:endSummerSeason)]+monthly_grazing_yield$residue_left[c(endWinterSeason:endSummerSeason)]),0)), 
                                                pasture_efficiency = c(1/(1+pasture_efficiency_potential_difference*(1-exp(-0.36*previous_AMP_years))))))
           }
-        # PDZ with only one growing season 
+          # PDZ with only one growing season 
         } else { # PDZ with only one growing season
           pasture_inputs <- rbind(pasture_inputs, 
                                   data.frame(scenario = c(paste('year',j,sep="")),
