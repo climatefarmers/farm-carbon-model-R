@@ -35,12 +35,13 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   ## Soil model settings -------------------------------------------------------
   
   pars = list(
-    n_run = 30,
+    n_run = 3,
     sd_future_mod=1,
     sd_field_carbon_in=0.10,
     CFmade_grazing_estimations_Yes_No="No",
     
     debug_mode = FALSE,  # Skip some steps. For now just skip fetching and use dummy climate data.
+    save2mongoDB = FALSE,
     
     # To copy the practice of a single year to all others
     yearX_landuse=1,  # setting to 0 will copy baseline
@@ -181,40 +182,40 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   
   
   ## Push results to mongoDB ---------------------------------------------------
-  
-  # Get code version and time info
-  tag <- system2(command = "git", args = "describe", stdout = TRUE)
-  full_tag <- paste0("R-model-version: ", tag)
-  currentTime <- format(Sys.time(), "%Y-%m-%d %H:%M")
-  currentYear <- format(Sys.time(), "%Y")
-  
-  farms_everything$modelInfo <- data.frame(
-    modelVersion=full_tag,
-    resultsGenerationYear=currentYear,
-    resultsGenerationTime=currentTime
-  )
-
-  farms_everything$modelResults <- data.frame(
-    yearlyCO2eqTotal=NA,
-    yearlyCO2eqSoil=NA,
-    yearlyCO2eqEmissions=NA,
-    yearlyCO2eqLeakage=NA,
-    yearlyCO2eqEmissions_detailed=NA,
-    yearlyProductivity=NA
-  )
-  farms_everything$modelResults$yearlyCO2eqTotal=list(c(yearly_results$CO2eq_total))
-  farms_everything$modelResults$yearlyCO2eqSoil=list(c(yearly_results$CO2eq_soil_final))
-  farms_everything$modelResults$yearlyCO2eqEmissions=list(c(yearly_results$CO2eq_emissions))
-  farms_everything$modelResults$yearlyCO2eqLeakage=list(c(yearly_results$CO2eq_leakage))
-  farms_everything$modelResults$yearlyCO2eqEmissions_detailed=list(c(emissions_detailed))
-  farms_everything$modelResults$yearlyProductivity=list(c(productivity))
-  
-  farms_everything$modelParameters <- data.frame(pars) 
-
-  # Upload to database
-  carbonresults_collection = mongo(collection="carbonresults", db=db, url=connection_string)
-  carbonresults_collection$insert(farms_everything)
-  
+  if(save2mongoDB) {
+    # Get code version and time info
+    tag <- system2(command = "git", args = "describe", stdout = TRUE)
+    full_tag <- paste0("R-model-version: ", tag)
+    currentTime <- format(Sys.time(), "%Y-%m-%d %H:%M")
+    currentYear <- format(Sys.time(), "%Y")
+    
+    farms_everything$modelInfo <- data.frame(
+      modelVersion=full_tag,
+      resultsGenerationYear=currentYear,
+      resultsGenerationTime=currentTime
+    )
+    
+    farms_everything$modelResults <- data.frame(
+      yearlyCO2eqTotal=NA,
+      yearlyCO2eqSoil=NA,
+      yearlyCO2eqEmissions=NA,
+      yearlyCO2eqLeakage=NA,
+      yearlyCO2eqEmissions_detailed=NA,
+      yearlyProductivity=NA
+    )
+    farms_everything$modelResults$yearlyCO2eqTotal=list(c(yearly_results$CO2eq_total))
+    farms_everything$modelResults$yearlyCO2eqSoil=list(c(yearly_results$CO2eq_soil_final))
+    farms_everything$modelResults$yearlyCO2eqEmissions=list(c(yearly_results$CO2eq_emissions))
+    farms_everything$modelResults$yearlyCO2eqLeakage=list(c(yearly_results$CO2eq_leakage))
+    farms_everything$modelResults$yearlyCO2eqEmissions_detailed=list(c(emissions_detailed))
+    farms_everything$modelResults$yearlyProductivity=list(c(productivity))
+    
+    farms_everything$modelParameters <- data.frame(pars) 
+    
+    # Upload to database
+    carbonresults_collection = mongo(collection="carbonresults", db=db, url=connection_string)
+    carbonresults_collection$insert(farms_everything)
+  }
   
   ## Plotting ------------------------------------------------------------------
   name<-paste0("Results_farm_", farmId)
