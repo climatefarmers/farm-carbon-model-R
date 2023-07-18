@@ -38,7 +38,7 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
     n_run = 3,
     sd_future_mod=1,
     sd_field_carbon_in=0.10,
-    CFmade_grazing_estimations_Yes_No="No",
+    CFmade_grazing_estimations_Yes_No="Yes", # Jeremie created because values from farmers are often missing or wrong. Safe to keep "Yes".
     
     debug_mode = FALSE,  # Skip some steps. For now just skip fetching and use dummy climate data.
     save2mongoDB = FALSE,
