@@ -185,15 +185,15 @@ get_total_grazing_table <- function(landUseSummaryOrPractices, livestock, animal
 get_monthly_cash_crop <- function(parcel_index = i, year_chosen){
   crop=rep(NA,12)
   for (k in c(1:12)){
-    if(is.na(year_chosen$cashCrop1MonthlyData[[parcel_index]][k])==FALSE &
+    if(!is.na(year_chosen$cashCrop1MonthlyData[[parcel_index]][k]) &
        year_chosen$cashCrop1MonthlyData[[parcel_index]][k] != "-"){ # cash crop 1 checked for month k
-      if(is.na(year_chosen$cashCrop2MonthlyData[[parcel_index]][k])==FALSE &
+      if(!is.na(year_chosen$cashCrop2MonthlyData[[parcel_index]][k]) &
          year_chosen$cashCrop2MonthlyData[[parcel_index]][k] != "-"){ # case of conflict, we assume that the correct is cash crop 1
         log4r::error(my_logger, paste('Two different cash crops checked for month ',k,' in parcel ',landUseSummaryOrPractices[[1]]$parcelName[i],'.',sep='')) # flag
       } else {
         crop[k] = year_chosen$cashCrop1MonthlyData[[parcel_index]][k]
       }
-    } else if (is.na(year_chosen$cashCrop2MonthlyData[[parcel_index]][k])==FALSE &
+    } else if (!is.na(year_chosen$cashCrop2MonthlyData[[parcel_index]][k]) &
                year_chosen$cashCrop2MonthlyData[[parcel_index]][k] != "-"){
       crop[k] = year_chosen$cashCrop2MonthlyData[[parcel_index]][k]
     } else {
@@ -271,7 +271,7 @@ get_SOC_content <- function(soilAnalysis, soilMapsData){
   if (is.null(soilAnalysis$clayContentPercent) & is.null(soilAnalysis$organicMatterContent)){ #case that SOC & SOM variables weren't found
     return(soilMapsData$SOC)
   }
-  if (is.null(soilAnalysis$carbonContent) & is.null(soilAnalysis$organicMatterContent)==FALSE){ 
+  if (!is.null(soilAnalysis$carbonContent) & is.null(soilAnalysis$organicMatterContent)){ 
     if (soilAnalysis$organicMatterContent==""){ # case that SOC variable wasn't found and SOM wasn't known
       return(soilMapsData$SOC)
     }
@@ -331,7 +331,7 @@ get_add_manure_inputs = function(landUseSummaryOrPractices){
   for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
     for (j in c(0:10)){
       year_chosen = landUseSummaryOrPractices[[1]][[paste('year', j, sep="")]]
-      if(is.na(year_chosen$manureApplication[i])==FALSE){
+      if(!is.na(year_chosen$manureApplication[i])){
         # Manure (animal dung)
         if (year_chosen$manureApplication[i]>=0){
           add_manure_inputs <- rbind(add_manure_inputs,data.frame(
@@ -346,7 +346,7 @@ get_add_manure_inputs = function(landUseSummaryOrPractices){
         }
       }
       # Compost
-      if(is.na(year_chosen$compostApplication[i])==FALSE){
+      if(!is.na(year_chosen$compostApplication[i])){
         if (year_chosen$compostApplication[i]>=0){
           add_manure_inputs <- rbind(add_manure_inputs,data.frame(
             parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
@@ -360,7 +360,7 @@ get_add_manure_inputs = function(landUseSummaryOrPractices){
         }
       }
       # Hay
-      if(is.na(year_chosen$hayStrawApplication[i])==FALSE){
+      if(!is.na(year_chosen$hayStrawApplication[i])){
         if (year_chosen$hayStrawApplication[i]>=0){
           add_manure_inputs <- rbind(add_manure_inputs, data.frame(
             parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
@@ -397,7 +397,7 @@ get_agroforestry_inputs = function(landUseSummaryOrPractices){
       c = c()
       for (tree in landUseSummaryOrPractices[[1]][[paste('year',j,sep="")]]$typeOfTrees[i][[1]]$treeName){
         row_index = row_index + 1
-        if (is.na(tree)==FALSE){
+        if (!is.na(tree)){
           if (tree!=""){ #filter out if no tree information given
             c = append(c, row_index)
           }
