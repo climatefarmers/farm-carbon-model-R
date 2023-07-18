@@ -24,25 +24,14 @@ farms_collection = mongo(collection="farms", db=db, url=connection_string)
 carbonresults_collection = mongo(collection="carbonresults", db=db, url=connection_string)
 
 farmIds <- c(
-  'edf5cce8-eee2-40a8-af32-520d2b93ab5c',
-  '7fe9ced2-73b8-45aa-b6a2-a9ede144ca1b',
-  '3f916c12-3a2c-4904-91cb-bb64e6fb0832',
-  'f67333e8-34a9-4030-93af-766f49d01310',
-  '584b48dc-0e5d-4ecc-b7d4-9acf281faaba',
-  'bb393d6d-f952-474e-a790-5486365d929b'
+  # 'edf5cce8-eee2-40a8-af32-520d2b93ab5c',
+  # '7fe9ced2-73b8-45aa-b6a2-a9ede144ca1b',
+  # '3f916c12-3a2c-4904-91cb-bb64e6fb0832',
+  # 'f67333e8-34a9-4030-93af-766f49d01310',
+  # '584b48dc-0e5d-4ecc-b7d4-9acf281faaba',
+  # 'bb393d6d-f952-474e-a790-5486365d929b'
 )
 
-for(farmId in farmIds){
-  farm <- carbonresults_collection$find(paste0('{"farmInfo.farmId":"',farmId, '", "modelParameters.n_run":',30,'}'))
-  farm2 <- carbonresults_collection$find(paste0('{"farmInfo.farmId":"',farmId, '", "modelParameters.n_run":',2,'}'))
-  farm$modelInfo['modelVersion'] <- 'R-model-version: v2.0.0'
-  farm$modelResults$yearlyCO2eqEmissions_detailed <- farm2$modelResults$yearlyCO2eqEmissions_detailed
-  farm$modelResults$yearlyProductivity <- farm2$modelResults$yearlyProductivity
-  farm$modelParameters <- farm2$modelParameters
-  farm$modelParameters$n_run <- 30
-  farm$modelInfo$n_run <- NULL
-  carbonresults_collection$insert(farm)
-}
 
 # # Get code version and time info
 # tag <- system2(command = "git", args = "describe", stdout = TRUE)
