@@ -941,7 +941,7 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
           pasture_df_temp$perennial_frac <- (AMP_years_current) * 0.02
         }
         
-        pasture_inputs <- rbind(pasture_inputs, pasture_temp)
+        pasture_inputs <- rbind(pasture_inputs, pasture_df_temp)
       }
     }
   }
