@@ -215,7 +215,7 @@ detect_crop_rotations <- function(landUseSummaryOrPractices, parcel_index = i){
       list_arablecrop_years = c(list_arablecrop_years,year)
     }
   }
-  # If occurence of arable crops, looking for crop rotations
+  # If occurrence of arable crops, looking for crop rotations
   if (length(list_arablecrop_years) > 0){
     df_crops = data.frame(year = c(), crops = c())
     for (year in c(0:10)){
@@ -551,21 +551,26 @@ get_crop_inputs <- function(landUseSummaryOrPractices, pars){
         monthly_harvesting_yield$grazing_yield = new.as_numeric(year_chosen$grazingYield[[i]])
         monthly_harvesting_yield$harvesting_yield = new.as_numeric(year_chosen$harvestYield[[i]])
         monthly_harvesting_yield$residue_left = new.as_numeric(year_chosen$estimationAfterResidueGrazingHarvest[[i]])
-        # if willing to correct total grazing yield by using a CF-made estimation, we re-weight the grazing yields
+        
+        # If get_grazing_estimates is TRUE, total grazing yield is calculated here, replacing input values.
         if (pars$get_grazing_estimates){
           grazing_table_temp = total_grazing_table %>% filter(scenario==paste('year',j,sep=""))
           if (grazing_table_temp$bale_grazing_total>grazing_table_temp$expected_grazing_needs_tDM){
             log4r::error(my_logger,"WARNING ! Bale grazing alone overcomes expected grazing needs, to be checked.")
-          } else if (grazing_table_temp$grazing_total==0){
+            stop("Error related to bale grazing numbers. See log file..")
+          }
+          if (grazing_table_temp$grazing_total==0){
             # grazing arbitrarily equally distributed over grazed land, 2 month a year (6 months apart) if no grazing yield announced
-            half_yearly_grazing_yield_per_ha = 1/2*(grazing_table_temp$expected_grazing_needs_tDM-grazing_table_temp$bale_grazing_total*0.85)/sum(parcel_inputs$area) 
-            monthly_harvesting_yield$grazing_yield = c(half_yearly_grazing_yield_per_ha,rep(0,5),half_yearly_grazing_yield_per_ha,rep(0,5))
+            half_yearly_grazing_yield_per_ha = 1/2 * 
+              (grazing_table_temp$expected_grazing_needs_tDM - grazing_table_temp$bale_grazing_total * 0.85)/sum(parcel_inputs$area) 
+            monthly_harvesting_yield$grazing_yield <- c(half_yearly_grazing_yield_per_ha, rep(0,5), half_yearly_grazing_yield_per_ha, rep(0,5))
           } else {
             # grazing arbitrarily equally distributed over time weighted by parcel grazing yield relatively to farm level, if known
-            half_yearly_grazing_yield_per_ha = 1/2*sum(monthly_harvesting_yield$grazing_yield)/
-              (grazing_table_temp$grazing_total-grazing_table_temp$grazing_yield_non_arable_lands)* #grazing yield arable lands
-              ((grazing_table_temp$expected_grazing_needs_tDM-grazing_table_temp$expected_grazing_needs_tDM_pastures)-(grazing_table_temp$bale_grazing_total-grazing_table_temp$pasture_yield_weighted_bale_grazing)*0.85) # expected grazing yield arable lands after deduction of bale grazing distributed in arable lands 
-            monthly_harvesting_yield$grazing_yield = c(half_yearly_grazing_yield_per_ha,rep(0,5),half_yearly_grazing_yield_per_ha,rep(0,5))
+            half_yearly_grazing_yield_per_ha <- 1/2*sum(monthly_harvesting_yield$grazing_yield) /
+              (grazing_table_temp$grazing_total - grazing_table_temp$grazing_yield_non_arable_lands)* #grazing yield arable lands
+              ((grazing_table_temp$expected_grazing_needs_tDM - grazing_table_temp$expected_grazing_needs_tDM_pastures) - 
+                 (grazing_table_temp$bale_grazing_total - grazing_table_temp$pasture_yield_weighted_bale_grazing) * 0.85) # expected grazing yield arable lands after deduction of bale grazing distributed in arable lands 
+            monthly_harvesting_yield$grazing_yield <- c(half_yearly_grazing_yield_per_ha, rep(0,5), half_yearly_grazing_yield_per_ha, rep(0,5))
           }
         }
         # fresh or dry tOM/ha
@@ -578,7 +583,7 @@ get_crop_inputs <- function(landUseSummaryOrPractices, pars){
         }
         # case of cash crop with no grazing
         for (crop_chosen in unique(monthly_harvesting_yield$crop)){
-          if(!is.na(crop_chosen)){
+          if(!is.na(crop_chosen)) {
             harvesting_yield = sum((monthly_harvesting_yield %>% filter(crop==crop_chosen))$harvesting_yield)
             grazing_yield = sum(new.as_numeric((monthly_harvesting_yield %>% filter(crop==crop_chosen))$grazing_yield))
             residue_left = sum((monthly_harvesting_yield %>% filter(crop==crop_chosen))$residue_left)
@@ -887,7 +892,7 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
           grazing_table_temp = total_grazing_table %>% filter(scenario==paste('year', j, sep=""))
           if (grazing_table_temp$bale_grazing_total > grazing_table_temp$expected_grazing_needs_tDM){
             log4r::error(my_logger,"WARNING ! Bale grazing alone exceeds expected grazing needs, to be checked.")
-            stop("Error related to bale grazing numbers. Check log files.")
+            stop("Error related to bale grazing numbers. See log file..")
           }
           if (grazing_table_temp$grazing_total == 0){
             # grazing arbitrarily equally distributed over grazed land, 2 month a year (6 months apart) if no grazing yield announced
