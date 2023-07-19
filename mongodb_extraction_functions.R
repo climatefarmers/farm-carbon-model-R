@@ -822,13 +822,12 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
       baseline_since_years = new.as_numeric(year0_since_years)
     }
     if(year0_is_AMP){
-      previous_AMP_years = baseline_since_years
+      current_AMP_years = baseline_since_years
     } else {
-      previous_AMP_years = 0
+      current_AMP_years = 0
       }
     }
 
-    current_AMP_years = 0
     years_lost_by_tilling = 1
     for (j in c(0:10)){
       year_chosen = landUseSummaryOrPractices[[1]][[paste('year',j,sep="")]]
@@ -840,25 +839,28 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
       minTill=unlist(year_chosen$minimumTillingEvent[i])
       if (sum(till)>0){ # in case of conventional tillage over a grassland 
         # AMP related productivity benefits got erased
-        current_AMP_years = - previous_AMP_years
+        current_AMP_years = 0
       } else if (sum(minTill)>0){ # in case of minimum tillage
         # AMP related productivity benefits got penalized
-        if(previous_AMP_years+current_AMP_years>0) current_AMP_years = current_AMP_years - years_lost_by_tilling
+        if(current_AMP_years - years_lost_by_tilling>0){
+          current_AMP_years = current_AMP_years - years_lost_by_tilling
+        } else {current_AMP_years = 0}
       } else {
         if(year_is_AMP) {
           current_AMP_years = current_AMP_years + 1
         } else {
-          if(previous_AMP_years+current_AMP_years>0) {
+          if(current_AMP_years-1>0) {
             current_AMP_years = current_AMP_years - 1
-          }
+          } else {current_AMP_years = 0}
         }
       }
       # Calculation of pasture_efficiency: an index of enhanced productivity due to AMP grazing
       # Efficiency increases with time towards a plateau.
       # 0.36 factor allows to reach 2/3 of potential efficiency after 3 years of AMP
       pasture_efficiency = 1 + pasture_efficiency_potential_difference *
-        (exp(-0.36*previous_AMP_years)-exp(-0.36*(previous_AMP_years+current_AMP_years)))
-      
+        exp(-0.36*current_AMP_years)
+      current_to_baseline_proportionality = 1 / (1 + pasture_efficiency_potential_difference *
+                                                   (1-exp(-0.36*baseline_since_years))) 
       # selecting the type of land use were grazing management affects most pasture efficiency 
       # monthly yield and residue (to avoid double-counting we will only look at grasslands)
       if (year_chosen$landUseType[i]!='Arablecrops'){
