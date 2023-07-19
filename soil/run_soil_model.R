@@ -476,7 +476,7 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ){
               list(step_in_table_final$yearly_CO2diff_final),
               '.\nArea considered: ', round(sum(parcel_inputs$area), 2), ' ha.', 
               "\nNumber of runs: ", run_ID,
-              ".\nGrazing estimations by CF (Y/N): ", pars$CFmade_grazing_estimations_Yes_No,
+              ".\nGrazing estimations by CF (Y/N): ", pars$get_grazing_estimates,
               "\nStandard deviation used for extrinsic uncertainty of practices (Cinputs): ",
               sd$field_carbon_in,
               ifelse(copy_yearX_to_following_years_landUse==TRUE,
