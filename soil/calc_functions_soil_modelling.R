@@ -63,15 +63,15 @@ get_monthly_Cinputs_pasture <- function (pasture_inputs, pasture_data, scenario_
                                         NA)))
   annual_pastures <- merge(x = pasture_inputs, 
                            y = filter(pasture_data, pasture_type=="annual"), by = "grass", all.x = TRUE) %>% 
-    mutate(c_input_shoot = (dry_residual+dry_yield*0.15)*pasture_efficiency*current_to_baseline_proportionality*dry_c) %>%
-    mutate(c_input_root = dry_agb_peak*pasture_efficiency*current_to_baseline_proportionality*
+    mutate(c_input_shoot = (dry_residual+dry_yield*0.15)*pasture_efficiency*AMP_baseline_factor*dry_c) %>%
+    mutate(c_input_root = dry_agb_peak*pasture_efficiency*AMP_baseline_factor*
              r_s_ratio*dry_c*bg_turnover) %>%
     mutate(c_inputs = c_input_shoot + c_input_root)
   perennial_pastures <- merge(x = pasture_inputs,
                               y = filter(pasture_data, pasture_type=="perennial"), by = "grass", all.x = TRUE) %>% 
-    mutate(c_input_shoot= (dry_yield*0.15+dry_agb_peak*pasture_efficiency*current_to_baseline_proportionality*
+    mutate(c_input_shoot= (dry_yield*0.15+dry_agb_peak*pasture_efficiency*AMP_baseline_factor*
                              ag_turnover)*dry_c) %>%
-    mutate(c_input_root= dry_agb_peak*pasture_efficiency*current_to_baseline_proportionality*r_s_ratio*dry_c*bg_turnover) %>%
+    mutate(c_input_root= dry_agb_peak*pasture_efficiency*AMP_baseline_factor*r_s_ratio*dry_c*bg_turnover) %>%
     mutate(c_inputs = c_input_shoot + c_input_root)
   tC_inputs_per_ha_per_year = sum(perennial_pastures$c_inputs*perennial_pastures$perennial_frac,na.rm=T)+
     sum(annual_pastures$c_inputs*(1-annual_pastures$perennial_frac),na.rm=T)

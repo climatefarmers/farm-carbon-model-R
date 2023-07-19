@@ -832,8 +832,10 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
 
     years_lost_by_tilling = 1
     for (j in c(0:10)){
+      
       year_chosen <- landUseSummaryOrPractices[[1]][[paste('year',j,sep="")]]
       year_is_AMP <- landUseSummaryOrPractices[[1]][[paste('year',j,sep="")]]$adaptiveMultiPaddockGrazing[i]
+      
       ## counting AMP years to calculate related efficiency
       # efficiency is assumed to be reversible
       # if AMP is not happening, efficiency will go backward
@@ -862,8 +864,8 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
       # 0.36 factor allows to reach 2/3 of potential efficiency after 3 years of AMP
       pasture_efficiency = 1 + pasture_efficiency_potential_difference *
         (1-exp(-0.36*AMP_years_current))
-      current_to_baseline_proportionality = 1 / (1 + pasture_efficiency_potential_difference * # This is used later to get the baseline productivity if AMP started in the past.
-                                                   (1-exp(-0.36*AMP_years_baseline)))
+      AMP_baseline_factor = 1 /  # This is used later to get the baseline productivity if AMP started in the past.
+        (1 + pasture_efficiency_potential_difference * (1-exp(-0.36*AMP_years_baseline)))
       
       # selecting the type of land use were grazing management affects most pasture efficiency 
       # monthly yield and residue (to avoid double-counting we will only look at grasslands)
@@ -911,7 +913,7 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
                                        dry_agb_peak = 0, 
                                        fresh_agb_peak = 0, 
                                        pasture_efficiency = pasture_efficiency,
-                                       current_to_baseline_proportionality = current_to_baseline_proportionality
+                                       AMP_baseline_factor = AMP_baseline_factor
         )
         if (farm_EnZ == "Mediterranean north" | farm_EnZ == "Mediterranean south"){ # env zones with 2 grass growing seasons
           endWinterSeason = 5 # month index
