@@ -860,7 +860,7 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
       pasture_efficiency = 1 + pasture_efficiency_potential_difference *
         exp(-0.36*current_AMP_years)
       current_to_baseline_proportionality = 1 / (1 + pasture_efficiency_potential_difference *
-                                                   (1-exp(-0.36*baseline_since_years))) 
+                                                   (1-exp(-0.36*baseline_since_years)))
       # selecting the type of land use were grazing management affects most pasture efficiency 
       # monthly yield and residue (to avoid double-counting we will only look at grasslands)
       if (year_chosen$landUseType[i]!='Arablecrops'){
