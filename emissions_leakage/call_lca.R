@@ -65,7 +65,7 @@ call_lca <- function(init_file, farms_everything, farm_EnZ){
                                                   rename(species=manure_source), parcel_data)
   crop_data <- get_crop_inputs(landUseSummaryOrPractices, pars)
   crop_data <- get_baseline_crop_inputs(landUseSummaryOrPractices, crop_data, crop_factors, my_logger, farm_EnZ)
-  pasture_data <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, farm_EnZ, total_grazing_table, my_logger, pars)
+  pasture_data <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, farm_EnZ, total_grazing_table, my_logger, parcel_data, pars)
   fertilizer_data <- get_fertilizer_inputs(landUseSummaryOrPractices)
   fuel_data <- get_fuel_inputs(fuel_object)
   add_manure_data <- get_add_manure_inputs(landUseSummaryOrPractices)

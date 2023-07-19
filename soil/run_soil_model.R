@@ -78,7 +78,7 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ){
   crop_inputs = get_crop_inputs(landUseSummaryOrPractices, pars)
   crop_inputs = get_baseline_crop_inputs(landUseSummaryOrPractices, crop_inputs, crop_data, my_logger, farm_EnZ)
   # C inputs from pasture biomass turnover
-  pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, farm_EnZ, total_grazing_table, my_logger, pars)
+  pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, farm_EnZ, total_grazing_table, my_logger, parcel_inputs, pars)
   
   ## Soil data
   # Bare field inputs
