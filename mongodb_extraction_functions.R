@@ -811,6 +811,7 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
   pasture_inputs = data.frame(scenario = c(), parcel_ID = c(), grass = c(), perennial_frac = c(), n_fixing_frac = c(), 
                               dry_yield = c(), fresh_yield = c(), dry_residual = c(), fresh_residual = c(), 
                               dry_agb_peak = c(), fresh_agb_peak = c(), pasture_efficiency = c())
+  
   for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
     year0_is_AMP <- landUseSummaryOrPractices[[1]][['year0']]$adaptiveMultiPaddockGrazing[i]
     year0_since_years <- landUseSummaryOrPractices[[1]][['year0']]$applyingThesePracticesInYears[i]
@@ -852,10 +853,12 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
           }
         }
       }
-      
       # Calculation of pasture_efficiency: an index of enhanced productivity due to AMP grazing
+      # Efficiency increases with time towards a plateau.
+      # 0.36 factor allows to reach 2/3 of potential efficiency after 3 years of AMP
       pasture_efficiency = 1 + pasture_efficiency_potential_difference *
-        (exp(-0.36*previous_AMP_years)-exp(-0.36*(previous_AMP_years+current_AMP_years)))#0.36 factor allows to reach 2/3 of potential efficiency increase after 3 years of AMP
+        (exp(-0.36*previous_AMP_years)-exp(-0.36*(previous_AMP_years+current_AMP_years)))
+      
       # selecting the type of land use were grazing management affects most pasture efficiency 
       # monthly yield and residue (to avoid double-counting we will only look at grasslands)
       if (year_chosen$landUseType[i]!='Arablecrops'){
