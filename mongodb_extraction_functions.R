@@ -891,6 +891,7 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
             monthly_grazing_yield$grazing_yield = c(half_yearly_grazing_yield_per_ha,rep(0,5),half_yearly_grazing_yield_per_ha,rep(0,5))
           }
         }
+        
         # fresh or dry tOM/ha
         if (is.na(year_chosen$yieldsResiduesDryOrFresh[i])){
           dryOrFresh = "Dry"
@@ -939,7 +940,7 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
           pasture_df_temp$perennial_frac <- 0
           pasture_df_temp$pasture_efficiency <- 1 / (1 + pasture_efficiency_potential_difference * (1 - exp(-0.36 * baseline_since_years)))
         }
-        if(year_chosen$landUseType[i]=='Arablecrops'){
+        if(year_chosen$landUseType[i]=='Arablecrops'){ # Fernando: unnecessary because this condition is already set above
           pasture_df_temp$perennial_frac <- (AMP_years_current) * 0.02
         }
         
