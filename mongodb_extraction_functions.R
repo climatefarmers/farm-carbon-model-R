@@ -862,8 +862,9 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
       # 0.36 factor allows to reach 2/3 of potential efficiency after 3 years of AMP
       pasture_efficiency = 1 + pasture_efficiency_potential_difference *
         (1-exp(-0.36*AMP_years_current))
-      current_to_baseline_proportionality = 1 / (1 + pasture_efficiency_potential_difference * # Fernando: what is this line for?
+      current_to_baseline_proportionality = 1 / (1 + pasture_efficiency_potential_difference * # This is used later to get the baseline productivity if AMP started in the past.
                                                    (1-exp(-0.36*AMP_years_baseline)))
+      
       # selecting the type of land use were grazing management affects most pasture efficiency 
       # monthly yield and residue (to avoid double-counting we will only look at grasslands)
       if (year_chosen$landUseType[i]!='Arablecrops'){
@@ -897,79 +898,50 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
           dryOrFresh = year_chosen$yieldsResiduesDryOrFresh[i]
         }
         ### building df for C inputs calculation
-        # PDZ with 2 grass growing season
-        if (farm_EnZ == "Mediterranean north" | farm_EnZ == "Mediterranean south"){
+        
+        pasture_df_temp <- data.frame(scenario = c(paste0('year',j)),
+                                       parcel_ID = landUseSummaryOrPractices[[1]]$parcelName[i], 
+                                       grass = "Generic grasses",
+                                       perennial_frac = 0,
+                                       n_fixing_frac = 0, # WARNING: TO BE AUTOMATED FOR CO2-EMISSION BALANCE 
+                                       dry_yield = 0, 
+                                       fresh_yield = 0, 
+                                       dry_residual = 0, 
+                                       fresh_residual = 0, 
+                                       dry_agb_peak = 0, 
+                                       fresh_agb_peak = 0, 
+                                       pasture_efficiency = pasture_efficiency,
+                                       current_to_baseline_proportionality = current_to_baseline_proportionality
+        )
+        if (farm_EnZ == "Mediterranean north" | farm_EnZ == "Mediterranean south"){ # env zones with 2 grass growing seasons
           endWinterSeason = 5 # month index
           endSummerSeason = 10 # month index
-          # Project scenario: year 2 to 10
-          browser()
-          pasture_temp <- data.frame(scenario = c(paste('year',j,sep="")),
-                                     parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
-                                     grass = c("Generic grasses"),
-                                     perennial_frac = c(ifelse(year_chosen$landUseType[i]=='Arablecrops', 
-                                                               0, (AMP_years_current)*0.02)), # WARNING assumption that perennials increase linearly with AMP by a rate of 2% per year
-                                     n_fixing_frac = c(0), # WARNING: TO BE AUTOMATED FOR CO2-EMISSION BALANCE 
-                                     dry_yield = c(ifelse(dryOrFresh=="Dry", sum(monthly_grazing_yield$grazing_yield),0)), 
-                                     fresh_yield = c(ifelse(dryOrFresh=="Fresh", sum(monthly_grazing_yield$grazing_yield),0)), 
-                                     dry_residual = c(ifelse(dryOrFresh=="Dry", sum(monthly_grazing_yield$residue_left),0)), 
-                                     fresh_residual = c(ifelse(dryOrFresh=="Fresh", sum(monthly_grazing_yield$residue_left),0)), 
-                                     dry_agb_peak = c(ifelse(dryOrFresh=="Dry", max((monthly_grazing_yield$grazing_yield+monthly_grazing_yield$residue_left)[c(1:endWinterSeason,endSummerSeason:12)]) +
-                                                               max((monthly_grazing_yield$grazing_yield+monthly_grazing_yield$residue_left)[c(endWinterSeason:endSummerSeason)]),0)), 
-                                     fresh_agb_peak = c(ifelse(dryOrFresh=="Fresh", max((monthly_grazing_yield$grazing_yield+monthly_grazing_yield$residue_left)[c(1:endWinterSeason,endSummerSeason:12)]) +
-                                                                 max((monthly_grazing_yield$grazing_yield+monthly_grazing_yield$residue_left)[c(endWinterSeason:endSummerSeason)]),0)), 
-                                     pasture_efficiency = c(pasture_efficiency) )
-          pasture_inputs <- rbind(pasture_inputs, pasture_temp)
-          # baseline scenario
-          if (j==0){ # WARNING :the value used there should have been monitored, update to year 1 is year 0 isn't accurate enough
-            pasture_temp <- data.frame(scenario = c("baseline"),
-                                       parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
-                                       grass = c("Generic grasses"),
-                                       perennial_frac = c(0),
-                                       n_fixing_frac = c(0), # WARNING: TO BE AUTOMATED FOR CO2-EMISSION BALANCE 
-                                       dry_yield = c(ifelse(dryOrFresh=="Dry", sum(monthly_grazing_yield$grazing_yield),0)), 
-                                       fresh_yield = c(ifelse(dryOrFresh=="Fresh", sum(monthly_grazing_yield$grazing_yield),0)), 
-                                       dry_residual = c(ifelse(dryOrFresh=="Dry", sum(monthly_grazing_yield$residue_left),0)), 
-                                       fresh_residual = c(ifelse(dryOrFresh=="Fresh", sum(monthly_grazing_yield$residue_left),0)), 
-                                       dry_agb_peak = c(ifelse(dryOrFresh=="Dry", max(monthly_grazing_yield$grazing_yield[c(1:endWinterSeason,endSummerSeason:12)]+monthly_grazing_yield$residue_left[c(1:endWinterSeason,endSummerSeason:12)]) +
-                                                                 max(monthly_grazing_yield$grazing_yield[c(endWinterSeason:endSummerSeason)]+monthly_grazing_yield$residue_left[c(endWinterSeason:endSummerSeason)]),0)), 
-                                       fresh_agb_peak = c(ifelse(dryOrFresh=="Fresh", max(monthly_grazing_yield$grazing_yield[c(1:endWinterSeason,endSummerSeason:12)]+monthly_grazing_yield$residue_left[c(1:endWinterSeason,endSummerSeason:12)]) +
-                                                                   max(monthly_grazing_yield$grazing_yield[c(endWinterSeason:endSummerSeason)]+monthly_grazing_yield$residue_left[c(endWinterSeason:endSummerSeason)]),0)), 
-                                       pasture_efficiency = c(1/(1+pasture_efficiency_potential_difference*(1-exp(-0.36*baseline_since_years)))))
-            
-            pasture_inputs <- rbind(pasture_inputs, pasture_temp)
-          }
-          # PDZ with only one growing season 
-        } else { # PDZ with only one growing season
-          pasture_temp <- data.frame(scenario = c(paste('year',j,sep="")),
-                                     parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
-                                     grass = c("Generic grasses"),
-                                     perennial_frac = c(ifelse(year_chosen$landUseType[i]=='Arablecrops', 
-                                                               0, AMP_years_current*0.02)), #WARNING assumption that perennials increase linearly with AMP by a rate of 2% per year
-                                     n_fixing_frac = c(0), # WARNING: TO BE AUTOMATED FOR CO2-EMISSION BALANCE 
-                                     dry_yield = c(ifelse(dryOrFresh=="Dry", sum(monthly_grazing_yield$grazing_yield),0)), 
-                                     fresh_yield = c(ifelse(dryOrFresh=="Fresh", sum(monthly_grazing_yield$grazing_yield),0)), 
-                                     dry_residual = c(ifelse(dryOrFresh=="Dry", sum(monthly_grazing_yield$residue_left),0)), 
-                                     fresh_residual = c(ifelse(dryOrFresh=="Fresh", sum(monthly_grazing_yield$residue_left),0)), 
-                                     dry_agb_peak = c(ifelse(dryOrFresh=="Dry", max(monthly_grazing_yield$grazing_yield+monthly_grazing_yield$residue_left),0)), 
-                                     fresh_agb_peak = c(ifelse(dryOrFresh=="Fresh", max(monthly_grazing_yield$grazing_yield+monthly_grazing_yield$residue_left),0)), 
-                                     pasture_efficiency = c(pasture_efficiency) )
-          pasture_inputs <- rbind(pasture_inputs, pasture_temp)
-          if (j==0){ # WARNING :the value used there should have been monitored, update to year 1 is year 0 isn't accurate enough
-            pasture_temp <- data.frame(scenario = c("baseline"),
-                                       parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]),
-                                       grass = c("Generic grasses"),
-                                       perennial_frac = c(0),
-                                       n_fixing_frac = c(0), # WARNING: TO BE AUTOMATED FOR CO2-EMISSION BALANCE
-                                       dry_yield = c(ifelse(dryOrFresh=="Dry", sum(monthly_grazing_yield$grazing_yield),0)),
-                                       fresh_yield = c(ifelse(dryOrFresh=="Fresh", sum(monthly_grazing_yield$grazing_yield),0)),
-                                       dry_residual = c(ifelse(dryOrFresh=="Dry", sum(monthly_grazing_yield$residue_left),0)),
-                                       fresh_residual = c(ifelse(dryOrFresh=="Fresh", sum(monthly_grazing_yield$residue_left),0)),
-                                       dry_agb_peak = c(ifelse(dryOrFresh=="Dry", max(monthly_grazing_yield$grazing_yield+monthly_grazing_yield$residue_left))),
-                                       fresh_agb_peak = c(ifelse(dryOrFresh=="Fresh", max(monthly_grazing_yield$grazing_yield+monthly_grazing_yield$residue_left))),
-                                       pasture_efficiency = c(1/(1+pasture_efficiency_potential_difference*(1-exp(-0.36* AMP_years_baseline)))))
-            pasture_inputs <- rbind(pasture_inputs, psature_temp)
-          }
+          agb_peak <- max((monthly_grazing_yield$grazing_yield+monthly_grazing_yield$residue_left)[c(1:endWinterSeason,endSummerSeason:12)]) +
+            max((monthly_grazing_yield$grazing_yield+monthly_grazing_yield$residue_left)[c(endWinterSeason:endSummerSeason)])
+        } else { # assuming a single growing season
+          agb_peak <- max(monthly_grazing_yield$grazing_yield+monthly_grazing_yield$residue_left)
         }
+        if(dryOrFresh=="Dry") {
+          pasture_df_temp$dry_yield <- sum(monthly_grazing_yield$grazing_yield)
+          pasture_df_temp$dry_residual <- sum(monthly_grazing_yield$residue_left)
+          pasture_df_temp$dry_agb_peak <- max(monthly_grazing_yield$grazing_yield+monthly_grazing_yield$residue_left)
+          pasture_df_temp$dry_agb_peak <- agb_peak
+        }
+        if(dryOrFresh=="Fresh") {
+          pasture_df_temp$fresh_yield <- sum(monthly_grazing_yield$grazing_yield)
+          pasture_df_temp$fresh_residual <- sum(monthly_grazing_yield$residue_left)
+          pasture_df_temp$fresh_agb_peak <- max(monthly_grazing_yield$grazing_yield+monthly_grazing_yield$residue_left)
+          pasture_df_temp$fresh_agb_peak <- agb_peak
+        }
+        if(j==0){
+          pasture_df_temp$perennial_frac <- 0
+          pasture_df_temp$pasture_efficiency <- 1 / (1 + pasture_efficiency_potential_difference * (1 - exp(-0.36 * baseline_since_years)))
+        }
+        if(year_chosen$landUseType[i]=='Arablecrops'){
+          pasture_df_temp$perennial_frac <- (AMP_years_current) * 0.02
+        }
+        
+        pasture_inputs <- rbind(pasture_inputs, pasture_temp)
       }
     }
   }
