@@ -59,9 +59,19 @@ call_lca <- function(init_file, farms_everything, farm_EnZ){
   climate_wet_or_dry <- unique(natural_area_factors$climate_wet_or_dry)
   methane_factors <- read_csv(file.path("data", "methane_emission_factors.csv")) %>% filter(climate == climate_zone) %>% select(-climate)
   grazing_factors <- read_csv(file.path("data", "grazing_factors.csv"))
-
+  
+  ## Getting parcel inputs dataframe
+  parcel_inputs = get_parcel_inputs(landUseSummaryOrPractices)
+  
   ## Get inputs
-  crop_data = get_crop_inputs(landUseSummaryOrPractices, pars)
+  # Getting grazing data dataframe
+  total_grazing_table = get_total_grazing_table(
+    landUseSummaryOrPractices,
+    livestock, 
+    animal_factors,
+    parcel_inputs
+  )
+  crop_data <- get_crop_inputs(landUseSummaryOrPractices, pars)
   crop_data <- get_baseline_crop_inputs(landUseSummaryOrPractices, crop_data, crop_factors, my_logger, farm_EnZ)
   pasture_data <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, farm_EnZ, total_grazing_table, my_logger, pars)
   fertilizer_data <- get_fertilizer_inputs(landUseSummaryOrPractices)
