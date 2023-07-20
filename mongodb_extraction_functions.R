@@ -561,9 +561,11 @@ get_crop_inputs <- function(landUseSummaryOrPractices, pars){
           }
           if (grazing_table_temp$grazing_total==0){
             # grazing arbitrarily equally distributed over grazed land, 2 month a year (6 months apart) if no grazing yield announced
-            yearly_grazing_yield_per_ha = 1/2 * 
-              (grazing_table_temp$expected_grazing_needs_tDM - grazing_table_temp$bale_grazing_total * 0.85)/sum(parcel_inputs$area) 
-            monthly_harvesting_yield$grazing_yield <- c(yearly_grazing_yield_per_ha, rep(0,5), yearly_grazing_yield_per_ha, rep(0,5))
+            # The distribution over 2 months is meant to reflect that grazing over a particular parcel happens a couple of times a year.
+            # This probably doesn't affect the model calculations.
+            # 0.85 is the bale minus the expected residues. Move to input pars. 
+            yearly_grazing_yield_per_ha = (grazing_table_temp$expected_grazing_needs_tDM - grazing_table_temp$bale_grazing_total * 0.85)/sum(parcel_inputs$area) 
+            monthly_harvesting_yield$grazing_yield <- c(1/2 * yearly_grazing_yield_per_ha, rep(0,5), 1/2 * yearly_grazing_yield_per_ha, rep(0,5))
           } else {
             # grazing arbitrarily equally distributed over time weighted by parcel grazing yield relatively to farm level, if known
             expected_grazing_on_arable <- ((grazing_table_temp$expected_grazing_needs_tDM - grazing_table_temp$expected_grazing_needs_tDM_pastures) - 
@@ -890,22 +892,21 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
         
         # If get_grazing_estimates is TRUE total grazing yield is calculated here, replacing input values.
         if (pars$get_grazing_estimates){
-          grazing_table_temp = total_grazing_table %>% filter(scenario==paste('year', j, sep=""))
+          grazing_table_temp = total_grazing_table %>% filter(scenario==paste0('year', j))
           if (grazing_table_temp$bale_grazing_total > grazing_table_temp$expected_grazing_needs_tDM){
-            log4r::error(my_logger,"WARNING ! Bale grazing alone exceeds expected grazing needs, to be checked.")
+            log4r::error(my_logger,"WARNING ! Bale grazing alone overcomes expected grazing needs, to be checked.")
             stop("Error related to bale grazing numbers. See log file..")
           }
           if (grazing_table_temp$grazing_total == 0){
-            # grazing arbitrarily equally distributed over grazed land, 2 month a year (6 months apart) if no grazing yield announced
-            # Fernando: why this distribution over 2 months?
-            yearly_grazing_yield_per_ha = (grazing_table_temp$expected_grazing_needs_tDM - grazing_table_temp$bale_grazing_total * 0.85) / # 0.85 is the bale minus the expected residues. More to input pars. 
-              sum(parcel_inputs$area)
-            monthly_grazing_yield$grazing_yield = c(1/2 *yearly_grazing_yield_per_ha, rep(0,5), 1/2 * yearly_grazing_yield_per_ha, rep(0,5))
+            yearly_grazing_yield_per_ha = (grazing_table_temp$expected_grazing_needs_tDM - grazing_table_temp$bale_grazing_total * 0.85) / sum(parcel_inputs$area)
+            monthly_grazing_yield$grazing_yield <- c(1/2 *yearly_grazing_yield_per_ha, rep(0,5), 1/2 * yearly_grazing_yield_per_ha, rep(0,5))
           } else {
             # grazing arbitrarily equally distributed over time weighted by parcel grazing yield relatively to farm level, if known
-            yearly_grazing_yield_per_ha = sum(monthly_grazing_yield$grazing_yield) / grazing_table_temp$grazing_yield_non_arable_lands * 
-              (grazing_table_temp$expected_grazing_needs_tDM_pastures - grazing_table_temp$pasture_yield_weighted_bale_grazing * 0.85)
-            monthly_grazing_yield$grazing_yield = c(1/2 * yearly_grazing_yield_per_ha, rep(0,5), 1/2 * yearly_grazing_yield_per_ha, rep(0,5))
+            expected_grazing_on_pasture <- (grazing_table_temp$expected_grazing_needs_tDM_pastures - grazing_table_temp$pasture_yield_weighted_bale_grazing * 0.85)
+            grazing_on_parcel_fraction <- sum(monthly_grazing_yield$grazing_yield) * parcel_inputs$area[i] / grazing_table_temp$grazing_yield_non_arable_lands
+            yearly_grazing_yield_per_ha <-  expected_grazing_on_pasture * grazing_on_parcel_fraction / parcel_inputs$area[i]
+              
+            monthly_grazing_yield$grazing_yield <- c(1/2 * yearly_grazing_yield_per_ha, rep(0,5), 1/2 * yearly_grazing_yield_per_ha, rep(0,5))
           }
         }
 
