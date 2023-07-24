@@ -528,7 +528,7 @@ get_bare_field_inputs = function(landUseSummaryOrPractices, soil_cover_data, far
   return(bare_field_inputs)
 }
 
-get_crop_inputs <- function(landUseSummaryOrPractices, pars){
+get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, pars){
   crop_inputs = data.frame(scenario = c(), parcel_ID = c(), crop = c(), dry_yield = c(), 
                            fresh_yield = c(), dry_grazing_yield = c(), fresh_grazing_yield = c(),
                            dry_residue = c(), fresh_residue = c(), 
@@ -692,25 +692,37 @@ get_fertilizer_inputs = function(landUseSummaryOrPractices){
   fertilizer_inputs = data.frame(parcel_ID = c(), field_area = c(), scenario = c(), usage_boolean=c(), 
                                  fertilizer_type=c(), quantity_t_ha=c(), n_content_perc=c())
   list_missing_data = c()
+  
   for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
     for (j in c(0:10)){
+      
+      parcel_id <- landUseSummaryOrPractices[[1]]$parcelName[i]
+      year <- paste0('year',j)
+      
+      # Determine the field area depending on input source
+      use_manual_area <- landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea[i]
+      if(is.na(use_manual_area) |  is.null(use_manual_area) | !use_manual_area) {
+        field_area <- new.as_numeric(landUseSummaryOrPractices[[1]]$area[i])/10000 # if no corrected value was provided by the farmer
+      } else {
+        field_area <- new.as_numeric(landUseSummaryOrPractices[[1]]$manuallyEnteredArea[i])/10000 # add a verification of consistency here?
+      }
+  
       year_chosen = landUseSummaryOrPractices[[1]][[paste('year',j,sep="")]]
-      fertilizer_inputs <- rbind(fertilizer_inputs,data.frame(
-        parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
-        field_area = ifelse(is.null(landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea[i]),
-                            c(new.as_numeric(landUseSummaryOrPractices[[1]]$area[i])/10000),
-                            ifelse(is.na(landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea[i]) |
-                                     landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea[i] == FALSE, # means that no corrected value was provided by the farmer
-                                   c(new.as_numeric(landUseSummaryOrPractices[[1]]$area[i])/10000),
-                                   c(new.as_numeric(landUseSummaryOrPractices[[1]]$manuallyEnteredArea[i])/10000))), # add a verification of consistence here
-        scenario = c(paste('year',j,sep="")),
+      
+      fertilizer_temp <- data.frame(
+        parcel_ID = parcel_id, 
+        field_area = field_area,
+        scenario = year,
         usage_boolean = year_chosen$syntheticFertilizer$usage[i],
         fertilizer_type = "synthetic", # here gathering data from the synthetic fertilizer dashboard entry
         quantity_t_ha = ifelse(year_chosen$syntheticFertilizer$usage[i]==TRUE, new.as_numeric(year_chosen$syntheticFertilizer$tonsPerYear[i]),0),
-        n_content_perc=ifelse(year_chosen$syntheticFertilizer$usage[i]==TRUE, new.as_numeric(year_chosen$syntheticFertilizer$percentOfNitrogen[i]),0)))
+        n_content_perc=ifelse(year_chosen$syntheticFertilizer$usage[i]==TRUE, new.as_numeric(year_chosen$syntheticFertilizer$percentOfNitrogen[i]),0)
+      )
+      fertilizer_inputs <- rbind(fertilizer_inputs, fertilizer_temp)
+      
       if (j==0){
         fertilizer_inputs <- rbind(fertilizer_inputs,data.frame(
-          parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
+          parcel_ID = parcel_id, 
           field_area = ifelse(is.null(landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea[i]),
                               c(new.as_numeric(landUseSummaryOrPractices[[1]]$area[i])/10000),
                               ifelse(is.na(landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea[i]) |
@@ -828,6 +840,8 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
   for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
     
     year0_is_AMP <- landUseSummaryOrPractices[[1]][['year0']]$adaptiveMultiPaddockGrazing[i]
+    if(is.na(year0_is_AMP)) {year0_is_AMP <- FALSE} # Workaround if value is missing. Should not be allowed. To be enforced at data collection.
+    
     year0_since_years <- landUseSummaryOrPractices[[1]][['year0']]$applyingThesePracticesInYears[i]
     
     if(year0_since_years==""){
@@ -850,6 +864,7 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
       
       year_chosen <- landUseSummaryOrPractices[[1]][[paste('year',j,sep="")]]
       year_is_AMP <- landUseSummaryOrPractices[[1]][[paste('year',j,sep="")]]$adaptiveMultiPaddockGrazing[i]
+      if(is.na(year_is_AMP)) {year_is_AMP <- FALSE} # Workaround if value is missing. Should not be allowed. To be enforced at data collection.
       
       if(j>0) { # Only apply to project years
         # Counting AMP years to calculate related efficiency
