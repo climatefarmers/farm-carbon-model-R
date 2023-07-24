@@ -938,7 +938,7 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
         pasture_df_temp <- data.frame(scenario = c(paste0('year',j)),
                                        parcel_ID = landUseSummaryOrPractices[[1]]$parcelName[i], 
                                        grass = "Generic grasses",
-                                       perennial_frac = 0,
+                                       perennial_frac = AMP_years_current * 0.02,
                                        n_fixing_frac = 0, # WARNING: TO BE AUTOMATED FOR CO2-EMISSION BALANCE 
                                        dry_yield = 0, 
                                        fresh_yield = 0, 
@@ -972,9 +972,6 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
         if(j==0){
           pasture_df_temp$perennial_frac <- 0
           pasture_df_temp$pasture_efficiency <- 1 / (1 + pasture_efficiency_potential_difference * (1 - exp(-0.36 * baseline_since_years)))
-        }
-        if(year_chosen$landUseType[i]=='Arablecrops'){ # Fernando: unnecessary because this condition is already set above
-          pasture_df_temp$perennial_frac <- (AMP_years_current) * 0.02
         }
         
         pasture_inputs <- rbind(pasture_inputs, pasture_df_temp)
