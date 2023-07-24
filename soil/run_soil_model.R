@@ -58,15 +58,9 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ){
   lon_farmer <- mean(parcel_inputs$longitude)
   lat_farmer <- mean(parcel_inputs$latitude)
   
-  ## Getting grazing data dataframe
-  total_grazing_table = get_total_grazing_table(
-    landUseSummaryOrPractices,
-    livestock, 
-    animal_factors,
-    parcel_inputs
-    )
-
-  ## Extraction of C inputs per parcel and scenario
+  # Extraction of C inputs per parcel and scenario
+  # Getting grazing data dataframe
+  total_grazing_table = get_total_grazing_table(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs)
   #farm_EnZ = clime.zone.check(init_file, lat_farmer, lon_farmer)
   # C inputs from additional organic matter: hay, compost, manure
   add_manure_inputs = get_add_manure_inputs(landUseSummaryOrPractices)
@@ -75,10 +69,10 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ){
   # C inputs from animal manure
   animal_inputs = get_animal_inputs(landUseSummaryOrPractices,livestock, parcel_inputs)
   # C inputs from crop (cash/cover crop) and residues left biomass turnover
-  crop_inputs = get_crop_inputs(landUseSummaryOrPractices, pars)
+  crop_inputs = get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, pars)
   crop_inputs = get_baseline_crop_inputs(landUseSummaryOrPractices, crop_inputs, crop_data, my_logger, farm_EnZ)
   # C inputs from pasture biomass turnover
-  pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, farm_EnZ, total_grazing_table, my_logger, pars)
+  pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, farm_EnZ, total_grazing_table, my_logger, parcel_inputs, pars)
   
   ## Soil data
   # Bare field inputs
@@ -476,7 +470,7 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ){
               list(step_in_table_final$yearly_CO2diff_final),
               '.\nArea considered: ', round(sum(parcel_inputs$area), 2), ' ha.', 
               "\nNumber of runs: ", run_ID,
-              ".\nGrazing estimations by CF (Y/N): ", pars$CFmade_grazing_estimations_Yes_No,
+              ".\nGrazing estimations by CF (Y/N): ", pars$get_grazing_estimates,
               "\nStandard deviation used for extrinsic uncertainty of practices (Cinputs): ",
               sd$field_carbon_in,
               ifelse(copy_yearX_to_following_years_landUse==TRUE,
