@@ -563,13 +563,12 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, pars){
             # grazing arbitrarily equally distributed over grazed land, 2 month a year (6 months apart) if no grazing yield announced
             # The distribution over 2 months is meant to reflect that grazing over a particular parcel happens a couple of times a year.
             # This probably doesn't affect the model calculations.
-            # 0.85 is the bale minus the expected residues. Move to input pars. 
-            yearly_grazing_yield_per_ha = (grazing_table_temp$expected_grazing_needs_tDM - grazing_table_temp$bale_grazing_total * 0.85)/sum(parcel_inputs$area) 
+            yearly_grazing_yield_per_ha = (grazing_table_temp$expected_grazing_needs_tDM - grazing_table_temp$bale_grazing_total)/sum(parcel_inputs$area) 
             monthly_harvesting_yield$grazing_yield <- c(1/2 * yearly_grazing_yield_per_ha, rep(0,5), 1/2 * yearly_grazing_yield_per_ha, rep(0,5))
           } else {
             # grazing arbitrarily equally distributed over time weighted by parcel grazing yield relatively to farm level, if known
             expected_grazing_on_arable <- ((grazing_table_temp$expected_grazing_needs_tDM - grazing_table_temp$expected_grazing_needs_tDM_pastures) - 
-                                                  (grazing_table_temp$bale_grazing_total - grazing_table_temp$pasture_yield_weighted_bale_grazing) * 0.85) # expected grazing yield arable lands after deduction of bale grazing distributed in arable lands 
+                                                  (grazing_table_temp$bale_grazing_total - grazing_table_temp$pasture_yield_weighted_bale_grazing)) # expected grazing yield arable lands after deduction of bale grazing distributed in arable lands 
             grazing_on_parcel_fraction <- (sum(monthly_harvesting_yield$grazing_yield) * parcel_inputs$area[i]) / (grazing_table_temp$grazing_total - grazing_table_temp$grazing_yield_non_arable_lands)
             yearly_grazing_yield_per_ha <- expected_grazing_on_arable * grazing_on_parcel_fraction / parcel_inputs$area[i] # Grazing yield arable lands
 
@@ -913,11 +912,11 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
             stop("Error related to bale grazing numbers. See log file..")
           }
           if (grazing_table_temp$grazing_total == 0){
-            yearly_grazing_yield_per_ha = (grazing_table_temp$expected_grazing_needs_tDM - grazing_table_temp$bale_grazing_total * 0.85) / sum(parcel_inputs$area)
+            yearly_grazing_yield_per_ha = (grazing_table_temp$expected_grazing_needs_tDM - grazing_table_temp$bale_grazing_total) / sum(parcel_inputs$area)
             monthly_grazing_yield$grazing_yield <- c(1/2 *yearly_grazing_yield_per_ha, rep(0,5), 1/2 * yearly_grazing_yield_per_ha, rep(0,5))
           } else {
             # grazing arbitrarily equally distributed over time weighted by parcel grazing yield relatively to farm level, if known
-            expected_grazing_on_pasture <- (grazing_table_temp$expected_grazing_needs_tDM_pastures - grazing_table_temp$pasture_yield_weighted_bale_grazing * 0.85)
+            expected_grazing_on_pasture <- (grazing_table_temp$expected_grazing_needs_tDM_pastures - grazing_table_temp$pasture_yield_weighted_bale_grazing)
             grazing_on_parcel_fraction <- sum(monthly_grazing_yield$grazing_yield) * parcel_inputs$area[i] / grazing_table_temp$grazing_yield_non_arable_lands
             yearly_grazing_yield_per_ha <-  expected_grazing_on_pasture * grazing_on_parcel_fraction / parcel_inputs$area[i]
               
