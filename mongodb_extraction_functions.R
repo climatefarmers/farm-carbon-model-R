@@ -968,10 +968,6 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
           pasture_df_temp$fresh_agb_peak <- max(monthly_grazing_yield$grazing_yield+monthly_grazing_yield$residue_left)
           pasture_df_temp$fresh_agb_peak <- agb_peak
         }
-        if(j==0){
-          pasture_df_temp$pasture_efficiency <- 1 / (1 + pasture_efficiency_potential_difference * (1 - exp(-0.36 * baseline_since_years)))
-        }
-        
         pasture_inputs <- rbind(pasture_inputs, pasture_df_temp)
       }
     }
