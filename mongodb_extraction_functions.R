@@ -959,13 +959,11 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
         if(dryOrFresh=="Dry") {
           pasture_df_temp$dry_yield <- sum(monthly_grazing_yield$grazing_yield)
           pasture_df_temp$dry_residual <- sum(monthly_grazing_yield$residue_left)
-          pasture_df_temp$dry_agb_peak <- max(monthly_grazing_yield$grazing_yield+monthly_grazing_yield$residue_left)
           pasture_df_temp$dry_agb_peak <- agb_peak
         }
         if(dryOrFresh=="Fresh") {
           pasture_df_temp$fresh_yield <- sum(monthly_grazing_yield$grazing_yield)
           pasture_df_temp$fresh_residual <- sum(monthly_grazing_yield$residue_left)
-          pasture_df_temp$fresh_agb_peak <- max(monthly_grazing_yield$grazing_yield+monthly_grazing_yield$residue_left)
           pasture_df_temp$fresh_agb_peak <- agb_peak
         }
         pasture_inputs <- rbind(pasture_inputs, pasture_df_temp)
