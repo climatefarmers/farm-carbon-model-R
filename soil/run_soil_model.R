@@ -356,9 +356,8 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ){
                                          silt = batch$silt[1],
                                          bulk_density = batch$bulk_density[1])
       
-      # For future, C_inputs are more uncertain: base uncertainty**1.5
       N_1 = 1 #first year of future modelling
-      batch_parcel_Cinputs = parcel_Cinputs %>% mutate(tot_Cinputs=tot_Cinputs*(batch_coef$field_carbon_in)**pars$sd_future_mod)
+      batch_parcel_Cinputs = parcel_Cinputs %>% mutate(tot_Cinputs=tot_Cinputs*batch_coef$field_carbon_in)
       batch$field_carbon_in <- (batch_parcel_Cinputs %>% filter (scenario==paste("year",N_1,sep="") & parcel_ID==parcel))$tot_Cinputs
       batch$bare = as.factor(t(bare_field_inputs %>% filter(scenario==paste("year",N_1,sep="") & parcel_ID==parcel))[c(3:14)])
       batch$tilling_factor = (tilling_inputs %>% filter(scenario==paste("year",N_1,sep="") & parcel_ID==parcel))$tilling_factor
@@ -382,7 +381,7 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ){
       C0_df_holistic = C0_df_holistic_yearly
       # next years
       for (N in c((N_1+1):10)){
-        batch_parcel_Cinputs = parcel_Cinputs %>% mutate(tot_Cinputs=tot_Cinputs*(batch_coef$field_carbon_in)**1.5)
+        batch_parcel_Cinputs = parcel_Cinputs %>% mutate(tot_Cinputs=tot_Cinputs*batch_coef$field_carbon_in)
         batch$field_carbon_in <- (batch_parcel_Cinputs %>% filter (scenario==paste("year",N,sep="") & parcel_ID==parcel))$tot_Cinputs
         batch$bare = as.factor(t(bare_field_inputs %>% filter(scenario==paste("year",N,sep="") & parcel_ID==parcel))[c(3:14)])
         batch$tilling_factor = (tilling_inputs %>% filter(scenario==paste("year",N,sep="") & parcel_ID==parcel))$tilling_factor

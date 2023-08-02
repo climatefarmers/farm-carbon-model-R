@@ -36,7 +36,6 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   
   pars = list(
     n_run = 3,
-    sd_future_mod=1,
     sd_field_carbon_in=0.10,
     get_grazing_estimates=TRUE, # TRUE or FALSE. Values from farmers are often missing or wrong. Default as TRUE
     
