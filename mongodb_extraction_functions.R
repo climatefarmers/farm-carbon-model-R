@@ -556,7 +556,7 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, pars){
         if (pars$get_grazing_estimates){
           grazing_table_temp = total_grazing_table %>% filter(scenario==paste('year',j,sep=""))
           if (grazing_table_temp$bale_grazing_total>grazing_table_temp$expected_grazing_needs_tDM){
-            log4r::error(my_logger,"WARNING ! Bale grazing alone overcomes expected grazing needs, to be checked.")
+            log4r::error(my_logger,"WARNING ! Bale grazing alone exceeds expected grazing needs, to be checked.")
             stop("Error related to bale grazing numbers. See log file..")
           }
           if (grazing_table_temp$grazing_total==0){
@@ -634,56 +634,75 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, pars){
   return(crop_inputs)
 }
 
+
 get_baseline_crop_inputs <- function(landUseSummaryOrPractices, crop_inputs, crop_data, my_logger, farm_EnZ){
-  for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
-    if (nrow(crop_inputs)==0){ # no crops previously found
-      return(crop_inputs) # so no crop baselines to be created, returned empty
-    }
-    #ONLY ARABLECROPS LANDUSE TYPE IS CURRENTLY CONSIDERED IN get_crop_inputs
-    #SHOULD BE REFINED IN CASE OF CASH CROPS UNDER AGROFORESTRY
-    # if(landUseSummaryOrPractices[[1]][['year0']]$landUseType[i]=="Agroforestry" |
-    #    landUseSummaryOrPractices[[1]][['year0']]$landUseType[i]=="Forestry" ){
-    #   # We assume that for the above land uses soil cover management baseline is the current state
-    #   crop_inputs <- rbind(crop_inputs,crop_inputs%>%
-    #                          filter(parcel_ID==landUseSummaryOrPractices[[1]]$parcelName[i], scenario=='year0')%>%
-    #                          mutate(scenario='baseline')) # arable crop baseline is based on previous years
-    # }
-    if(landUseSummaryOrPractices[[1]][['year0']]$landUseType[i]=="Arablecrops"){
-      # AT THE MOMENT PERMANENT COVER CROPS ARE ALSO ASSOCIATED TO CEREAL-BASELINE
-      if(landUseSummaryOrPractices[[1]]$year0$applyingThesePracticesInYears[i]==""){
-        log4r::error(my_logger,"Number of years that practices have been applied until now is NOT entered.")
-      } else if (new.as_numeric(landUseSummaryOrPractices[[1]]$year0$applyingThesePracticesInYears[i])>3){
-        # choice that if an arable crop has been run for more than 3 years in a way, this way must be the baseline
-        crop_inputs <- rbind(crop_inputs,crop_inputs%>%
-                               filter(parcel_ID==landUseSummaryOrPractices[[1]]$parcelName[i], scenario=='year0')%>%
-                               mutate(scenario='baseline')) # arable crop baseline is based on previous years
-      } else {
-        # If 3 years or less, assume common practices. Use provided wheat yield data if given. Else take from factors table.
-        if(nrow(crop_inputs %>% filter(crop=='Wheat' | crop=='Winter wheat' | crop=='Spring wheat'))>0){#if we have wheat data from the farmer
-          crop_inputs_temp <- crop_inputs %>% filter(crop=='Wheat' | crop=='Winter wheat' | crop=='Spring wheat') %>%
-            summarize(parcel_ID=landUseSummaryOrPractices[[1]]$parcelName[i], scenario='baseline',
-                      crop = 'Wheat', 
-                      dry_yield=mean(dry_agb_peak)*0.95, fresh_yield = mean(fresh_agb_peak)*0.95,
-                      dry_grazing_yield=0, fresh_grazing_yield=0,
-                      dry_residue=mean(dry_agb_peak)*0.05, fresh_residue=mean(fresh_agb_peak)*0.05, #assumption that only 5% of aboveground biomass  is left-on-site
-                      dry_agb_peak=mean(dry_agb_peak), fresh_agb_peak=mean(fresh_agb_peak))
-          crop_inputs <- rbind(crop_inputs, crop_inputs_temp)
-        } else {
-          # if no wheat yield data is provided by the farmer
-          dry_agb_peak = (crop_data %>% filter(pedo_climatic_area==farm_EnZ))$ag_dm_peak
-          crop_inputs_temp <- data.frame(parcel_ID=landUseSummaryOrPractices[[1]]$parcelName[i], scenario='baseline',
-                                         crop = 'Wheat', 
-                                         dry_yield=mean(dry_agb_peak)*0.95, fresh_yield = 0,
-                                         dry_grazing_yield=0, fresh_grazing_yield=0,
-                                         dry_residue=mean(dry_agb_peak)*0.05, fresh_residue=0, #assumption that only 5% of aboveground biomass is left-on-site
-                                         dry_agb_peak=mean(dry_agb_peak), fresh_agb_peak=0)
-          crop_inputs <- rbind(crop_inputs, crop_inputs_temp)
-        }
-      }
-    }
+  
+  if (nrow(crop_inputs)==0){ # no crops present
+    return(crop_inputs) # returne empty
   }
+  # Set baseline equal to year0
+  crop_inputs <- rbind(crop_inputs, crop_inputs %>% filter(scenario=='year0') %>% mutate(scenario='baseline'))
+  
   return(crop_inputs)
 }
+
+
+## The commented function below was written by Jeremie to set a baseline using common practices data.
+## Not used because it was decided it introduces too much uncertainty.
+# get_baseline_crop_inputs <- function(landUseSummaryOrPractices, crop_inputs, crop_data, my_logger, farm_EnZ){
+#   
+#   if (nrow(crop_inputs)==0){ # no crops previously found
+#     return(crop_inputs) # so no crop baselines to be created, returned empty
+#   }
+#   for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
+#     #ONLY ARABLECROPS LANDUSE TYPE IS CURRENTLY CONSIDERED IN get_crop_inputs
+#     #SHOULD BE REFINED IN CASE OF CASH CROPS UNDER AGROFORESTRY
+#     # if(landUseSummaryOrPractices[[1]][['year0']]$landUseType[i]=="Agroforestry" |
+#     #    landUseSummaryOrPractices[[1]][['year0']]$landUseType[i]=="Forestry" ){
+#     #   # We assume that for the above land uses soil cover management baseline is the current state
+#     #   crop_inputs <- rbind(crop_inputs,crop_inputs%>%
+#     #                          filter(parcel_ID==landUseSummaryOrPractices[[1]]$parcelName[i], scenario=='year0')%>%
+#     #                          mutate(scenario='baseline')) # arable crop baseline is based on previous years
+#     # }
+#     if(landUseSummaryOrPractices[[1]][['year0']]$landUseType[i]=="Arablecrops"){
+#       # AT THE MOMENT PERMANENT COVER CROPS ARE ALSO ASSOCIATED TO CEREAL-BASELINE
+#       if(landUseSummaryOrPractices[[1]]$year0$applyingThesePracticesInYears[i]==""){
+#         log4r::error(my_logger,"No value found for 'applyingThesePracticesInYears'.")
+#         stop("No value found for 'applyingThesePracticesInYears'.")
+#       } else if (new.as_numeric(landUseSummaryOrPractices[[1]]$year0$applyingThesePracticesInYears[i])>3){
+#         # choice that if an arable crop has been run for more than 3 years in a way, this way must be the baseline
+#         crop_inputs <- rbind(crop_inputs,crop_inputs%>%
+#                                filter(parcel_ID==landUseSummaryOrPractices[[1]]$parcelName[i], scenario=='year0')%>%
+#                                mutate(scenario='baseline')) # arable crop baseline is based on previous years
+#       } else {
+#         # If 3 years or less, assume common practices. Use provided wheat yield data if given. Else take from factors table.
+#         if(nrow(crop_inputs %>% filter(crop=='Wheat' | crop=='Winter wheat' | crop=='Spring wheat'))>0){#if we have wheat data from the farmer
+#           crop_inputs_temp <- crop_inputs %>% filter(crop=='Wheat' | crop=='Winter wheat' | crop=='Spring wheat') %>%
+#             summarize(parcel_ID=landUseSummaryOrPractices[[1]]$parcelName[i], scenario='baseline',
+#                       crop = 'Wheat',
+#                       dry_yield=mean(dry_agb_peak)*0.95, fresh_yield = mean(fresh_agb_peak)*0.95,
+#                       dry_grazing_yield=0, fresh_grazing_yield=0,
+#                       dry_residue=mean(dry_agb_peak)*0.05, fresh_residue=mean(fresh_agb_peak)*0.05, #assumption that only 5% of aboveground biomass  is left-on-site
+#                       dry_agb_peak=mean(dry_agb_peak), fresh_agb_peak=mean(fresh_agb_peak))
+#           crop_inputs <- rbind(crop_inputs, crop_inputs_temp)
+#         } else {
+#           # if no wheat yield data is provided by the farmer
+#           dry_agb_peak = (crop_data %>% filter(pedo_climatic_area==farm_EnZ))$ag_dm_peak
+#           crop_inputs_temp <- data.frame(parcel_ID=landUseSummaryOrPractices[[1]]$parcelName[i], scenario='baseline',
+#                                          crop = 'Wheat',
+#                                          dry_yield=mean(dry_agb_peak)*0.95, fresh_yield = 0,
+#                                          dry_grazing_yield=0, fresh_grazing_yield=0,
+#                                          dry_residue=mean(dry_agb_peak)*0.05, fresh_residue=0, #assumption that only 5% of aboveground biomass is left-on-site
+#                                          dry_agb_peak=mean(dry_agb_peak), fresh_agb_peak=0)
+#           crop_inputs <- rbind(crop_inputs, crop_inputs_temp)
+#         }
+#       }
+#     }
+#   }
+#   
+#   return(crop_inputs)
+# }
+
 
 get_fertilizer_inputs = function(landUseSummaryOrPractices){
   # takes landUseSummaryOrPractices from farms collection
