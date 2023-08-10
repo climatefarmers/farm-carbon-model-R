@@ -315,8 +315,7 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ){
       farm_frac = parcel_inputs$area[i]/sum(parcel_inputs$area)
       #Select parcel's fixed values
       batch_parcel_Cinputs = parcel_Cinputs %>% mutate(tot_Cinputs=tot_Cinputs*batch_coef$field_carbon_in)
-      batch$dr_ratio = ifelse((batch_parcel_Cinputs %>% filter (scenario==baseline_chosen & parcel_ID==parcel))$agroforestry_Cinputs>0, dr_ratio_agroforestry, 
-                              ifelse((soil_inputs %>% filter(parcel_ID==parcel))$irrigation==TRUE, dr_ratio_irrigated, dr_ratio_non_irrigated))*batch_coef$dr_ratio
+      batch$dr_ratio = ifelse((soil_inputs %>% filter(parcel_ID==parcel))$irrigation==TRUE, dr_ratio_irrigated, dr_ratio_non_irrigated) * batch_coef$dr_ratio
       # choice of scenario = baseline
       batch$field_carbon_in <- (batch_parcel_Cinputs %>% filter (scenario==baseline_chosen & parcel_ID==parcel))$tot_Cinputs
       batch$bare = as.factor(t(bare_field_inputs %>% filter(scenario==baseline_chosen & parcel_ID==parcel))[c(3:14)])
