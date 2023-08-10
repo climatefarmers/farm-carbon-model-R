@@ -35,11 +35,11 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   ## Soil model settings -------------------------------------------------------
   
   pars = list(
-    n_run = 3,
+    n_run = 2,
     sd_field_carbon_in=0.10,
     get_grazing_estimates=TRUE, # TRUE or FALSE. Values from farmers are often missing or wrong. Default as TRUE
     
-    debug_mode = FALSE,  # Skip some steps. For now just skip fetching and use dummy climate data.
+    debug_mode = TRUE,  # Skip some steps. For now just skip fetching and use dummy climate data.
     save2mongoDB = FALSE,
     
     # To copy the practice of a single year to all others
@@ -50,6 +50,8 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
     
     server="dev"  # One of: "prod", dev", "test"
   )
+  
+  if(pars$debug_mode & pars$save2mongoDB) {stop("Need to set debug_mode to FALSE when setting save2mongoDB to TRUE.")}
 
   list2env(pars, envir = environment())
   
