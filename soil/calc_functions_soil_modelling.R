@@ -52,24 +52,24 @@ get_monthly_Cinputs_pasture <- function (pasture_inputs, pasture_data, scenario_
   if(nrow(pasture_inputs)==0){
     return(0)}
   pasture_inputs <- pasture_inputs %>% filter(scenario==scenario_chosen & parcel_ID==parcel) %>%
-    mutate(dry_residual = ifelse(is.na(dry_residual)==FALSE, dry_residual, 
-                                 ifelse(is.na(fresh_residual)==FALSE,fresh_residual*dry,
+    mutate(dry_residual = ifelse(!is.na(dry_residual), dry_residual, 
+                                 ifelse(!is.na(fresh_residual), fresh_residual * dry,
                                         NA))) %>%
-    mutate(dry_yield = ifelse(is.na(dry_yield)==FALSE, dry_yield, 
-                              ifelse(is.na(fresh_yield)==FALSE,fresh_yield*dry,
+    mutate(dry_grazing = ifelse(!is.na(dry_grazing), dry_grazing, 
+                              ifelse(!is.na(fresh_grazing), fresh_grazing * dry,
                                      NA))) %>%
     mutate(dry_agb_peak = ifelse(is.na(dry_agb_peak)==FALSE, dry_agb_peak, 
                                  ifelse(is.na(fresh_agb_peak)==FALSE,fresh_agb_peak*dry,
                                         NA)))
   annual_pastures <- merge(x = pasture_inputs, 
                            y = filter(pasture_data, pasture_type=="annual"), by = "grass", all.x = TRUE) %>% 
-    mutate(c_input_shoot = (dry_residual+dry_yield*0.15)*pasture_efficiency*AMP_baseline_factor*dry_c) %>%
+    mutate(c_input_shoot = (dry_residual+dry_grazing*0.15)*pasture_efficiency*AMP_baseline_factor*dry_c) %>%
     mutate(c_input_root = dry_agb_peak*pasture_efficiency*AMP_baseline_factor*
              r_s_ratio*dry_c*bg_turnover) %>%
     mutate(c_inputs = c_input_shoot + c_input_root)
   perennial_pastures <- merge(x = pasture_inputs,
                               y = filter(pasture_data, pasture_type=="perennial"), by = "grass", all.x = TRUE) %>% 
-    mutate(c_input_shoot= (dry_yield*0.15+dry_agb_peak*pasture_efficiency*AMP_baseline_factor*
+    mutate(c_input_shoot= (dry_grazing*0.15+dry_agb_peak*pasture_efficiency*AMP_baseline_factor*
                              ag_turnover)*dry_c) %>%
     mutate(c_input_root= dry_agb_peak*pasture_efficiency*AMP_baseline_factor*r_s_ratio*dry_c*bg_turnover) %>%
     mutate(c_inputs = c_input_shoot + c_input_root)
