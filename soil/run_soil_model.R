@@ -35,13 +35,13 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ){
   animal_factors <- read_csv(file.path("data", "carbon_share_manure.csv")) %>%
     filter(type=="manure") %>% rename(species=manure_source)
   agroforestry_factors <- read_csv(file.path("data", "agroforestry_factors.csv")) 
-  crop_data <- read_csv(file.path("data", "crop_factors.csv"))
+  crop_factors <- read_csv(file.path("data", "crop_factors.csv"))
   grazing_factors <- read_csv(file.path("data", "grazing_factors.csv"))
   manure_factors <- read_csv(file.path("data", "carbon_share_manure.csv"))
   natural_area_factors <- read_csv(
     file.path( "data", "natural_area_factors.csv")
     ) %>% filter(pedo_climatic_area==farm_EnZ) 
-  pasture_data <- read_csv(file.path("data", "pasture_factors.csv"))
+  pasture_factors <- read_csv(file.path("data", "pasture_factors.csv"))
   tilling_factors <- read_csv(file.path("data", "tilling_factors.csv"))
   soil_cover_data <- read_csv(file.path("data", "soil_cover_factors.csv"))
   
@@ -69,8 +69,8 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ){
   # C inputs from animal manure
   animal_inputs = get_animal_inputs(landUseSummaryOrPractices,livestock, parcel_inputs)
   # C inputs from crop (cash/cover crop) and residues left biomass turnover
-  crop_inputs = get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, pars)
-  crop_inputs = get_baseline_crop_inputs(landUseSummaryOrPractices, crop_inputs, crop_data, my_logger, farm_EnZ)
+  crop_inputs = get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, pars)
+  crop_inputs = get_baseline_crop_inputs(landUseSummaryOrPractices, crop_inputs, crop_factors, my_logger, farm_EnZ)
   # C inputs from pasture biomass turnover
   pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, farm_EnZ, total_grazing_table, my_logger, parcel_inputs, pars)
   
@@ -116,8 +116,8 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ){
                                        agroforestry_Cinputs=0,#get_monthly_Cinputs_agroforestry(agroforestry_inputs, agroforestry_factors,
                                        #                              scenario, parcel, lat_farmer),
                                        animal_Cinputs=get_monthly_Cinputs_animals(animal_inputs, animal_factors, scenario, parcel),
-                                       crop_Cinputs=get_monthly_Cinputs_crop(crop_inputs, crop_data, scenario, parcel, farm_EnZ),
-                                       pasture_Cinputs=get_monthly_Cinputs_pasture(pasture_inputs, pasture_data, scenario, parcel)))
+                                       crop_Cinputs=get_monthly_Cinputs_crop(crop_inputs, crop_factors, scenario, parcel, farm_EnZ),
+                                       pasture_Cinputs=get_monthly_Cinputs_pasture(pasture_inputs, pasture_factors, scenario, parcel)))
     }
     scenario = baseline_chosen
     parcel_Cinputs<-rbind(parcel_Cinputs,
@@ -128,8 +128,8 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ){
                                      agroforestry_Cinputs=0,#get_monthly_Cinputs_agroforestry(agroforestry_inputs, agroforestry_factors,
                                      #                               scenario, parcel, lat_farmer),
                                      animal_Cinputs=get_monthly_Cinputs_animals(animal_inputs, animal_factors, scenario, parcel),
-                                     crop_Cinputs=get_monthly_Cinputs_crop(crop_inputs, crop_data, scenario, parcel, farm_EnZ),
-                                     pasture_Cinputs=get_monthly_Cinputs_pasture(pasture_inputs, pasture_data, scenario, parcel)))
+                                     crop_Cinputs=get_monthly_Cinputs_crop(crop_inputs, crop_factors, scenario, parcel, farm_EnZ),
+                                     pasture_Cinputs=get_monthly_Cinputs_pasture(pasture_inputs, pasture_factors, scenario, parcel)))
   }
   parcel_Cinputs <- parcel_Cinputs %>% mutate(tot_Cinputs=add_manure_Cinputs+agroforestry_Cinputs+animal_Cinputs+crop_Cinputs+pasture_Cinputs)
   if (length(apply(is.na(parcel_Cinputs), 2, which))==0){
