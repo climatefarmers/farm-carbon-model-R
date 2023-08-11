@@ -53,16 +53,17 @@ get_monthly_Cinputs_pasture <- function (pasture_inputs, pasture_data, scenario_
     return(0)}
   dry_annuals <- pasture_data %>% filter(grasses == 'generic grasses')
   
-  pasture_inputs <- pasture_inputs %>% filter(scenario==scenario_chosen & parcel_ID == parcel) %>%
-    mutate(dry_residual = ifelse(!is.na(dry_residual), dry_residual, 
-                                 ifelse(!is.na(fresh_residual), fresh_residual * dry,
-                                        NA))) %>%
-    mutate(dry_grazing = ifelse(!is.na(dry_grazing), dry_grazing, 
-                              ifelse(!is.na(fresh_grazing), fresh_grazing * dry,
-                                     NA))) %>%
-    mutate(dry_agb_peak = ifelse(is.na(dry_agb_peak)==FALSE, dry_agb_peak, 
-                                 ifelse(is.na(fresh_agb_peak)==FALSE,fresh_agb_peak * dry,
-                                        NA)))
+  ## Fernando" commented out because this does not work. dry_residuals is never NA and the dry variable is not defined.
+  # pasture_inputs <- pasture_inputs %>% filter(scenario==scenario_chosen & parcel_ID == parcel) %>%
+  #   mutate(dry_residual = ifelse(!is.na(dry_residual), dry_residual, 
+  #                                ifelse(!is.na(fresh_residual), fresh_residual * dry,
+  #                                       NA))) %>%
+  #   mutate(dry_grazing = ifelse(!is.na(dry_grazing), dry_grazing, 
+  #                             ifelse(!is.na(fresh_grazing), fresh_grazing * dry,
+  #                                    NA))) %>%
+  #   mutate(dry_agb_peak = ifelse(is.na(dry_agb_peak)==FALSE, dry_agb_peak, 
+  #                                ifelse(is.na(fresh_agb_peak)==FALSE,fresh_agb_peak * dry,
+  #                                       NA)))
   annual_pastures <- 
     merge(x = pasture_inputs, y = filter(pasture_data, pasture_type == "annual"), by = "grass", all.x = TRUE) %>% 
     mutate(c_input_shoot = (dry_residual + dry_grazing * 0.15) * pasture_efficiency * AMP_baseline_factor * dry_c) %>%

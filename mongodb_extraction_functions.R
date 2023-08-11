@@ -582,6 +582,8 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, pars){
                                         " for year ",j,". Was ASSUMED to be dry.", sep=""))
         } else {
           dryOrFresh = year_chosen$yieldsResiduesDryOrFresh[i]
+          # Code not working with fresh plant inputs! Dry fraction in crop factors unrealistic!
+          if(dryOrFresh == "Fresh") {stop("Code not working with fresh plant inputs! Dry fraction in crop factors unrealistic!")}
         }
         # case of cash crop with no grazing
         for (crop_chosen in unique(monthly_harvesting_yield$crop)){
@@ -951,6 +953,8 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, farm_
                                        " for year ",j,". Was ASSUMED to be dry.", sep=""))
         } else {
           dryOrFresh = year_chosen$yieldsResiduesDryOrFresh[i]
+          if(dryOrFresh=="Fresh") {stop("The code is not working with fresh plant input values. Dry estimates are required.")}
+          
         }
         
         ### building df for C inputs calculation
