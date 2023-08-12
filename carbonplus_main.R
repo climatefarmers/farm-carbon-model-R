@@ -63,10 +63,11 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
     "AWS_SECRET_ACCESS_KEY" = init_file$AWS_SECRET_ACCESS_KEY,
     "AWS_DEFAULT_REGION" = init_file$AWS_DEFAULT_REGION
   )
+  
   init_file=fromJSON("../sensitive-data/init_file.json")
   source(file.path("soil","run_soil_model.R"), local = TRUE)
   source(file.path("emissions_leakage", "call_lca.R"), local = TRUE)
-  
+  source(file.path("test_functions.R"), local = TRUE)
   
   ## Get the farm data from the JSON file or MongoDB ---------------------------
   
@@ -179,7 +180,7 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   
   ## Reading in calculation factors (parameters) from csv files
   animal_factors <- read_csv(file.path("data", "carbon_share_manure.csv")) %>%
-    filter(type=="manure") %>% rename(species=source)
+    filter(type=="manure")
   crop_factors <- read_csv(file.path("data", "crop_factors.csv"))
   grazing_factors <- read_csv(file.path("data", "grazing_factors.csv"))
   manure_factors <- read_csv(file.path("data", "carbon_share_manure.csv"))
@@ -189,29 +190,41 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   tilling_factors <- read_csv(file.path("data", "tilling_factors.csv"))
   soil_cover_data <- read_csv(file.path("data", "soil_cover_factors.csv"))
   agroforestry_factors <- read_csv(file.path("data", "agroforestry_factors.csv")) 
+  co2eq_factors <- read_csv(file.path("data", "co2eq_factors.csv"))
+  fertilizer_factors <- read_csv(file.path("data", "fertilizer_factors.csv"))
+  fuel_factors <- read_csv(file.path("data", "fuel_factors.csv"))
+  tree_factors <- read_csv(file.path("data", "agroforestry_factors.csv"))
+  methane_factors <- read_csv(file.path("data", "methane_emission_factors.csv")) %>% filter(climate == climate_zone) %>% select(-climate)
+  
+  factors <- list(
+    animal_factors = animal_factors,
+    crop_factors = crop_factors,
+    grazing_factors = grazing_factors,
+    manure_factors = manure_factors,
+    natural_area_factors = natural_area_factors,
+    pasture_factors = pasture_factors,
+    tilling_factors = tilling_factors,
+    soil_cover_data = soil_cover_data,
+    agroforestry_factors = agroforestry_factors,
+    co2eq_factors = co2eq_factors,
+    fertilizer_factors = fertilizer_factors,
+    fuel_factors = fuel_factors,
+    tree_factors = tree_factors,
+    methane_factors = methane_factors
+  )
   
   # Extraction of inputs per parcel and scenario
   landUseType <- get_land_use_type(landUseSummaryOrPractices, parcel_inputs)
-  # Getting parcel inputs dataframe
-  parcel_inputs <- get_parcel_inputs(landUseSummaryOrPractices)
-  # Getting grazing data dataframe
-  total_grazing_table <- get_total_grazing_table(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs)
-  # C inputs from additional organic matter: hay, compost, manure
-  orgamendments_inputs <- get_orgamendments_inputs(landUseSummaryOrPractices)
-  # C inputs from tree biomass turnover
-  agroforestry_inputs <- get_agroforestry_inputs(landUseSummaryOrPractices)
-  # C inputs from animal manure
-  animal_inputs <- get_animal_inputs(landUseSummaryOrPractices,livestock, parcel_inputs)
-  # C inputs from crop (cash/cover crop) and residues left biomass turnover
-  crop_inputs <- get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, pars)
+  parcel_inputs <- get_parcel_inputs(landUseSummaryOrPractices)  # Parcel information
+  total_grazing_table <- get_total_grazing_table(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs)  # grazing data
+  orgamendments_inputs <- get_orgamendments_inputs(landUseSummaryOrPractices)  # Organic amendments: hay, compost, manure
+  agroforestry_inputs <- get_agroforestry_inputs(landUseSummaryOrPractices)  # Tree biomass turnover
+  animal_inputs <- get_animal_inputs(landUseSummaryOrPractices,livestock, parcel_inputs)  # Animal manure
+  crop_inputs <- get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, pars)  # Crops and residues
   crop_inputs <- get_baseline_crop_inputs(landUseSummaryOrPractices, crop_inputs, crop_factors, my_logger, farm_EnZ)
-  # C inputs from pasture biomass turnover
   pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, farm_EnZ, total_grazing_table, my_logger, parcel_inputs, pars)
-  # Get fertilizer inputs
   fertilizer_inputs <- get_fertilizer_inputs(landUseSummaryOrPractices)
-  # Get fuel inputs
   fuel_inputs <- get_fuel_inputs(fuel_object)
-  # Get tree inputs
   tree_inputs <- get_agroforestry_inputs(landUseSummaryOrPractices)
   
   # Check input data for validity
@@ -241,7 +254,8 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   lca_out <- call_lca(init_file=init_file,
                       farms_everything=farms_everything,
                       farm_EnZ = farm_EnZ,
-                      inputs = inputs)
+                      inputs = inputs,
+                      factors = factors)
   emissions <- lca_out[['emissions']]
   emissions_detailed <- lca_out[['emissions_detailed']]
   productivity <- lca_out[['productivity']]

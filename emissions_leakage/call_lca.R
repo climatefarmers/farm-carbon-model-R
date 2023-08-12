@@ -4,11 +4,12 @@
 #### TO DO: include pastures and compst ?? to n2o_n_fixing
 #### TO DO LATER: include n2o_n_fixing & compost import to leakage
 
-call_lca <- function(init_file, farms_everything, farm_EnZ, inputs){
+call_lca <- function(init_file, farms_everything, farm_EnZ, inputs, factors){
   ## This life cycle analysis function for getting the farm emissions
   ## is meant to be called by passing it the init_file and farm data directly.
   
   list2env(inputs)
+  list2env(factors)
   
   ## Log start running messages
   log4r::info(my_logger, "run_lca.R started running for all scenario.")
@@ -21,31 +22,13 @@ call_lca <- function(init_file, farms_everything, farm_EnZ, inputs){
   source(file.path("emissions_leakage", "agroforestry_functions.R"), local = TRUE)
   source(file.path("emissions_leakage", "leakage_functions.R"), local = TRUE)
   source(file.path("emissions_leakage", "test_functions.R"), local = TRUE)
-  # source("mongodb_extraction_functions.R", local = TRUE)
 
-  fuel_object = farms_everything$energyUsage
-  livestock = farms_everything$liveStock
+  fuel_object <- farms_everything$energyUsage
+  livestock <- farms_everything$liveStock
   landUseSummaryOrPractices = farms_everything$landUse$landUseSummaryOrPractices
-  soilAnalysis = farms_everything$soilAnalysis
-  livestock = farms_everything$liveStock
-  landUseSummaryOrPractices = farms_everything$landUse$landUseSummaryOrPractices
-  soilAnalysis = farms_everything$soilAnalysis
-
-  ## Read in lca data
-  animal_factors <- read_csv(file.path("data", "carbon_share_manure.csv")) %>% filter(type=="manure") %>% 
-    rename(species=source)
-  co2eq_factors <- read_csv(file.path("data", "co2eq_factors.csv"))
-  crop_factors <- read_csv(file.path("data", "crop_factors.csv"))
-  fertilizer_factors <- read_csv(file.path("data", "fertilizer_factors.csv"))
-  fuel_factors <- read_csv(file.path("data", "fuel_factors.csv"))
-  tree_factors <- read_csv(file.path("data", "agroforestry_factors.csv"))
-  manure_factors <- read_csv(file.path("data", "carbon_share_manure.csv"))
-  natural_area_factors <- read_csv(file.path("data", "natural_area_factors.csv")) %>%
-    filter(pedo_climatic_area==farm_EnZ)
-  pasture_factors <- read_csv(file.path("data", "pasture_factors.csv"))
+  soilAnalysis <- farms_everything$soilAnalysis
   climate_zone <- unique(natural_area_factors$climate_zone)
   climate_wet_or_dry <- unique(natural_area_factors$climate_wet_or_dry)
-  methane_factors <- read_csv(file.path("data", "methane_emission_factors.csv")) %>% filter(climate == climate_zone) %>% select(-climate)
 
   ## Calculation of yearly results
   # Preparation of data frames
