@@ -6,7 +6,7 @@ get_monthly_Cinputs_add_manure <- function (add_manure_inputs, manure_factors, s
   if(nrow(add_manure_inputs)==0){
     return(0)}
   add_manure_inputs = filter(add_manure_inputs,scenario==scenario_chosen & parcel_ID==parcel)
-  add_manure = merge(x = add_manure_inputs, y = manure_factors, by = "manure_source", all.x = TRUE) %>% 
+  add_manure = merge(x = add_manure_inputs, y = manure_factors, by = "source", all.x = TRUE) %>% 
     mutate (tC_inputs_add_manure= quantity_t_ha*remaining_frac*carbon_content)
   tC_inputs_add_manure = sum(add_manure$tC_inputs_add_manure)
   return(tC_inputs_add_manure)

@@ -4,9 +4,11 @@
 #### TO DO: include pastures and compst ?? to n2o_n_fixing
 #### TO DO LATER: include n2o_n_fixing & compost import to leakage
 
-call_lca <- function(init_file, farms_everything, farm_EnZ){
+call_lca <- function(init_file, farms_everything, farm_EnZ, inputs){
   ## This life cycle analysis function for getting the farm emissions
   ## is meant to be called by passing it the init_file and farm data directly.
+  
+  list2env(inputs)
   
   ## Log start running messages
   log4r::info(my_logger, "run_lca.R started running for all scenario.")
@@ -19,7 +21,7 @@ call_lca <- function(init_file, farms_everything, farm_EnZ){
   source(file.path("emissions_leakage", "agroforestry_functions.R"), local = TRUE)
   source(file.path("emissions_leakage", "leakage_functions.R"), local = TRUE)
   source(file.path("emissions_leakage", "test_functions.R"), local = TRUE)
-  source("mongodb_extraction_functions.R", local = TRUE)
+  # source("mongodb_extraction_functions.R", local = TRUE)
 
   fuel_object = farms_everything$energyUsage
   livestock = farms_everything$liveStock
@@ -28,24 +30,10 @@ call_lca <- function(init_file, farms_everything, farm_EnZ){
   livestock = farms_everything$liveStock
   landUseSummaryOrPractices = farms_everything$landUse$landUseSummaryOrPractices
   soilAnalysis = farms_everything$soilAnalysis
-  
-  ## If TRUE, copies the practice of a single year to all others
-  if (copy_yearX_to_following_years_landUse == TRUE){
-    #last_year_to_duplicate = 1
-    for(i in c(last_year_to_duplicate+1:10)){landUseSummaryOrPractices[[1]][[paste("year",i,sep="")]]=landUseSummaryOrPractices[[1]][[paste("year",last_year_to_duplicate,sep="")]]}
-    log4r::info(my_logger, paste("MODIF: EVERY PARCELS: Data from year", last_year_to_duplicate,
-                                 "was pasted to every following years", sep=" "))
-  }
-  if (copy_yearX_to_following_years_livestock == TRUE){
-    #last_year_to_duplicate = 1
-    for(i in c(last_year_to_duplicate+1:10)){livestock[["futureManagement"]][[1]][[paste("year",i,sep="")]]=livestock[["futureManagement"]][[1]][[paste("year",last_year_to_duplicate,sep="")]]}
-    log4r::info(my_logger, paste("MODIF: LIVESTOCK: Data from year", last_year_to_duplicate,
-                                 "was pasted to every following years", sep=" "))
-  }
 
   ## Read in lca data
   animal_factors <- read_csv(file.path("data", "carbon_share_manure.csv")) %>% filter(type=="manure") %>% 
-    rename(species=manure_source)
+    rename(species=source)
   co2eq_factors <- read_csv(file.path("data", "co2eq_factors.csv"))
   crop_factors <- read_csv(file.path("data", "crop_factors.csv"))
   fertilizer_factors <- read_csv(file.path("data", "fertilizer_factors.csv"))
@@ -58,27 +46,6 @@ call_lca <- function(init_file, farms_everything, farm_EnZ){
   climate_zone <- unique(natural_area_factors$climate_zone)
   climate_wet_or_dry <- unique(natural_area_factors$climate_wet_or_dry)
   methane_factors <- read_csv(file.path("data", "methane_emission_factors.csv")) %>% filter(climate == climate_zone) %>% select(-climate)
-  grazing_factors <- read_csv(file.path("data", "grazing_factors.csv"))
-  
-  parcel_data <- get_parcel_inputs(landUseSummaryOrPractices)
-  total_grazing_table = get_total_grazing_table(landUseSummaryOrPractices,livestock, animal_factors=manure_factors %>% filter(type=="manure") %>% 
-                                                  rename(species=manure_source), parcel_data)
-  crop_data <- get_crop_inputs(landUseSummaryOrPractices, parcel_data, pars)
-  crop_data <- get_baseline_crop_inputs(landUseSummaryOrPractices, crop_data, crop_factors, my_logger, farm_EnZ)
-  pasture_data <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, farm_EnZ, total_grazing_table, my_logger, parcel_data, pars)
-  fertilizer_data <- get_fertilizer_inputs(landUseSummaryOrPractices)
-  fuel_data <- get_fuel_inputs(fuel_object)
-  add_manure_data <- get_add_manure_inputs(landUseSummaryOrPractices)
-  tree_data <- get_agroforestry_inputs(landUseSummaryOrPractices)
-  animal_data <- get_animal_inputs(landUseSummaryOrPractices,livestock, parcel_data)
-  
-  ## Check input data for validity
-  check_animal_data(animal_data, animal_factors)
-  check_crop_data(crop_data, crop_factors)
-  check_fertilizer_data(fertilizer_data, fertilizer_factors)
-  check_fuel_data(fuel_data, fuel_factors)
-  check_manure_data(add_manure_data, manure_factors)  
-  
 
   ## Calculation of yearly results
   # Preparation of data frames
@@ -92,18 +59,18 @@ call_lca <- function(init_file, farms_everything, farm_EnZ){
   # merge in factors into lca data
   for (i in years){
     scenario_selected <- scenarios[i+1]
-    animals <- merge(filter(animal_data, scenario==scenario_selected), animal_factors, by = "species", all.x = TRUE)
+    animals <- merge(filter(animal_inputs, scenario==scenario_selected), animal_factors, by = "species", all.x = TRUE)
     animals <- merge(animals, methane_factors, by = c("species" = "species", "grazing_management" = "grazing_management", "productivity" = "productivity"), all.x = TRUE)
-    n_fixing_species_crop <- merge(filter(crop_data, scenario==scenario_selected), crop_factors, by = "crop", all.x = TRUE)
-    n_fixing_species_crop <- merge(n_fixing_species_crop, parcel_data, by = "parcel_ID", all.x = TRUE)
-    #n_fixing_species_pasture <- merge(filter(pasture_data, scenario==scenario_selected), pasture_factors, by = "grass", all.x = TRUE)
-    #n_fixing_species_pasture <- merge(n_fixing_species_pasture, parcel_data, by = "parcel_ID", all.x = TRUE)
-    fertilizers <- merge(filter(fertilizer_data, scenario==scenario_selected), fertilizer_factors, by = "fertilizer_type", all.x = TRUE)
-    if(nrow(fuel_data)>0){
-      fuel <- merge(filter(fuel_data, scenario==scenario_selected), fuel_factors, by = "fuel_type", all.x = TRUE)
-    }else{fuel<-data.frame(fuel_data)}
-    amendments <- merge(filter(add_manure_data, scenario==scenario_selected), manure_factors, by = "manure_source", all.x = TRUE)
-    amendments <- merge(filter(amendments, scenario==scenario_selected), parcel_data, by = "parcel_ID", all.x = TRUE)
+    n_fixing_species_crop <- merge(filter(crop_inputs, scenario==scenario_selected), crop_factors, by = "crop", all.x = TRUE)
+    n_fixing_species_crop <- merge(n_fixing_species_crop, parcel_inputs, by = "parcel_ID", all.x = TRUE)
+    #n_fixing_species_pasture <- merge(filter(pasture_inputs, scenario==scenario_selected), pasture_factors, by = "grass", all.x = TRUE)
+    #n_fixing_species_pasture <- merge(n_fixing_species_pasture, parcel_inputs, by = "parcel_ID", all.x = TRUE)
+    fertilizers <- merge(filter(fertilizer_inputs, scenario==scenario_selected), fertilizer_factors, by = "fertilizer_type", all.x = TRUE)
+    if(nrow(fuel_inputs)>0){
+      fuel <- merge(filter(fuel_inputs, scenario==scenario_selected), fuel_factors, by = "fuel_type", all.x = TRUE)
+    }else{fuel<-data.frame(fuel_inputs)}
+    amendments <- merge(filter(orgamendments_inputs, scenario==scenario_selected), manure_factors, by = "source", all.x = TRUE)
+    amendments <- merge(filter(amendments, scenario==scenario_selected), parcel_inputs, by = "parcel_ID", all.x = TRUE)
     # Run through calculations
     fertilizers <- n2o_fertilizer(fertilizers, ef_fertilizer = 0.011) 
     animals<- ch4_enteric_fermentation(animals)
@@ -116,9 +83,9 @@ call_lca <- function(init_file, farms_everything, farm_EnZ){
     fuel <- co2_fuel_consumption(fuel)
     # add leakage calculations
     leakage <- manure_leakage(amendments)
-    yearly_productivity <- productivity_crops(crop_data, scenario_selected, farm_EnZ)
+    yearly_productivity <- productivity_crops(crop_inputs, scenario_selected, farm_EnZ)
     productivity_table <- rbind(productivity_table,
-                                get_yearly_productivity_table(productivity_table, crop_data, scenario_selected, farm_EnZ))
+                                get_yearly_productivity_table(productivity_table, crop_inputs, scenario_selected, farm_EnZ))
     # Clean Results 
     if (nrow(fertilizers) > 0){
       fertilizer_results <- fertilizers %>% select(fertilizer_type, n2o_fertilizer)}else{

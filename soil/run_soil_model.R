@@ -1,5 +1,5 @@
-run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ){ 
-  # browser()  # debugging
+run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ, inputs, factors){ 
+
   ## Log starting run message
   log4r::info(my_logger, "run_soil_model.R started running")
 
@@ -7,74 +7,28 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ){
   source(file.path("soil", "model_semiArid_functions.R"), local = TRUE)
   source(file.path("soil", "modified_semiArid_functions.R"), local = TRUE)
   source(file.path("soil", "calc_functions_soil_modelling.R"), local = TRUE)
-  source("mongodb_extraction_functions.R", local = TRUE)
   source("weather_data_pulling_functions.R", local = TRUE)
-
-  ## Extracting livestock, landUseSummaryOrPractices and soilAnalysis from the farms_everything variable
-  livestock = farms_everything$liveStock
+  
+  list2env(inputs)
+  list2env(factors)
+  
   landUseSummaryOrPractices = farms_everything$landUse$landUseSummaryOrPractices
   soilAnalysis = farms_everything$soilAnalysis
+  
+  ## Get weather data ---
+  # Mean coordinates
+  latlon_farm <- c(latitude = mean(parcel_inputs$latitude), longitude = mean(parcel_inputs$longitude))
+  if(exists("debug_mode")) {
+    if(debug_mode){  # will skip fetching climate data and use dummy data if debug_mode is set
+      weather_data <- read_csv(file.path("data","test_weather_data.csv")) # For testing only
+    } else {
+      weather_data=cbind(get_past_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"]),
+                         get_future_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], scenario="rcp4.5"),
+                         get_future_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], scenario="rcp8.5"))
+    }
+  }
 
-  ## Copying data from baseline to future depending on settings chosen 
-  if (copy_yearX_to_following_years_landUse == TRUE){
-    for(i in c(yearX_landuse+1:10)){
-      landUseSummaryOrPractices[[1]][[paste("year", i, sep="")]] = 
-        landUseSummaryOrPractices[[1]][[paste("year", yearX_landuse, sep="")]]}
-    log4r::info(my_logger, paste("MODIF: EVERY PARCELS: Data from year", yearX_landuse,
-                                 "was pasted to every following years", sep=" "))
-  }
-  if (copy_yearX_to_following_years_livestock == TRUE){
-    for(i in c(yearX_livestock+1:10)){
-      livestock[["futureManagement"]][[1]][[paste("year",i,sep="")]] =
-        livestock[["futureManagement"]][[1]][[paste("year",yearX_livestock,sep="")]]}
-    log4r::info(my_logger, paste("MODIF: LIVESTOCK: Data from year", yearX_livestock,
-                                 "was pasted to every following years", sep=" "))
-  }
-  
-  ## Reading in calculation factors (parameters) from csv files
-  animal_factors <- read_csv(file.path("data", "carbon_share_manure.csv")) %>%
-    filter(type=="manure") %>% rename(species=manure_source)
-  agroforestry_factors <- read_csv(file.path("data", "agroforestry_factors.csv")) 
-  crop_factors <- read_csv(file.path("data", "crop_factors.csv"))
-  grazing_factors <- read_csv(file.path("data", "grazing_factors.csv"))
-  manure_factors <- read_csv(file.path("data", "carbon_share_manure.csv"))
-  natural_area_factors <- read_csv(
-    file.path( "data", "natural_area_factors.csv")
-    ) %>% filter(pedo_climatic_area==farm_EnZ) 
-  pasture_factors <- read_csv(file.path("data", "pasture_factors.csv"))
-  tilling_factors <- read_csv(file.path("data", "tilling_factors.csv"))
-  soil_cover_data <- read_csv(file.path("data", "soil_cover_factors.csv"))
-  
-  ## Creating a data frame to hold soil data
-  #soilMapsData <- data.frame(SOC=c(1), clay=c(25), silt =c(30), bulk_density=c(1.2)) # to be pulled and processed from S3 bucket
-  
-  ## Getting parcel inputs dataframe
-  parcel_inputs = get_parcel_inputs(landUseSummaryOrPractices)
-  
-  ## Getting Land use type (variable not used!)
-  landUseType = get_land_use_type(landUseSummaryOrPractices, parcel_inputs)
-  
-  ## Getting mean lon and lat
-  lon_farmer <- mean(parcel_inputs$longitude)
-  lat_farmer <- mean(parcel_inputs$latitude)
-  
-  # Extraction of C inputs per parcel and scenario
-  # Getting grazing data dataframe
-  total_grazing_table = get_total_grazing_table(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs)
-  #farm_EnZ = clime.zone.check(init_file, lat_farmer, lon_farmer)
-  # C inputs from additional organic matter: hay, compost, manure
-  add_manure_inputs = get_add_manure_inputs(landUseSummaryOrPractices)
-  # C inputs from tree biomass turnover
-  agroforestry_inputs = get_agroforestry_inputs(landUseSummaryOrPractices)
-  # C inputs from animal manure
-  animal_inputs = get_animal_inputs(landUseSummaryOrPractices,livestock, parcel_inputs)
-  # C inputs from crop (cash/cover crop) and residues left biomass turnover
-  crop_inputs = get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, pars)
-  crop_inputs = get_baseline_crop_inputs(landUseSummaryOrPractices, crop_inputs, crop_factors, my_logger, farm_EnZ)
-  # C inputs from pasture biomass turnover
-  pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, farm_EnZ, total_grazing_table, my_logger, parcel_inputs, pars)
-  
-  ## Soil data
+  ## Soil data ---
   # Bare field inputs
   bare_field_inputs = get_bare_field_inputs(landUseSummaryOrPractices, soil_cover_data, farm_EnZ)
   # Gets soil data from https://maps.isric.org/ (AWS)
@@ -169,16 +123,7 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ){
                                   pasture_Cinputs=sum(area*pasture_Cinputs),
                                   agroforestry_Cinputs=sum(area*agroforestry_Cinputs))
   
-  ################# Weather data pulling
-  if(exists("debug_mode")) {
-    if(debug_mode){  # will skip fetching climate data and use dummy data if debug_mode is set
-      weather_data <- read_csv(file.path("data","test_weather_data.csv")) # For testing only
-    } else {
-      weather_data=cbind(get_past_weather_data(init_file, lat_farmer, lon_farmer),
-                         get_future_weather_data(init_file, lat_farmer, lon_farmer, scenario="rcp4.5"),
-                         get_future_weather_data(init_file, lat_farmer, lon_farmer, scenario="rcp8.5"))
-    }
-  }
+
   
   ################# Initialisation by making the model reach SOC of natural areas of the pedo-climatic area
   
@@ -478,6 +423,7 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ){
                      paste("\nCAUTION: Duplicated and applied livestock from 'year",
                            yearX_livestock,"' to ALL following years.",sep=""),""),sep="")
   
+  ## Write out land use type
   write.csv(landUseType, file.path("logs",
                                     paste("landUseType_", 
                                           farms_everything$farmInfo$farmManagerFirstName, 

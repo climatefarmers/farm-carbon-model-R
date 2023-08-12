@@ -323,10 +323,10 @@ get_bulk_density <- function(soilAnalysis, soilMapsData){
 }
 
 ### GET INPUT FUNCTIONS
-get_add_manure_inputs = function(landUseSummaryOrPractices){
+get_orgamendments_inputs = function(landUseSummaryOrPractices){
   # takes landUseSummaryOrPractices from farms collection
   # extracts manure application inputs dataframe 
-  add_manure_inputs = data.frame(parcel_ID = c(), scenario = c(), manure_source = c(), 
+  add_manure_inputs = data.frame(parcel_ID = c(), scenario = c(), source = c(), 
                                  quantity_t_ha = c(), imported_frac = c(), remaining_frac = c())
   for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
     for (j in c(0:10)){
@@ -337,7 +337,7 @@ get_add_manure_inputs = function(landUseSummaryOrPractices){
           add_manure_inputs <- rbind(add_manure_inputs,data.frame(
             parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
             scenario = c(paste('year', j, sep="")), 
-            manure_source = c("Other Cattle"), # AN UNFOLDING LIST OF MANURE TYPE MIGHT HAVE TO BE ADDED TO UI
+            source = c("Other Cattle"), # AN UNFOLDING LIST OF MANURE TYPE MIGHT HAVE TO BE ADDED TO UI
             quantity_t_ha = c(new.as_numeric(year_chosen$manureApplication[i])), 
             imported_frac = c(ifelse(is.null(year_chosen$percentManureImported[i]),0,
                                      ifelse(is.na(year_chosen$percentManureImported[i]),0,
@@ -351,7 +351,7 @@ get_add_manure_inputs = function(landUseSummaryOrPractices){
           add_manure_inputs <- rbind(add_manure_inputs,data.frame(
             parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
             scenario = c(paste('year',j,sep="")), 
-            manure_source = c("Green compost"), # WARNING the fact that compost entry is GREEN compost might have to be specified
+            source = c("Green compost"), # WARNING the fact that compost entry is GREEN compost might have to be specified
             quantity_t_ha = c(new.as_numeric(year_chosen$compostApplication[i])), 
             imported_frac = c(ifelse(is.null(year_chosen$percentCompostImported[i]),0,
                                      ifelse(is.na(year_chosen$percentCompostImported[i]),0,
@@ -365,7 +365,7 @@ get_add_manure_inputs = function(landUseSummaryOrPractices){
           add_manure_inputs <- rbind(add_manure_inputs, data.frame(
             parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
             scenario = c(paste('year',j,sep="")), 
-            manure_source = c("Hay"),
+            source = c("Hay"),
             quantity_t_ha = c(new.as_numeric(year_chosen$hayStrawApplication[i])), 
             imported_frac = c(ifelse(is.null(year_chosen$percentageOfHayStrawImported[i]),0,
                                      ifelse(is.na(year_chosen$percentageOfHayStrawImported[i]),0,
@@ -529,6 +529,7 @@ get_bare_field_inputs = function(landUseSummaryOrPractices, soil_cover_data, far
 }
 
 get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_factors, pars){
+  browser()
   crop_inputs = data.frame(scenario = c(), parcel_ID = c(), crop = c(), harvest = c(), 
                            grazing = c(), residue = c(),  agb_peak = c())
   for (j in c(0:10)){ # years

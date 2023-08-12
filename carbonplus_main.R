@@ -17,7 +17,7 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   p_load('pacman', 'SoilR', 'mongolite', 'dplyr', 'tidyr', 'tidyverse',
          'soilassessment', 'readr','aws.s3', 'log4r', 'jsonlite',
          'httr', 'logger', 'ncdf4', 'ncdf4.helpers')
-
+  
   
   ## Prepare log files ---------------------------------------------------------
   
@@ -34,12 +34,12 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   
   ## Soil model settings -------------------------------------------------------
   
-  pars = list(
+  pars <- list(
     n_run = 2,
     sd_field_carbon_in=0.10,
     get_grazing_estimates=TRUE, # TRUE or FALSE. Values from farmers are often missing or wrong. Default as TRUE
     
-    debug_mode = TRUE,  # Skip some steps. For now just skip fetching and use dummy climate data.
+    debug_mode = FALSE,  # Skip some steps. For now just skip fetching and use dummy climate data.
     save2mongoDB = FALSE,
     
     # To copy the practice of a single year to all others
@@ -52,7 +52,7 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   )
   
   if(pars$debug_mode & pars$save2mongoDB) {stop("Need to set debug_mode to FALSE when setting save2mongoDB to TRUE.")}
-
+  
   list2env(pars, envir = environment())
   
   ## Fetching Data -----------------------------------------------------------
@@ -69,7 +69,7 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   
   
   ## Get the farm data from the JSON file or MongoDB ---------------------------
-
+  
   # Check that only one source of farm data was provided
   if(!is.na(farmId) & !is.na(JSONfile)){
     stop("Both farmId AND JSON files were passed to the model. Please choose only one.")
@@ -80,8 +80,9 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   }
   
   if(!is.na(JSONfile)){
-    JSONfile_entered = TRUE
-    farms_everything = fromJSON(JSONfile)
+    JSONfile_entered <- TRUE
+    farms_everything <- fromJSON(JSONfile)
+    farmId <- farms_everything$farmInfo$farmId
   }
   
   if(!is.na(farmId)) {
@@ -124,11 +125,11 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   
   ## Fetching pedo-climatic zone -----------------------------------------------
   
-  farm_parameters = mongo(collection="farmparameters", 
+  farm_parameters <- mongo(collection="farmparameters", 
                           db="carbonplus_production_db", 
                           url=init_file$connection_string_prod
   )
-  farm_EnZ =  farm_parameters$find(paste('{"farmId":"',farmId,'"}',sep=""))
+  farm_EnZ <-  farm_parameters$find(paste('{"farmId":"',farmId,'"}',sep=""))
   if (length(unique(farm_EnZ$enz))==1){
     farm_EnZ = unique(farm_EnZ$enz)
     log4r::info(
@@ -152,19 +153,104 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   }
   
   
-  ## Running the soil model and emissions calculations ---------------------
+  ## Processing Inputs ------------------------------------------------------------
+  
+  source("mongodb_extraction_functions.R", local = TRUE)
+  
+  ## Extracting livestock, landUseSummaryOrPractices and soilAnalysis from the farms_everything variable
+  livestock <- farms_everything$liveStock
+  landUseSummaryOrPractices <- farms_everything$landUse$landUseSummaryOrPractices
+  
+  ## Workaround for missing data: if set, copy data from baseline to future (not for official credit generation!)
+  if (copy_yearX_to_following_years_landUse == TRUE){
+    for(i in c(yearX_landuse+1:10)){
+      landUseSummaryOrPractices[[1]][[paste0("year", i)]] <- 
+        landUseSummaryOrPractices[[1]][[paste0("year", yearX_landuse)]]}
+    log4r::info(my_logger, paste("MODIF: EVERY PARCELS: Data from year", yearX_landuse,
+                                 "was pasted to every following years", sep=" "))
+  }
+  if (copy_yearX_to_following_years_livestock == TRUE){
+    for(i in c(yearX_livestock+1:10)){
+      livestock[["futureManagement"]][[1]][[paste("year",i,sep="")]] <-
+        livestock[["futureManagement"]][[1]][[paste("year",yearX_livestock,sep="")]]}
+    log4r::info(my_logger, paste("MODIF: LIVESTOCK: Data from year", yearX_livestock,
+                                 "was pasted to every following years", sep=" "))
+  }
+  
+  ## Reading in calculation factors (parameters) from csv files
+  animal_factors <- read_csv(file.path("data", "carbon_share_manure.csv")) %>%
+    filter(type=="manure") %>% rename(species=source)
+  crop_factors <- read_csv(file.path("data", "crop_factors.csv"))
+  grazing_factors <- read_csv(file.path("data", "grazing_factors.csv"))
+  manure_factors <- read_csv(file.path("data", "carbon_share_manure.csv"))
+  natural_area_factors <- read_csv(file.path( "data", "natural_area_factors.csv")) %>% 
+    filter(pedo_climatic_area==farm_EnZ) 
+  pasture_factors <- read_csv(file.path("data", "pasture_factors.csv"))
+  tilling_factors <- read_csv(file.path("data", "tilling_factors.csv"))
+  soil_cover_data <- read_csv(file.path("data", "soil_cover_factors.csv"))
+  agroforestry_factors <- read_csv(file.path("data", "agroforestry_factors.csv")) 
+  
+  # Extraction of inputs per parcel and scenario
+  landUseType <- get_land_use_type(landUseSummaryOrPractices, parcel_inputs)
+  # Getting parcel inputs dataframe
+  parcel_inputs <- get_parcel_inputs(landUseSummaryOrPractices)
+  # Getting grazing data dataframe
+  total_grazing_table <- get_total_grazing_table(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs)
+  # C inputs from additional organic matter: hay, compost, manure
+  orgamendments_inputs <- get_orgamendments_inputs(landUseSummaryOrPractices)
+  # C inputs from tree biomass turnover
+  agroforestry_inputs <- get_agroforestry_inputs(landUseSummaryOrPractices)
+  # C inputs from animal manure
+  animal_inputs <- get_animal_inputs(landUseSummaryOrPractices,livestock, parcel_inputs)
+  # C inputs from crop (cash/cover crop) and residues left biomass turnover
+  crop_inputs <- get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, pars)
+  crop_inputs <- get_baseline_crop_inputs(landUseSummaryOrPractices, crop_inputs, crop_factors, my_logger, farm_EnZ)
+  # C inputs from pasture biomass turnover
+  pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, farm_EnZ, total_grazing_table, my_logger, parcel_inputs, pars)
+  # Get fertilizer inputs
+  fertilizer_inputs <- get_fertilizer_inputs(landUseSummaryOrPractices)
+  # Get fuel inputs
+  fuel_inputs <- get_fuel_inputs(fuel_object)
+  # Get tree inputs
+  tree_inputs <- get_agroforestry_inputs(landUseSummaryOrPractices)
+  
+  # Check input data for validity
+  check_animal_data(animal_inputs, animal_factors)
+  check_crop_data(crop_inputs, crop_factors)
+  check_fertilizer_data(fertilizer_inputs, fertilizer_factors)
+  check_fuel_data(fuel_inputs, fuel_factors)
+  check_manure_data(orgamendments_inputs, manure_factors)  
+  
+  # Collect inputs as list
+  inputs <- list(
+    landUseType = landUseType, 
+    parcel_inputs = parcel_inputs,
+    orgamendments_inputs = orgamendments_inputs, 
+    agroforestry_inputs = agroforestry_inputs,
+    animal_inputs = animal_inputs, 
+    crop_inputs = crop_inputs,
+    pasture_inputs = pasture_inputs,
+    fertilizer_inputs = fertilizer_inputs,
+    fuel_inputs = fuel_inputs,
+    tree_inputs = tree_inputs
+  )
+  
+  
+  ## Running the soil model and emissions calculations -------------------------
   
   lca_out <- call_lca(init_file=init_file,
                       farms_everything=farms_everything,
-                      farm_EnZ = farm_EnZ)
+                      farm_EnZ = farm_EnZ,
+                      inputs = inputs)
   emissions <- lca_out[['emissions']]
   emissions_detailed <- lca_out[['emissions_detailed']]
   productivity <- lca_out[['productivity']]
   
   soil_results_out <- run_soil_model(init_file=init_file,
-                                        pars=pars,
-                                        farms_everything=farms_everything,
-                                        farm_EnZ=farm_EnZ)
+                                     pars=pars,
+                                     farms_everything=farms_everything,
+                                     farm_EnZ=farm_EnZ,
+                                     inputs=inputs)
   soil_results_yearly <- soil_results_out[[1]]
   soil_results_monthly <- soil_results_out[[2]]
   
