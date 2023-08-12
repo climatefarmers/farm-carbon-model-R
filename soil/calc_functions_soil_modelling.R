@@ -2,12 +2,12 @@ library(tidyr)
 
 ### Calculation of added manure input: Carbon input due to manure/compost/hay daily spreading over a grazed field
 # YEARLY
-get_monthly_Cinputs_orgamendments <- function (orgamendments_inputs, manure_factors, scenario_chosen, parcel){
+get_monthly_Cinputs_orgamendments <- function (orgamendments_inputs, orgamendments, scenario_chosen, parcel){
   if(nrow(orgamendments_inputs)==0){
     return(0)}
-  orgamendments_inputs = filter(orgamendments_inputs,scenario==scenario_chosen & parcel_ID==parcel)
-  orgamendments = merge(x = orgamendments_inputs, y = manure_factors, by = "source", all.x = TRUE) %>% 
-    mutate (tC_inputs_orgamendments= quantity_t_ha*remaining_frac*carbon_content)
+  orgamendments_inputs = filter(orgamendments_inputs, scenario==scenario_chosen & parcel_ID==parcel)
+  orgamendments = merge(x = orgamendments_inputs, y = orgamendments, by = "source", all.x = TRUE) %>% 
+    mutate (tC_inputs_orgamendments= quantity_t_ha * remaining_frac*carbon_content)
   tC_inputs_orgamendments = sum(orgamendments$tC_inputs_orgamendments)
   return(tC_inputs_orgamendments)
 }
@@ -17,10 +17,10 @@ get_monthly_Cinputs_orgamendments <- function (orgamendments_inputs, manure_fact
 get_monthly_Cinputs_animals <- function (animal_inputs, animal_factors, scenario_chosen, parcel){
   if(nrow(animal_inputs)==0){
     return(0)}
-  animal_inputs = filter(animal_inputs,scenario==scenario_chosen & parcel_ID==parcel & n_animals>0)
+  animal_inputs = filter(animal_inputs, scenario == scenario_chosen & parcel_ID == parcel & n_animals > 0)
   animals = merge(x = animal_inputs, y = animal_factors, by = "species", all.x = TRUE) %>% 
-    mutate (C_inputs_manure_kg_per_ha_per_year= n_animals*c_kg_per_year_per_animal/area*grazing_days/365)
-  tC_inputs_per_ha_per_year = sum(animals$C_inputs_manure_kg_per_ha_per_year)*1e-3
+    mutate (C_inputs_manure_kg_per_ha_per_year = n_animals*c_kg_per_year_per_animal / area * grazing_days / 365)
+  tC_inputs_per_ha_per_year = sum(animals$C_inputs_manure_kg_per_ha_per_year) * 1e-3
   return(tC_inputs_per_ha_per_year)
 }
 
@@ -48,30 +48,19 @@ get_monthly_Cinputs_agroforestry <- function (agroforestry_inputs, agroforestry_
 
 ### Calculation of pasture input: Carbon input from pasture biomass turnover
 # YEARLY
-get_monthly_Cinputs_pasture <- function (pasture_inputs, pasture_data, scenario_chosen, parcel){
+get_monthly_Cinputs_pasture <- function (pasture_inputs, pasture_factors, scenario_chosen, parcel){
   if(nrow(pasture_inputs)==0){
     return(0)}
-  dry_annuals <- pasture_data %>% filter(grasses == 'generic grasses')
-  
-  ## Fernando" commented out because this does not work. dry_residuals is never NA and the dry variable is not defined.
-  # pasture_inputs <- pasture_inputs %>% filter(scenario==scenario_chosen & parcel_ID == parcel) %>%
-  #   mutate(dry_residual = ifelse(!is.na(dry_residual), dry_residual, 
-  #                                ifelse(!is.na(fresh_residual), fresh_residual * dry,
-  #                                       NA))) %>%
-  #   mutate(dry_grazing = ifelse(!is.na(dry_grazing), dry_grazing, 
-  #                             ifelse(!is.na(fresh_grazing), fresh_grazing * dry,
-  #                                    NA))) %>%
-  #   mutate(dry_agb_peak = ifelse(is.na(dry_agb_peak)==FALSE, dry_agb_peak, 
-  #                                ifelse(is.na(fresh_agb_peak)==FALSE,fresh_agb_peak * dry,
-  #                                       NA)))
+  dry_annuals <- pasture_factors %>% filter(grasses == 'generic grasses')
+
   annual_pastures <- 
-    merge(x = pasture_inputs, y = filter(pasture_data, pasture_type == "annual"), by = "grass", all.x = TRUE) %>% 
+    merge(x = pasture_inputs, y = filter(pasture_factors, pasture_type == "annual"), by = "grass", all.x = TRUE) %>% 
     mutate(c_input_shoot = (dry_residual + dry_grazing * 0.15) * pasture_efficiency * AMP_baseline_factor * dry_c) %>%
     mutate(c_input_root = dry_agb_peak * pasture_efficiency * AMP_baseline_factor * r_s_ratio * dry_c * bg_turnover) %>%
     mutate(c_inputs = c_input_shoot + c_input_root)
   
   perennial_pastures <- 
-    merge(x = pasture_inputs, y = filter(pasture_data, pasture_type == "perennial"), by = "grass", all.x = TRUE) %>% 
+    merge(x = pasture_inputs, y = filter(pasture_factors, pasture_type == "perennial"), by = "grass", all.x = TRUE) %>% 
     mutate(c_input_shoot = (dry_grazing * 0.15 + dry_agb_peak * pasture_efficiency * AMP_baseline_factor * ag_turnover) * dry_c) %>%
     mutate(c_input_root = dry_agb_peak * pasture_efficiency * AMP_baseline_factor * r_s_ratio * dry_c * bg_turnover) %>%
     mutate(c_inputs = c_input_shoot + c_input_root)
@@ -87,28 +76,13 @@ get_monthly_Cinputs_pasture <- function (pasture_inputs, pasture_data, scenario_
 get_monthly_Cinputs_crop <- function (crop_inputs, crop_data, scenario_chosen, parcel, farm_EnZ){
   if(nrow(crop_inputs)==0){
     return(0)}
-  crops <- merge(x = filter(crop_inputs,scenario==scenario_chosen & parcel_ID==parcel), 
-                 y = filter(crop_data,pedo_climatic_area==farm_EnZ | is.na(pedo_climatic_area)==TRUE), by = "crop", all.x = TRUE)
+  crops <- merge(x = filter(crop_inputs, scenario == scenario_chosen & parcel_ID == parcel), 
+                 y = filter(crop_data, pedo_climatic_area == farm_EnZ | is.na(pedo_climatic_area) == TRUE), by = "crop", all.x = TRUE)
   crops <- crops %>%
-    mutate(c_shoot= ifelse(is.na(dry_residue)==FALSE, dry_residue*dry_c,
-                           ifelse(is.na(fresh_residue)==FALSE, fresh_residue*dry*dry_c,
-                                  ifelse(is.na(dry_residue)==TRUE & is.na(fresh_residue)==TRUE & is.na(residue_frac)==TRUE,NA,
-                                         ifelse(is.na(dry_yield)==FALSE, dry_yield*dry_c*residue_frac,
-                                                ifelse(is.na(fresh_yield)==FALSE, fresh_yield*dry*dry_c*residue_frac,
-                                                       ifelse(is.na(ag_dm_peak)==FALSE, ag_dm_peak*dry_c*residue_frac, 
-                                                              NA))))))) %>% # Warning should be implemented
-    mutate(c_root= ifelse(is.na(dry_agb_peak)==FALSE, dry_agb_peak*dry_c*r_s_ratio,
-                          ifelse(is.na(fresh_agb_peak)==FALSE, fresh_agb_peak*dry*dry_c*r_s_ratio,
-                                 ifelse(is.na(ag_dm_peak)==FALSE, ag_dm_peak*dry_c*r_s_ratio,
-                                        NA)))) %>% # Warning should be implemented
-    mutate(c_inputs= c_shoot*s_turnover + c_root*r_turnover)
+    mutate(c_shoot = dry_residue * dry_c) %>%
+    mutate(c_root = dry_agb_peak * dry_c * r_s_ratio) %>%
+    mutate(c_inputs = c_shoot * s_turnover + c_root * r_turnover)
   
-  # if (is.na(crops$dry_residue)==TRUE & is.na(crops$fresh_residue)==TRUE & is.na(crops$residue_frac)==TRUE){
-  #   print("No residue data")
-  # }
-  # if (is.na(crops$dry_yield)==TRUE & is.na(crops$fresh_yield)==TRUE & is.na(crops$ag_dm_peak)==FALSE){
-  #   print("No yield data")
-  # }
   tC_inputs_per_ha_per_year = sum(crops$c_inputs)
   
   return(tC_inputs_per_ha_per_year)

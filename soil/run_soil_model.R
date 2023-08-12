@@ -47,53 +47,55 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ, inputs, 
   ## Tilling inputs
   tilling_inputs <- get_tilling_inputs(landUseSummaryOrPractices, tilling_factors, farm_EnZ)
   
+  
   ################# Calculations of C inputs per parcel and scenario
+  
   # Attention: YEARLY C inputs are calculated, naming misleading
   baseline_chosen="baseline"
-  parcel_Cinputs =data.frame(parcel_ID=c(),
-                             scenario=c(),
-                             orgamendments_Cinputs=c(),
-                             agroforestry_Cinput=c(),
-                             animal_Cinput=c(),
-                             crop_Cinputs=c(),
-                             pasture_Cinputs=c())
+  parcel_Cinputs <- data.frame(parcel_ID=c(),
+                               scenario=c(),
+                               orgamendments_Cinputs=c(),
+                               agroforestry_Cinput=c(),
+                               animal_Cinput=c(),
+                               crop_Cinputs=c(),
+                               pasture_Cinputs=c()
+                               )
   
   # load("parcel_Cinputs.RData")  # for testing only
   
+  scenarios <- c(do.call(paste0, expand_grid("year", 1:10)), baseline_chosen)
+  
   for(parcel in unique(parcel_inputs$parcel_ID)){
-    for(i in c(0:10)){
-      scenario = paste("year",i,sep="")
+    
+    for(scenario in scenarios){
       
-      parcel_Cinputs_temp <- data.frame(parcel_ID=parcel,
-                                        scenario=scenario,
-                                        orgamendments_Cinputs=get_monthly_Cinputs_orgamendments(orgamendments_inputs, manure_factors, scenario, parcel),
-                                        agroforestry_Cinputs=0,# get_monthly_Cinputs_agroforestry(agroforestry_inputs, agroforestry_factors, scenario, parcel, lat_farmer),
-                                        animal_Cinputs=get_monthly_Cinputs_animals(animal_inputs, animal_factors, scenario, parcel),
-                                        crop_Cinputs=get_monthly_Cinputs_crop(crop_inputs, crop_factors, scenario, parcel, farm_EnZ),
-                                        pasture_Cinputs=get_monthly_Cinputs_pasture(pasture_inputs, pasture_factors, scenario, parcel)
-                                        )
+      orgamendments_Cinputs <- get_monthly_Cinputs_orgamendments(orgamendments_inputs, manure_factors, scenario, parcel)
+      agroforestry_Cinputs <- 0 # get_monthly_Cinputs_agroforestry(agroforestry_inputs, agroforestry_factors, scenario, parcel, lat_farmer) # TREES NOT COUNTED BEFORE GOOD CHECK OF DATA QUALITY
+      animal_Cinputs <- get_monthly_Cinputs_animals(animal_inputs, animal_factors, scenario, parcel)
+      crop_Cinputs <- get_monthly_Cinputs_crop(crop_inputs, crop_factors, scenario, parcel, farm_EnZ)
+      pasture_Cinputs <- get_monthly_Cinputs_pasture(pasture_inputs, pasture_factors, scenario, parcel)
+      
+      parcel_Cinputs_temp <- data.frame(parcel_ID = parcel,
+                                        scenario = scenario,
+                                        orgamendments_Cinputs=orgamendments_Cinputs,
+                                        agroforestry_Cinputs=agroforestry_Cinputs,
+                                        animal_Cinputs=animal_Cinputs,
+                                        crop_Cinputs=crop_Cinputs,
+                                        pasture_Cinputs=pasture_Cinputs
+      )
       parcel_Cinputs<-rbind(parcel_Cinputs, parcel_Cinputs_temp)
     }
-    scenario = baseline_chosen
-    parcel_Cinputs<-rbind(parcel_Cinputs,
-                          data.frame(parcel_ID=parcel,
-                                     scenario=scenario,
-                                     orgamendments_Cinputs=get_monthly_Cinputs_orgamendments(orgamendments_inputs, manure_factors, scenario, parcel),
-                                     # TREES NOT COUNTED BEFORE GOOD CHECK OF DATA QUALITY
-                                     agroforestry_Cinputs=0,#get_monthly_Cinputs_agroforestry(agroforestry_inputs, agroforestry_factors,
-                                     #                               scenario, parcel, lat_farmer),
-                                     animal_Cinputs=get_monthly_Cinputs_animals(animal_inputs, animal_factors, scenario, parcel),
-                                     crop_Cinputs=get_monthly_Cinputs_crop(crop_inputs, crop_factors, scenario, parcel, farm_EnZ),
-                                     pasture_Cinputs=get_monthly_Cinputs_pasture(pasture_inputs, pasture_factors, scenario, parcel)))
   }
-  parcel_Cinputs <- parcel_Cinputs %>% mutate(tot_Cinputs=orgamendments_Cinputs+agroforestry_Cinputs+animal_Cinputs+crop_Cinputs+pasture_Cinputs)
+  
+  parcel_Cinputs <- parcel_Cinputs %>% mutate(tot_Cinputs = orgamendments_Cinputs + agroforestry_Cinputs + animal_Cinputs + crop_Cinputs + pasture_Cinputs)
+  
   if (length(apply(is.na(parcel_Cinputs), 2, which))==0){
     log4r::info(my_logger,'parcel C inputs calculations have no NAs.',sep=" ")
   } else {
     log4r::error(my_logger, paste(length(apply(is.na(parcel_Cinputs), 2, which)),'NAs were found in parcel C inputs calculation results.'))
   }
   
-  ################# Calculations of additional C inputs compared to baseline per parcel and scenario
+  ################# Calculations of additional C inputs compared to baseline per parcel and scenario -- Fernando: NOT USED FURTHER IN CODE!
   
   parcel_Cinputs_addition = merge(x= parcel_Cinputs, 
                                   y= parcel_inputs %>% 
@@ -102,16 +104,15 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ, inputs, 
     group_by(parcel_ID,farm_frac) %>% 
     mutate(Cinput_per_ha_project = sum(tot_Cinputs[scenario!=baseline_chosen & scenario!="year0"])/10) %>%
     filter(scenario==baseline_chosen) %>%
-    mutate(additional_Cinput_per_ha = round(Cinput_per_ha_project - tot_Cinputs,2), 
-           relative_increase=paste(as.character(ifelse(tot_Cinputs==0,NA,as.integer((Cinput_per_ha_project- tot_Cinputs)
-                                                                                    /tot_Cinputs*100))),'%'),
+    mutate(additional_Cinput_per_ha = round(Cinput_per_ha_project - tot_Cinputs, 2), 
+           relative_increase=paste(as.character(ifelse(tot_Cinputs==0,NA, as.integer((Cinput_per_ha_project - tot_Cinputs) / tot_Cinputs*100))),'%'),
            additional_Cinput_total = round(unique(area)*(Cinput_per_ha_project - tot_Cinputs),1)) 
   additional_Cinput_total_farm = sum(parcel_Cinputs_addition$additional_Cinput_total)
   parcel_Cinputs_addition = parcel_Cinputs_addition %>%
-    mutate(absolute_contribution_perc = round(100*additional_Cinput_total/additional_Cinput_total_farm)) %>%
+    mutate(absolute_contribution_perc = round(100*additional_Cinput_total / additional_Cinput_total_farm)) %>%
     select(parcel_ID, farm_frac, additional_Cinput_per_ha, relative_increase, additional_Cinput_total, absolute_contribution_perc)
   
-  ## Calculation of total c inputs for the whole farm
+  ## Calculation of total c inputs for the whole farm -- Fernando: NOT BEING USED FURTHER IN CODE!
   # Sum over all parcels
   yearly_Cinputs_farm = merge(x= parcel_Cinputs, 
                               y= parcel_inputs,
@@ -190,12 +191,6 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ, inputs, 
   all_results<-data.frame(run=c(),parcel_ID=c(),time=c(),SOC=c(),scenario=c(),farm_frac=c())
   # Data frame that includes total soc per farm
   farm_results<-data.frame(run=c(),time=c(),scenario=c(),SOC_farm=c())
-  
-  # if (length(unique(is.na(parcel_Cinputs)))==1){
-  #   log4r::info(my_logger,'Parcels loop starting smoothly. No NA in C inputs.',sep=" ")
-  # } else {
-  #   log4r::error(my_logger, 'CAUTION: there is NA in C inputs (before entering in calculation loops).')
-  # }
   
   ## Chossing model version
   model_version = ifelse(sum(weather_data$past_precipitation)/sum(weather_data$past_pevap)<0.65 &
