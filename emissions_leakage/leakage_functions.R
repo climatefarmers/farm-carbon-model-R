@@ -3,20 +3,20 @@
 
 # Carbon share of manure come from: https://www.researchgate.net/publication/225385126_Carbon_resources_of_residue_and_manure_in_Japanese_farmland_soils/figures?lo=1
 
-manure_leakage <- function(add_manure_data){
+manure_leakage <- function(orgamendments_data){
   
-  if(nrow(add_manure_data) > 0){
-  add_manure_data <- add_manure_data %>% 
+  if(nrow(orgamendments_data) > 0){
+  orgamendments_data <- orgamendments_data %>% 
     mutate(co2_leakage = quantity_t_ha*1e3 * imported_frac * area * carbon_content * .12 * (44/12)) %>% 
     select(source, co2_leakage)
   }
   else{
-      add_manure_data <- create_empty_dataframe(c("source", "co2_leakage"))
+      orgamendments_data <- create_empty_dataframe(c("source", "co2_leakage"))
       warning("No additional manure data provided")
     }
   
   
-  return(add_manure_data)
+  return(orgamendments_data)
   
 }
 

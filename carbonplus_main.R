@@ -6,6 +6,8 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   # - set general model settings
   # - get farm data from mongoDB
   # - get farm environmental zone
+  # - read in factors
+  # - process input data
   # - call the soil model and emissions calculations
   # - upload resulting co2eq to mongoDB
   ####################################################################
@@ -21,7 +23,6 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   
   ## Prepare log files ---------------------------------------------------------
   
-  #landUseSummaryOrPractices_schema_281022 <- readRDS('landUseSummaryOrPractices_schema_281022')
   if(!dir.exists('logs')) {dir.create('logs')}
   my_logfile = file.path('logs', paste(farmId,'__',str_replace_all(Sys.time(), c(" "="__", ":"="_")),'.log',sep=""))
   my_console_appender = console_appender(layout = default_log_layout())
@@ -256,8 +257,11 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
                       farm_EnZ = farm_EnZ,
                       inputs = inputs,
                       factors = factors)
+  
   emissions <- lca_out[['emissions']]
+  
   emissions_detailed <- lca_out[['emissions_detailed']]
+  
   productivity <- lca_out[['productivity']]
   
   soil_results_out <- run_soil_model(init_file=init_file,
@@ -265,7 +269,9 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
                                      farms_everything=farms_everything,
                                      farm_EnZ=farm_EnZ,
                                      inputs=inputs)
+  
   soil_results_yearly <- soil_results_out[[1]]
+  
   soil_results_monthly <- soil_results_out[[2]]
   
   yearly_results <- soil_results_yearly %>%
@@ -283,6 +289,7 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   
   
   ## Push results to mongoDB ---------------------------------------------------
+  
   if(save2mongoDB) {
     # Get code version and time info
     tag <- system2(command = "git", args = "describe", stdout = TRUE)
@@ -304,6 +311,7 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
       yearlyCO2eqEmissions_detailed=NA,
       yearlyProductivity=NA
     )
+    
     farms_everything$modelResults$yearlyCO2eqTotal=list(c(yearly_results$CO2eq_total))
     farms_everything$modelResults$yearlyCO2eqSoil=list(c(yearly_results$CO2eq_soil_final))
     farms_everything$modelResults$yearlyCO2eqEmissions=list(c(yearly_results$CO2eq_emissions))
@@ -316,10 +324,14 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
     # Upload to database
     carbonresults_collection = mongo(collection="carbonresults", db=db, url=connection_string)
     carbonresults_collection$insert(farms_everything)
+    
   }
   
+  
   ## Plotting ------------------------------------------------------------------
+  
   name<-paste0("Results_farm_", farmId)
+  
   graph <- ggplot(data = soil_results_monthly, aes(x = time, y = SOC_farm_mean, colour=scenario)) +
     geom_line()+
     #geom_errorbar(aes(ymin=SOC_farm_mean-SOC_farm_sd, ymax=SOC_farm_mean+SOC_farm_sd), width=.1) +
@@ -338,8 +350,11 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
     geom_bar(aes(y=CO2eq_total), stat="identity", fill="darkred", alpha=0.7) +
     xlab("Time")+
     ylab("Number of certificates issuable (per year)")
+  
   print(histogram)
+  
   
   ## End function --------------------------------------------------------------
   return(yearly_results)
+  
 }

@@ -326,7 +326,7 @@ get_bulk_density <- function(soilAnalysis, soilMapsData){
 get_orgamendments_inputs = function(landUseSummaryOrPractices){
   # takes landUseSummaryOrPractices from farms collection
   # extracts manure application inputs dataframe 
-  add_manure_inputs = data.frame(parcel_ID = c(), scenario = c(), source = c(), 
+  orgamendments_inputs = data.frame(parcel_ID = c(), scenario = c(), source = c(), 
                                  quantity_t_ha = c(), imported_frac = c(), remaining_frac = c())
   for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
     for (j in c(0:10)){
@@ -334,7 +334,7 @@ get_orgamendments_inputs = function(landUseSummaryOrPractices){
       if(!is.na(year_chosen$manureApplication[i])){
         # Manure (animal dung)
         if (year_chosen$manureApplication[i]>=0){
-          add_manure_inputs <- rbind(add_manure_inputs,data.frame(
+          orgamendments_inputs <- rbind(orgamendments_inputs,data.frame(
             parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
             scenario = c(paste('year', j, sep="")), 
             source = c("Other Cattle"), # AN UNFOLDING LIST OF MANURE TYPE MIGHT HAVE TO BE ADDED TO UI
@@ -348,7 +348,7 @@ get_orgamendments_inputs = function(landUseSummaryOrPractices){
       # Compost
       if(!is.na(year_chosen$compostApplication[i])){
         if (year_chosen$compostApplication[i]>=0){
-          add_manure_inputs <- rbind(add_manure_inputs,data.frame(
+          orgamendments_inputs <- rbind(orgamendments_inputs,data.frame(
             parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
             scenario = c(paste('year',j,sep="")), 
             source = c("Green compost"), # WARNING the fact that compost entry is GREEN compost might have to be specified
@@ -362,7 +362,7 @@ get_orgamendments_inputs = function(landUseSummaryOrPractices){
       # Hay
       if(!is.na(year_chosen$hayStrawApplication[i])){
         if (year_chosen$hayStrawApplication[i]>=0){
-          add_manure_inputs <- rbind(add_manure_inputs, data.frame(
+          orgamendments_inputs <- rbind(orgamendments_inputs, data.frame(
             parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
             scenario = c(paste('year',j,sep="")), 
             source = c("Hay"),
@@ -380,10 +380,10 @@ get_orgamendments_inputs = function(landUseSummaryOrPractices){
       }
     }
   }
-  add_manure_inputs <- rbind(add_manure_inputs, add_manure_inputs%>%
+  orgamendments_inputs <- rbind(orgamendments_inputs, orgamendments_inputs%>%
                                filter(scenario=='year0')%>%
                                mutate(scenario='baseline')) # Manure addition baseline is based on previous years
-  return(add_manure_inputs)
+  return(orgamendments_inputs)
 }
 
 get_agroforestry_inputs = function(landUseSummaryOrPractices){

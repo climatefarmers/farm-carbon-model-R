@@ -24,24 +24,24 @@ get_residue_management_data <- function(pasture_inputs,crop_inputs, parcel_input
 residues = get_residue_management_data(pasture_inputs,crop_inputs, parcel_inputs)
 
 #Project activity: Add manures
-get_manure_data <- function(add_manure_inputs, parcel_inputs) {
+get_manure_data <- function(orgamendments_inputs, parcel_inputs) {
   
   # Needs to be adapted depending on considering dry or fresh residues
-  total_add_manure_table <- left_join(add_manure_inputs, parcel_inputs, by = "parcel_ID")
+  total_orgamendments_table <- left_join(orgamendments_inputs, parcel_inputs, by = "parcel_ID")
   
-  total_add_manure_inputs <- total_add_manure_table %>% filter(quantity_t_ha != 0) %>% group_by(scenario,source) %>% summarise(total_add_manure = sum(quantity_t_ha*area/sum(area)))
-  total_add_manure_area <- total_add_manure_table %>% filter(quantity_t_ha != 0) %>% group_by(scenario,source) %>% summarise(total_area = sum(area))
-  #total_add_manure_inputs <- total_add_manure_inputs %>% mutate(quantity_parcel = quantity_t_ha*area) %>% group_by(scenario,source) %>% summarise(total_add_manure = sum(quantity_t_ha))
-  total_add_manure_import_frac <- total_add_manure_table %>% filter(quantity_t_ha != 0) %>% group_by(scenario,source) %>% summarise(average_imported_fraction= mean(imported_frac))
+  total_orgamendments_inputs <- total_orgamendments_table %>% filter(quantity_t_ha != 0) %>% group_by(scenario,source) %>% summarise(total_orgamendments = sum(quantity_t_ha*area/sum(area)))
+  total_orgamendments_area <- total_orgamendments_table %>% filter(quantity_t_ha != 0) %>% group_by(scenario,source) %>% summarise(total_area = sum(area))
+  #total_orgamendments_inputs <- total_orgamendments_inputs %>% mutate(quantity_parcel = quantity_t_ha*area) %>% group_by(scenario,source) %>% summarise(total_orgamendments = sum(quantity_t_ha))
+  total_orgamendments_import_frac <- total_orgamendments_table %>% filter(quantity_t_ha != 0) %>% group_by(scenario,source) %>% summarise(average_imported_fraction= mean(imported_frac))
   
-  total_add_manure_inputs <- pivot_wider(total_add_manure_inputs, names_from = source, values_from = total_add_manure)
-  total_add_manure_area <- pivot_wider(total_add_manure_area, names_from = source, values_from = total_area)
-  total_add_manure_import_frac <- pivot_wider(total_add_manure_import_frac, names_from = source, values_from = average_imported_fraction)
+  total_orgamendments_inputs <- pivot_wider(total_orgamendments_inputs, names_from = source, values_from = total_orgamendments)
+  total_orgamendments_area <- pivot_wider(total_orgamendments_area, names_from = source, values_from = total_area)
+  total_orgamendments_import_frac <- pivot_wider(total_orgamendments_import_frac, names_from = source, values_from = average_imported_fraction)
   
-  #total_add_manure_area <- pivot_wider(total_add_manure_area,names_from = source, values_from = total_area)
-  total_add_manure_table <- left_join(total_add_manure_inputs,total_add_manure_area, by = "scenario")
-  total_add_manure_table <- left_join(total_add_manure_table,total_add_manure_import_frac, by = "scenario")
-  return(total_add_manure_table)
+  #total_orgamendments_area <- pivot_wider(total_orgamendments_area,names_from = source, values_from = total_area)
+  total_orgamendments_table <- left_join(total_orgamendments_inputs,total_orgamendments_area, by = "scenario")
+  total_orgamendments_table <- left_join(total_orgamendments_table,total_orgamendments_import_frac, by = "scenario")
+  return(total_orgamendments_table)
 
 }
 

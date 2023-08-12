@@ -2,14 +2,14 @@ library(tidyr)
 
 ### Calculation of added manure input: Carbon input due to manure/compost/hay daily spreading over a grazed field
 # YEARLY
-get_monthly_Cinputs_add_manure <- function (add_manure_inputs, manure_factors, scenario_chosen, parcel){
-  if(nrow(add_manure_inputs)==0){
+get_monthly_Cinputs_orgamendments <- function (orgamendments_inputs, manure_factors, scenario_chosen, parcel){
+  if(nrow(orgamendments_inputs)==0){
     return(0)}
-  add_manure_inputs = filter(add_manure_inputs,scenario==scenario_chosen & parcel_ID==parcel)
-  add_manure = merge(x = add_manure_inputs, y = manure_factors, by = "source", all.x = TRUE) %>% 
-    mutate (tC_inputs_add_manure= quantity_t_ha*remaining_frac*carbon_content)
-  tC_inputs_add_manure = sum(add_manure$tC_inputs_add_manure)
-  return(tC_inputs_add_manure)
+  orgamendments_inputs = filter(orgamendments_inputs,scenario==scenario_chosen & parcel_ID==parcel)
+  orgamendments = merge(x = orgamendments_inputs, y = manure_factors, by = "source", all.x = TRUE) %>% 
+    mutate (tC_inputs_orgamendments= quantity_t_ha*remaining_frac*carbon_content)
+  tC_inputs_orgamendments = sum(orgamendments$tC_inputs_orgamendments)
+  return(tC_inputs_orgamendments)
 }
 
 ### Calculation of animal input: Carbon input due to manure daily spreading over a grazed field

@@ -37,10 +37,10 @@ check_fuel_data <- function(fuel_data, fuel_factors){
   
 }
 
-check_manure_data <- function(add_manure_data, manure_factors){
+check_manure_data <- function(orgamendments_data, manure_factors){
   
   manures <- unique(manure_factors$source)
-  missing_manures <- setdiff(add_manure_data$source, manures)
+  missing_manures <- setdiff(orgamendments_data$source, manures)
   
   if(length(missing_manures) > 0){warning(paste(missing_manures, "manure data not in the database "))}  
   

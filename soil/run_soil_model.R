@@ -1,8 +1,8 @@
 run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ, inputs, factors){ 
-
+  
   ## Log starting run message
   log4r::info(my_logger, "run_soil_model.R started running")
-
+  
   ## Sourcing code from files
   source(file.path("soil", "model_semiArid_functions.R"), local = TRUE)
   source(file.path("soil", "modified_semiArid_functions.R"), local = TRUE)
@@ -27,7 +27,7 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ, inputs, 
                          get_future_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], scenario="rcp8.5"))
     }
   }
-
+  
   ## Soil data ---
   # Bare field inputs
   bare_field_inputs = get_bare_field_inputs(landUseSummaryOrPractices, soil_cover_data, farm_EnZ)
@@ -43,7 +43,7 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ, inputs, 
                             bulk_density=mean(bdod_df$`bdod_5-15cm_mean`)/100, bdod_Q0.05=mean(bdod_df$`bdod_5-15cm_Q0.05`)/100, bdod_Q0.95=mean(bdod_df$`bdod_5-15cm_Q0.95`)/100)# waiting for values from soil maps
   # Final soil inputs
   soil_inputs <- get_soil_inputs(landUseSummaryOrPractices, soilAnalysis, soilMapsData)
-
+  
   ## Tilling inputs
   tilling_inputs <- get_tilling_inputs(landUseSummaryOrPractices, tilling_factors, farm_EnZ)
   
@@ -52,7 +52,7 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ, inputs, 
   baseline_chosen="baseline"
   parcel_Cinputs =data.frame(parcel_ID=c(),
                              scenario=c(),
-                             add_manure_Cinputs=c(),
+                             orgamendments_Cinputs=c(),
                              agroforestry_Cinput=c(),
                              animal_Cinput=c(),
                              crop_Cinputs=c(),
@@ -63,21 +63,22 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ, inputs, 
   for(parcel in unique(parcel_inputs$parcel_ID)){
     for(i in c(0:10)){
       scenario = paste("year",i,sep="")
-      parcel_Cinputs<-rbind(parcel_Cinputs,
-                            data.frame(parcel_ID=parcel,
-                                       scenario=scenario,
-                                       add_manure_Cinputs=get_monthly_Cinputs_add_manure(add_manure_inputs, manure_factors, scenario, parcel),
-                                       agroforestry_Cinputs=0,#get_monthly_Cinputs_agroforestry(agroforestry_inputs, agroforestry_factors,
-                                       #                              scenario, parcel, lat_farmer),
-                                       animal_Cinputs=get_monthly_Cinputs_animals(animal_inputs, animal_factors, scenario, parcel),
-                                       crop_Cinputs=get_monthly_Cinputs_crop(crop_inputs, crop_factors, scenario, parcel, farm_EnZ),
-                                       pasture_Cinputs=get_monthly_Cinputs_pasture(pasture_inputs, pasture_factors, scenario, parcel)))
+      
+      parcel_Cinputs_temp <- data.frame(parcel_ID=parcel,
+                                        scenario=scenario,
+                                        orgamendments_Cinputs=get_monthly_Cinputs_orgamendments(orgamendments_inputs, manure_factors, scenario, parcel),
+                                        agroforestry_Cinputs=0,# get_monthly_Cinputs_agroforestry(agroforestry_inputs, agroforestry_factors, scenario, parcel, lat_farmer),
+                                        animal_Cinputs=get_monthly_Cinputs_animals(animal_inputs, animal_factors, scenario, parcel),
+                                        crop_Cinputs=get_monthly_Cinputs_crop(crop_inputs, crop_factors, scenario, parcel, farm_EnZ),
+                                        pasture_Cinputs=get_monthly_Cinputs_pasture(pasture_inputs, pasture_factors, scenario, parcel)
+                                        )
+      parcel_Cinputs<-rbind(parcel_Cinputs, parcel_Cinputs_temp)
     }
     scenario = baseline_chosen
     parcel_Cinputs<-rbind(parcel_Cinputs,
                           data.frame(parcel_ID=parcel,
                                      scenario=scenario,
-                                     add_manure_Cinputs=get_monthly_Cinputs_add_manure(add_manure_inputs, manure_factors, scenario, parcel),
+                                     orgamendments_Cinputs=get_monthly_Cinputs_orgamendments(orgamendments_inputs, manure_factors, scenario, parcel),
                                      # TREES NOT COUNTED BEFORE GOOD CHECK OF DATA QUALITY
                                      agroforestry_Cinputs=0,#get_monthly_Cinputs_agroforestry(agroforestry_inputs, agroforestry_factors,
                                      #                               scenario, parcel, lat_farmer),
@@ -85,15 +86,15 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ, inputs, 
                                      crop_Cinputs=get_monthly_Cinputs_crop(crop_inputs, crop_factors, scenario, parcel, farm_EnZ),
                                      pasture_Cinputs=get_monthly_Cinputs_pasture(pasture_inputs, pasture_factors, scenario, parcel)))
   }
-  parcel_Cinputs <- parcel_Cinputs %>% mutate(tot_Cinputs=add_manure_Cinputs+agroforestry_Cinputs+animal_Cinputs+crop_Cinputs+pasture_Cinputs)
+  parcel_Cinputs <- parcel_Cinputs %>% mutate(tot_Cinputs=orgamendments_Cinputs+agroforestry_Cinputs+animal_Cinputs+crop_Cinputs+pasture_Cinputs)
   if (length(apply(is.na(parcel_Cinputs), 2, which))==0){
     log4r::info(my_logger,'parcel C inputs calculations have no NAs.',sep=" ")
   } else {
     log4r::error(my_logger, paste(length(apply(is.na(parcel_Cinputs), 2, which)),'NAs were found in parcel C inputs calculation results.'))
   }
-
+  
   ################# Calculations of additional C inputs compared to baseline per parcel and scenario
-
+  
   parcel_Cinputs_addition = merge(x= parcel_Cinputs, 
                                   y= parcel_inputs %>% 
                                     select(parcel_ID,area) %>%
@@ -115,15 +116,15 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ, inputs, 
   yearly_Cinputs_farm = merge(x= parcel_Cinputs, 
                               y= parcel_inputs,
                               by="parcel_ID") %>%
-                        group_by(scenario) %>%
-                        summarise(tot_Cinputs=sum(tot_Cinputs*area),
-                                  add_manure_Cinputs=sum(area*add_manure_Cinputs),
-                                  animal_Cinputs=sum(area*animal_Cinputs),
-                                  crop_Cinputs=sum(area*crop_Cinputs),
-                                  pasture_Cinputs=sum(area*pasture_Cinputs),
-                                  agroforestry_Cinputs=sum(area*agroforestry_Cinputs))
+    group_by(scenario) %>%
+    summarise(tot_Cinputs=sum(tot_Cinputs*area),
+              orgamendments_Cinputs=sum(area*orgamendments_Cinputs),
+              animal_Cinputs=sum(area*animal_Cinputs),
+              crop_Cinputs=sum(area*crop_Cinputs),
+              pasture_Cinputs=sum(area*pasture_Cinputs),
+              agroforestry_Cinputs=sum(area*agroforestry_Cinputs))
   
-
+  
   
   ################# Initialisation by making the model reach SOC of natural areas of the pedo-climatic area
   
@@ -350,13 +351,13 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ, inputs, 
       }
       
       all_results_batch <- rbind(all_results_batch, data.frame(run=run_ID,
-                                                              parcel_ID=rep(parcel, 264),
-                                                              time=rep(seq(as.Date("2020-1-1"), as.Date("2030-12-31"), by = "month"),2),
-                                                              SOC=c(C0_df$TOT, C0_df_mdf$TOT, C0_df$TOT, C0_df_holistic$TOT),
-                                                              scenario=c(rep("baseline", 132), rep("holistic", 132)),
-                                                              farm_frac=rep(farm_frac, 264)))#,C0_df_baseline$TOT#,rep("current",120)
+                                                               parcel_ID=rep(parcel, 264),
+                                                               time=rep(seq(as.Date("2020-1-1"), as.Date("2030-12-31"), by = "month"),2),
+                                                               SOC=c(C0_df$TOT, C0_df_mdf$TOT, C0_df$TOT, C0_df_holistic$TOT),
+                                                               scenario=c(rep("baseline", 132), rep("holistic", 132)),
+                                                               farm_frac=rep(farm_frac, 264)))#,C0_df_baseline$TOT#,rep("current",120)
     }
-
+    
     farm_results_batch <- data.frame(unique(all_results_batch %>% group_by(time, scenario) %>% mutate(SOC_farm=sum(SOC*farm_frac)) %>% select(run, time, scenario, SOC_farm)))
     months <- format(farm_results_batch$time, format="%m")
     step_in_results <- farm_results_batch[months==12,]  # SOC content at end of year (December, month 12) is selected.
@@ -366,12 +367,12 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ, inputs, 
     year_temp <- step_in_results$year[step_in_results$scenario=="holistic"][2:11]
     
     step_in_table <- rbind(step_in_table, (data.frame(run=run_ID,
-                                                     year=year_temp,
-                                                     baseline_step_SOC_per_hectare=step_baseline,
-                                                     holistic_step_SOC_per_hectare=step_holistic,
-                                                     baseline_step_total_CO2=step_baseline*sum(parcel_inputs$area)*44/12,
-                                                     holistic_step_total_CO2=step_holistic*sum(parcel_inputs$area)*44/12) %>%
-                                            mutate(yearly_CO2diff=holistic_step_total_CO2-baseline_step_total_CO2)))
+                                                      year=year_temp,
+                                                      baseline_step_SOC_per_hectare=step_baseline,
+                                                      holistic_step_SOC_per_hectare=step_holistic,
+                                                      baseline_step_total_CO2=step_baseline*sum(parcel_inputs$area)*44/12,
+                                                      holistic_step_total_CO2=step_holistic*sum(parcel_inputs$area)*44/12) %>%
+                                             mutate(yearly_CO2diff=holistic_step_total_CO2-baseline_step_total_CO2)))
     all_results <- rbind(all_results_batch, all_results)
     farm_results <- rbind(farm_results_batch, farm_results)
     print(paste(paste(paste(paste("Run ", n), "over"), n_run), "done"))
@@ -395,7 +396,7 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ, inputs, 
            yearly_CO2diff_sd, baseline_step_total_CO2_mean, 
            baseline_step_total_CO2_var, holistic_step_total_CO2_mean, 
            holistic_step_total_CO2_var, cov_step_total_CO2,sd_diff)
-
+  
   # Results of soc per parcel per scenario/year
   all_results_final <- all_results %>% group_by(scenario, parcel_ID, time, farm_frac) %>% 
     summarise(SOC_mean=mean(SOC), SOC_sd=sd(SOC)) %>%
@@ -425,13 +426,13 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ, inputs, 
   
   ## Write out land use type
   write.csv(landUseType, file.path("logs",
-                                    paste("landUseType_", 
-                                          farms_everything$farmInfo$farmManagerFirstName, 
-                                          farms_everything$farmInfo$farmManagerLastName,
-                                          ".csv",sep="")
-                                   ), row.names = FALSE)
+                                   paste("landUseType_", 
+                                         farms_everything$farmInfo$farmManagerFirstName, 
+                                         farms_everything$farmInfo$farmManagerLastName,
+                                         ".csv",sep="")
+  ), row.names = FALSE)
   
-
+  
   # Use of parcels coordinates for other applications like co-benefits
   #jsonFileOfParcelsCoordinates = toJSON(landUseSummaryOrPractices[[1]]$coordinates[c(2,3)])
   #write(jsonFileOfParcelsCoordinates, paste("parcelsCoordinates_",farmId,".json",sep=""))
