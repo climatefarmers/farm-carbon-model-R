@@ -13,6 +13,19 @@ source("carbonplus_main.R")
 sensitive_data_loc <- "../sensitive-data"
 init_file <- fromJSON(file.path(sensitive_data_loc,"init_file.json"))
 
+settings <- list(
+  n_runs = 2,
+  se_field_carbon_in=0.10,
+  get_grazing_estimates=TRUE,
+  debug_mode = FALSE, 
+  save2mongoDB = FALSE,
+  yearX_landuse=1, 
+  yearX_livestock=1, 
+  copy_yearX_to_following_years_landUse=FALSE,
+  copy_yearX_to_following_years_livestock=FALSE,
+  server="dev"  # One of: "prod", dev", "test"
+)
+
 # farmIds <- read_csv(file.path(sensitive_data_loc,"farmIds.csv"), show_col_types = FALSE)
 # farmId <- farmIds$farmId[2]
 # farmId <- "a9f9b719-b301-4a7d-a89c-824f73e2c966" # This is a test Id from user Suhas
@@ -23,7 +36,7 @@ init_file <- fromJSON(file.path(sensitive_data_loc,"init_file.json"))
 # farmId <- '584b48dc-0e5d-4ecc-b7d4-9acf281faaba' # Alves 3
 # farmId <- 'bb393d6d-f952-474e-a790-5486365d929b' # Alves 4
 # 
-# out <- carbonplus_main(init_file=init_file, farmId=farmId)
+# out <- carbonplus_main(init_file=init_file, settings=settings, farmId=farmId)
 
 
 farmIds <- c(
@@ -36,5 +49,5 @@ farmIds <- c(
 )
 
 for (farmId in farmIds){
-  carbonplus_main(init_file=init_file, farmId=farmId)
+  carbonplus_main(init_file=init_file, settings=settings, farmId=farmId)
 }

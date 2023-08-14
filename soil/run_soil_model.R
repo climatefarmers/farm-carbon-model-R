@@ -1,4 +1,4 @@
-run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ, inputs, factors){ 
+run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factors, n_runs, se_field_carbon_in){ 
   
   ## Log starting run message
   log4r::info(my_logger, "run_soil_model.R started running")
@@ -165,7 +165,7 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ, inputs, 
   ## Standard deviation for each input
   # Modelling perform several times with different inputs
   # Let's define standard deviation for each input representing extrinsic uncertainty of the model
-  sd=data.frame(field_carbon_in=pars$sd_field_carbon_in,
+  se=data.frame(field_carbon_in=se_field_carbon_in,
                 dr_ratio = 0.025,
                 temp = 0.025,
                 precip = 0.025,
@@ -199,27 +199,25 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ, inputs, 
   ## Initialisation of model runs
   # Initialising run counter
   run_ID = 0
-  # Choosing a number of run to perform extrinsic uncertainty
-  n_run = pars$n_run # moved out to pars argument
   
   ## Model runs
-  for (n in c(1:n_run)){
+  for (n in c(1:n_runs)){
     run_ID = run_ID + 1
     all_results_batch <- data.frame(run=c(), parcel_ID=c(), time=c(), SOC=c(), scenario=c(), farm_frac=c())
     farm_results_batch <- data.frame(run=c(), time=c(), SOC_farm=c(), scenario=c())
     #Choice of a random factor to normally randomize input values
-    batch_coef=data.frame(field_carbon_in = rnorm(1,1,sd$field_carbon_in),
-                          dr_ratio = rnorm(1,1,sd$dr_ratio),
-                          temp = rnorm(1,1,sd$temp),
-                          precip = rnorm(1,1,sd$precip),
-                          evap = rnorm(1,1,sd$evap),
-                          soil_thick = rnorm(1,1,sd$soil_thick),
-                          SOC = rnorm(1,1,sd$SOC),
-                          clay = rnorm(1,1,sd$clay),
-                          pE = rnorm(1,1,sd$pE),
-                          tilling_factor = rnorm(1,1,sd$tilling_factor),
-                          silt = rnorm(1,1,sd$silt),
-                          bulk_density = rnorm(1,1,sd$bulk_density))
+    batch_coef=data.frame(field_carbon_in = rnorm(1,1,se$field_carbon_in),
+                          dr_ratio = rnorm(1,1,se$dr_ratio),
+                          temp = rnorm(1,1,se$temp),
+                          precip = rnorm(1,1,se$precip),
+                          evap = rnorm(1,1,se$evap),
+                          soil_thick = rnorm(1,1,se$soil_thick),
+                          SOC = rnorm(1,1,se$SOC),
+                          clay = rnorm(1,1,se$clay),
+                          pE = rnorm(1,1,se$pE),
+                          tilling_factor = rnorm(1,1,se$tilling_factor),
+                          silt = rnorm(1,1,se$silt),
+                          bulk_density = rnorm(1,1,se$bulk_density))
     
     #Choose randomly one of the two climate scenario
     climate_scenario = ifelse(sample(0:1,1)==0, 'rcp4.5', 'rcp8.5')
@@ -370,7 +368,7 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ, inputs, 
                                              mutate(yearly_CO2diff=holistic_step_total_CO2-baseline_step_total_CO2)))
     all_results <- rbind(all_results_batch, all_results)
     farm_results <- rbind(farm_results_batch, farm_results)
-    print(paste(paste(paste(paste("Run ", n), "over"), n_run), "done"))
+    print(paste("Run ", n, "over", n_runs, "done"))
     
   } # End of model runs
   
@@ -403,22 +401,6 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ, inputs, 
               SOC_farm_sd=sd(SOC_farm)) %>%
     select(time, scenario, SOC_farm_mean, SOC_farm_sd)
   
-  log4r::info(my_logger,'Total soil CO2eq: ', 
-              sum(step_in_table_final$yearly_CO2diff_final),
-              '.\nCredits per year (before emission reductions): ', 
-              list(step_in_table_final$yearly_CO2diff_final),
-              '.\nArea considered: ', round(sum(parcel_inputs$area), 2), ' ha.', 
-              "\nNumber of runs: ", run_ID,
-              ".\nGrazing estimations by CF (Y/N): ", pars$get_grazing_estimates,
-              "\nStandard deviation used for extrinsic uncertainty of practices (Cinputs): ",
-              sd$field_carbon_in,
-              ifelse(copy_yearX_to_following_years_landUse==TRUE,
-                     paste("\nCAUTION: Duplicated and applied land use from 'year",
-                           yearX_landuse,"' to following years in EVERY parcel.",sep=""),""),
-              ifelse(copy_yearX_to_following_years_livestock==TRUE,
-                     paste("\nCAUTION: Duplicated and applied livestock from 'year",
-                           yearX_livestock,"' to ALL following years.",sep=""),""),sep="")
-  
   ## Write out land use type
   write.csv(landUseType, file.path("logs",
                                    paste("landUseType_", 
@@ -427,10 +409,6 @@ run_soil_model <- function(init_file, pars, farms_everything, farm_EnZ, inputs, 
                                          ".csv",sep="")
   ), row.names = FALSE)
   
-  
-  # Use of parcels coordinates for other applications like co-benefits
-  #jsonFileOfParcelsCoordinates = toJSON(landUseSummaryOrPractices[[1]]$coordinates[c(2,3)])
-  #write(jsonFileOfParcelsCoordinates, paste("parcelsCoordinates_",farmId,".json",sep=""))
   
   if (length(apply(is.na(step_in_table_final), 2, which))==0){
     log4r::info(my_logger,'soil_run_model.R calculations ran smoothly.',sep=" ")

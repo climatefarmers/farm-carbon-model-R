@@ -1,4 +1,4 @@
-carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
+carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   
   ####################################################################
   # This script has the following functions:
@@ -10,6 +10,19 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   # - process input data
   # - call the soil model and emissions calculations
   # - upload resulting co2eq to mongoDB
+  ####################################################################
+  # Settings should be a list with:
+  # n_runs: Integer. The number of runs for getting uncertainties. Using 100 for production runs.
+  # sd_field_carbon_in: Positive decimal. standard error of the carbon inputs. Using 0.1 as default.
+  # get_grazing_estimates: TRUE or FALSE. Calculate grazing estimates? Values from farmers are often missing or wrong. Default as TRUE
+  # debug_mode: Skip some steps. For now just skip fetching and use dummy climate data.
+  # save2mongoDB: Set to TRUE for production runs to save to database
+  # # To copy the practice of a single year to all others
+  # copy_yearX_to_following_years_landUse: set to FALSE for production runs
+  # copy_yearX_to_following_years_livestock: set to FALSE for production runs
+  # yearX_landuse: setting to 0 will copy baseline
+  # yearX_livestock: setting to 0 will copy baseline
+  # server: Server to use. One of: "prod", dev", "test"
   ####################################################################
   
   
@@ -33,28 +46,11 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   log4r::info(my_logger, paste("farmId = ",farmId,sep=""))
   
   
-  ## Soil model settings -------------------------------------------------------
+  ## Extract model settings -------------------------------------------------------
   
-  pars <- list(
-    n_run = 2,
-    sd_field_carbon_in=0.10,
-    get_grazing_estimates=TRUE, # TRUE or FALSE. Values from farmers are often missing or wrong. Default as TRUE
-    
-    debug_mode = FALSE,  # Skip some steps. For now just skip fetching and use dummy climate data.
-    save2mongoDB = FALSE,
-    
-    # To copy the practice of a single year to all others
-    yearX_landuse=1,  # setting to 0 will copy baseline
-    yearX_livestock=1,  # setting to 0 will copy baseline
-    copy_yearX_to_following_years_landUse=FALSE,
-    copy_yearX_to_following_years_livestock=FALSE,
-    
-    server="dev"  # One of: "prod", dev", "test"
-  )
+  list2env(settings, envir = environment())
   
-  if(pars$debug_mode & pars$save2mongoDB) {stop("Need to set debug_mode to FALSE when setting save2mongoDB to TRUE.")}
-  
-  list2env(pars, envir = environment())
+  if(debug_mode & save2mongoDB) {stop("Need to set debug_mode to FALSE when setting save2mongoDB to TRUE.")}
   
   ## Fetching Data -----------------------------------------------------------
   
@@ -178,24 +174,25 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
     log4r::info(my_logger, paste("MODIF: LIVESTOCK: Data from year", yearX_livestock,
                                  "was pasted to every following years", sep=" "))
   }
-  
-  ## Reading in calculation factors (parameters) from csv files
-  animal_factors <- read_csv(file.path("data", "carbon_share_manure.csv")) %>%
+
+  ## Reading in calculation factors from csv files
+  animal_factors <- read_csv(file.path("data", "carbon_share_manure.csv"), show_col_types = FALSE) %>%
     filter(type=="manure")
-  crop_factors <- read_csv(file.path("data", "crop_factors.csv"))
-  grazing_factors <- read_csv(file.path("data", "grazing_factors.csv"))
-  manure_factors <- read_csv(file.path("data", "carbon_share_manure.csv"))
-  natural_area_factors <- read_csv(file.path( "data", "natural_area_factors.csv")) %>% 
-    filter(pedo_climatic_area==farm_EnZ) 
-  pasture_factors <- read_csv(file.path("data", "pasture_factors.csv"))
-  tilling_factors <- read_csv(file.path("data", "tilling_factors.csv"))
-  soil_cover_data <- read_csv(file.path("data", "soil_cover_factors.csv"))
-  agroforestry_factors <- read_csv(file.path("data", "agroforestry_factors.csv")) 
-  co2eq_factors <- read_csv(file.path("data", "co2eq_factors.csv"))
-  fertilizer_factors <- read_csv(file.path("data", "fertilizer_factors.csv"))
-  fuel_factors <- read_csv(file.path("data", "fuel_factors.csv"))
-  tree_factors <- read_csv(file.path("data", "agroforestry_factors.csv"))
-  methane_factors <- read_csv(file.path("data", "methane_emission_factors.csv")) %>% filter(climate == climate_zone) %>% select(-climate)
+  crop_factors <- read_csv(file.path("data", "crop_factors.csv"), show_col_types = FALSE)
+  grazing_factors <- read_csv(file.path("data", "grazing_factors.csv"), show_col_types = FALSE)
+  manure_factors <- read_csv(file.path("data", "carbon_share_manure.csv"), show_col_types = FALSE)
+  natural_area_factors <- read_csv(file.path( "data", "natural_area_factors.csv"), show_col_types = FALSE) %>% 
+    filter(pedo_climatic_area==farm_EnZ)
+  pasture_factors <- read_csv(file.path("data", "pasture_factors.csv"), show_col_types = FALSE)
+  tilling_factors <- read_csv(file.path("data", "tilling_factors.csv"), show_col_types = FALSE)
+  soil_cover_data <- read_csv(file.path("data", "soil_cover_factors.csv"), show_col_types = FALSE)
+  agroforestry_factors <- read_csv(file.path("data", "agroforestry_factors.csv"), show_col_types = FALSE) 
+  co2eq_factors <- read_csv(file.path("data", "co2eq_factors.csv"), show_col_types = FALSE)
+  fertilizer_factors <- read_csv(file.path("data", "fertilizer_factors.csv"), show_col_types = FALSE)
+  fuel_factors <- read_csv(file.path("data", "fuel_factors.csv"), show_col_types = FALSE)
+  tree_factors <- read_csv(file.path("data", "agroforestry_factors.csv"), show_col_types = FALSE)
+  methane_factors <- read_csv(file.path("data", "methane_emission_factors.csv"), show_col_types = FALSE) %>%
+    filter(climate == natural_area_factors$climate_zone) %>% select(-climate)
   
   factors <- list(
     animal_factors = animal_factors,
@@ -213,17 +210,17 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
     tree_factors = tree_factors,
     methane_factors = methane_factors
   )
-  
+
   # Extraction of inputs per parcel and scenario
-  landUseType <- get_land_use_type(landUseSummaryOrPractices, parcel_inputs)
   parcel_inputs <- get_parcel_inputs(landUseSummaryOrPractices)  # Parcel information
+  landUseType <- get_land_use_type(landUseSummaryOrPractices, parcel_inputs)
   total_grazing_table <- get_total_grazing_table(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs)  # grazing data
   orgamendments_inputs <- get_orgamendments_inputs(landUseSummaryOrPractices)  # Organic amendments: hay, compost, manure
   agroforestry_inputs <- get_agroforestry_inputs(landUseSummaryOrPractices)  # Tree biomass turnover
   animal_inputs <- get_animal_inputs(landUseSummaryOrPractices,livestock, parcel_inputs)  # Animal manure
-  crop_inputs <- get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, pars)  # Crops and residues
+  crop_inputs <- get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, get_grazing_estimates)  # Crops and residues
   crop_inputs <- get_baseline_crop_inputs(landUseSummaryOrPractices, crop_inputs, crop_factors, my_logger, farm_EnZ)
-  pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, farm_EnZ, total_grazing_table, my_logger, parcel_inputs, pars)
+  pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, farm_EnZ, total_grazing_table, my_logger, parcel_inputs, get_grazing_estimates)
   fertilizer_inputs <- get_fertilizer_inputs(landUseSummaryOrPractices)
   fuel_inputs <- get_fuel_inputs(fuel_object)
   tree_inputs <- get_agroforestry_inputs(landUseSummaryOrPractices)
@@ -265,7 +262,7 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
   productivity <- lca_out[['productivity']]
   
   soil_results_out <- run_soil_model(init_file=init_file,
-                                     pars=pars,
+                                     settings=settings,
                                      farms_everything=farms_everything,
                                      farm_EnZ=farm_EnZ,
                                      inputs=inputs)
@@ -319,13 +316,31 @@ carbonplus_main <- function(init_file, farmId=NA, JSONfile=NA){
     farms_everything$modelResults$yearlyCO2eqEmissions_detailed=list(c(emissions_detailed))
     farms_everything$modelResults$yearlyProductivity=list(c(productivity))
     
-    farms_everything$modelParameters <- data.frame(pars) 
+    farms_everything$modelSettings <- data.frame(settings) 
     
     # Upload to database
     carbonresults_collection = mongo(collection="carbonresults", db=db, url=connection_string)
     carbonresults_collection$insert(farms_everything)
     
   }
+  
+  ## Log Messages --------------------------------------------------------------
+  
+  log4r::info(my_logger,'Total soil CO2eq: ', 
+              sum(yearly_results$CO2eq_soil_final),
+              '.\nCredits per year (before emission reductions): ', 
+              list(yearly_results$CO2eq_soil_final),
+              '.\nArea considered: ', round(sum(parcel_inputs$area), 2), ' ha.', 
+              "\nNumber of runs: ", n_runs,
+              ".\nGrazing estimations by CF (Y/N): ", get_grazing_estimates,
+              "\nStandard deviation used for extrinsic uncertainty of practices (Cinputs): ",
+              se_field_carbon_in,
+              ifelse(copy_yearX_to_following_years_landUse==TRUE,
+                     paste("\nWARNING: Duplicated and applied land use from 'year",
+                           yearX_landuse,"' to following years in EVERY parcel.",sep=""),""),
+              ifelse(copy_yearX_to_following_years_livestock==TRUE,
+                     paste("\nWARNING: Duplicated and applied livestock from 'year",
+                           yearX_livestock,"' to ALL following years.",sep=""),""),sep="")
   
   
   ## Plotting ------------------------------------------------------------------
