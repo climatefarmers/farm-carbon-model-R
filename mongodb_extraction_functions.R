@@ -548,7 +548,7 @@ get_bare_field_inputs = function(landUseSummaryOrPractices, soil_cover_data, far
   return(bare_field_inputs)
 }
 
-get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_factors, get_grazing_estimates){
+get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_factors, get_grazing_estimates, total_grazing_table){
 
   crop_inputs = data.frame(scenario = c(), parcel_ID = c(), crop = c(), harvest = c(), 
                            grazing = c(), residue = c(),  agb_peak = c())
@@ -572,38 +572,55 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
         monthly_harvest$harvest = new.as_numeric(year_chosen$harvestYield[[i]])
         monthly_harvest$residue = new.as_numeric(year_chosen$estimationAfterResidueGrazingHarvest[[i]])
         
+        # if(landUseSummaryOrPractices[[1]]$parcelName[i] == 'Llanos 2' & j == 4) browser()
+        
         # If get_grazing_estimates is TRUE, total grazing yield is calculated here, replacing input values. Recommended.
         if (get_grazing_estimates){
-          grazing_table_temp = total_grazing_table %>% filter(scenario==year_str)
-          if (grazing_table_temp$bale_grazing_total>grazing_table_temp$expected_grazing_needs_tDM){
-            log4r::error(my_logger,"WARNING ! Bale grazing alone exceeds expected grazing needs, to be checked.")
-            stop("Error related to bale grazing numbers. See log file..")
+          
+          grazing_table_temp <- total_grazing_table %>% filter(scenario==year_str)
+          grazing_total_calculated <- grazing_table_temp$expected_grazing_needs_tDM
+          balegrazing_total_reported <- grazing_table_temp$bale_grazing_total
+          grazing_pastures_calculated <- grazing_table_temp$expected_grazing_needs_tDM_pastures
+          balegrazing_pastures_reported <- grazing_table_temp$pasture_weighted_bale_grazing
+          grazing_total_reported <- grazing_table_temp$grazing_total
+          grazing_pastures_reported <- grazing_table_temp$grazing_non_arable_lands
+          
+          if (balegrazing_total_reported > grazing_total_calculated){
+            log4r::error(my_logger,"WARNING! Bale grazing exceeds expected total grazing needs. Check data.")
           }
-          if (grazing_table_temp$grazing_total==0){
-            # grazing arbitrarily equally distributed over grazed land, 2 month a year (6 months apart) if no grazing yield announced
-            # The distribution over 2 months is meant to reflect that grazing over a particular parcel happens a couple of times a year.
-            # This probably doesn't affect the model calculations.
-            yearly_grazing_per_ha = (grazing_table_temp$expected_grazing_needs_tDM - grazing_table_temp$bale_grazing_total)/sum(parcel_inputs$area) 
+          if (grazing_total_reported==0){
+            # Grazing arbitrarily equally distributed over farm area, 2 month a year (6 months apart) if no grazing values provided
+            # (The distribution over 2 months is meant to reflect that grazing over a particular parcel happens a couple of times a year. This probably doesn't affect the model calculations.)
+            yearly_grazing_per_ha = max((grazing_total_calculated - balegrazing_total_reported) / sum(parcel_inputs$area), 0)
             monthly_harvest$grazing <- c(1/2 * yearly_grazing_per_ha, rep(0,5), 1/2 * yearly_grazing_per_ha, rep(0,5))
           } else {
-            # grazing arbitrarily equally distributed over time weighted by parcel grazing yield relatively to farm level, if known
-            expected_grazing_on_arable <- ((grazing_table_temp$expected_grazing_needs_tDM - grazing_table_temp$expected_grazing_needs_tDM_pastures) - 
-                                             (grazing_table_temp$bale_grazing_total - grazing_table_temp$pasture_weighted_bale_grazing)) # expected grazing yield arable lands after deduction of bale grazing distributed in arable lands 
-            grazing_on_parcel_fraction <- (sum(monthly_harvest$grazing) * parcel_inputs$area[i]) / (grazing_table_temp$grazing_total - grazing_table_temp$grazing_non_arable_lands)
-            yearly_grazing_per_ha <- expected_grazing_on_arable * grazing_on_parcel_fraction / parcel_inputs$area[i] # Grazing yield arable lands
-            
-            monthly_harvest$grazing <- c(1/2 * yearly_grazing_per_ha, rep(0,5), 1/2 * yearly_grazing_per_ha, rep(0,5))
+            # Grazing arbitrarily equally distributed over time weighted by parcel grazing relatively to farm level
+            expected_grazing_on_arable <- (grazing_total_calculated - grazing_pastures_calculated) - (balegrazing_total_reported - balegrazing_pastures_reported) # expected grazing yield arable lands after deduction of bale grazing distributed in arable lands 
+            if(expected_grazing_on_arable == 0) {
+              monthly_harvest$grazing <- rep(0, 12)
+              } else {
+              grazing_on_parcel_fraction <- (sum(monthly_harvest$grazing) * parcel_inputs$area[i]) / (grazing_total_reported - grazing_pastures_reported)
+              yearly_grazing_per_ha <- expected_grazing_on_arable * grazing_on_parcel_fraction / parcel_inputs$area[i] # Grazing yield arable lands
+              monthly_harvest$grazing <- c(1/2 * yearly_grazing_per_ha, rep(0,5), 1/2 * yearly_grazing_per_ha, rep(0,5))
+            }
           }
         }
 
         # Check if input values are fresh or dry.
-        # Note: the code is not working with fresh plant inputs! Dry fraction in crop factors was wrongly implemented. Air-dry/harvest-dry values should be submitted.
-        if (is.na(year_chosen$yieldsResiduesDryOrFresh[i])){
-          log4r::info(my_logger, paste("WARNING: dryOrFresh is NA in parcel ",landUseSummaryOrPractices[[1]]$parcelName[i],
-                                       " for year ",j,". Assumed to be dry.", sep=""))
+        # Note: the code is not working with fresh plant inputs! Dry fraction in crop factors was wrongly implemented. Air-dry/harvest-dry values are required.
+
+        dryOrFresh <- year_chosen$yieldsResiduesDryOrFresh[i]
+        if(is.null(dryOrFresh)) dryOrFresh <- NA
+        if (!(dryOrFresh %in% c("Dry", "Fresh"))){
+          log4r::info(my_logger, 
+                      paste0("WARNING: dryOrFresh value not found for parcel ",
+                             landUseSummaryOrPractices[[1]]$parcelName[i],
+                             " for year ", j,". Assuming: Dry."))
+          dryOrFresh <- "Dry"
         }
-        if(year_chosen$yieldsResiduesDryOrFresh[i]=="Fresh") {
-          stop("Code not working with fresh plant inputs! Dry fraction in crop factors unrealistic!")
+        
+        if(dryOrFresh=="Fresh") {
+          stop("Code not working with fresh crop inputs! Air-dried values required.")
         }
         
         # case of cash crop with no grazing
@@ -639,6 +656,7 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
                                            residue = residue+grazing * 0.15, 
                                            agb_peak = max(yield_sum)
             )
+
             crop_inputs <- rbind(crop_inputs, crop_inputs_temp)
           }
         }
@@ -948,21 +966,32 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
         
         # If get_grazing_estimates is TRUE total grazing yield is calculated here, replacing reported values.
         if (get_grazing_estimates){
-          grazing_table_temp = total_grazing_table %>% filter(scenario==paste0('year', j))
-          if (grazing_table_temp$bale_grazing_total > grazing_table_temp$expected_grazing_needs_tDM){
+          
+          grazing_table_temp <- total_grazing_table %>% filter(scenario==paste0('year', j))
+          grazing_total_calculated <- grazing_table_temp$expected_grazing_needs_tDM
+          balegrazing_total_reported <- grazing_table_temp$bale_grazing_total
+          grazing_pastures_calculated <- grazing_table_temp$expected_grazing_needs_tDM_pastures
+          balegrazing_pastures_reported <- grazing_table_temp$pasture_weighted_bale_grazing
+          grazing_total_reported <- grazing_table_temp$grazing_total
+          grazing_pastures_reported <- grazing_table_temp$grazing_non_arable_lands
+          
+          if (balegrazing_total_reported > grazing_total_calculated){
             log4r::error(my_logger,"WARNING ! Bale grazing alone overcomes expected grazing needs, to be checked.")
             stop("Error related to bale grazing numbers. See log file..")
           }
-          if (grazing_table_temp$grazing_total == 0){
-            yearly_grazing_per_ha = (grazing_table_temp$expected_grazing_needs_tDM - grazing_table_temp$bale_grazing_total) / sum(parcel_inputs$area)
+          if (grazing_total_reported == 0){
+            yearly_grazing_per_ha <- (grazing_total_calculated - balegrazing_total_reported) / sum(parcel_inputs$area)
             monthly_nonarables$grazing <- c(1/2 *yearly_grazing_per_ha, rep(0,5), 1/2 * yearly_grazing_per_ha, rep(0,5))
           } else {
             # grazing arbitrarily equally distributed over time weighted by parcel grazing yield relatively to farm level, if known
-            expected_grazing_on_pasture <- (grazing_table_temp$expected_grazing_needs_tDM_pastures - grazing_table_temp$pasture_weighted_bale_grazing)
-            grazing_on_parcel_fraction <- sum(monthly_nonarables$grazing) * parcel_inputs$area[i] / grazing_table_temp$grazing_non_arable_lands
-            yearly_grazing_per_ha <-  expected_grazing_on_pasture * grazing_on_parcel_fraction / parcel_inputs$area[i]
-            
-            monthly_nonarables$grazing <- c(1/2 * yearly_grazing_per_ha, rep(0,5), 1/2 * yearly_grazing_per_ha, rep(0,5))
+            expected_grazing_on_pasture <- (grazing_pastures_calculated - balegrazing_pastures_reported)
+            if(expected_grazing_on_pasture == 0) {
+              monthly_nonarables$grazing <- rep(0, 12)
+            } else {
+              grazing_on_parcel_fraction <- sum(monthly_nonarables$grazing) * parcel_inputs$area[i] / grazing_pastures_reported
+              yearly_grazing_per_ha <-  expected_grazing_on_pasture * grazing_on_parcel_fraction / parcel_inputs$area[i]
+              monthly_nonarables$grazing <- c(1/2 * yearly_grazing_per_ha, rep(0,5), 1/2 * yearly_grazing_per_ha, rep(0,5))
+            }
           }
         }
 
@@ -1006,7 +1035,7 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
         # Correct for moisture content
         if(dryOrFresh == 'Dry') { dw <- dw_dry } else { dw <- dw_fresh }
         
-        pasture_df_temp %>% mutate(
+        pasture_df_temp <- pasture_df_temp %>% mutate(
           dry_harvest = harvest * dw,
           dry_grazing = grazing * dw,
           dry_residue = residue * dw,

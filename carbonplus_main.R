@@ -220,12 +220,12 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   orgamendments_inputs <- get_orgamendments_inputs(landUseSummaryOrPractices)  # Organic amendments: hay, compost, manure
   agroforestry_inputs <- get_agroforestry_inputs(landUseSummaryOrPractices)  # Tree biomass turnover
   animal_inputs <- get_animal_inputs(landUseSummaryOrPractices,livestock, parcel_inputs)  # Animal manure
-  crop_inputs <- get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, get_grazing_estimates)  # Crops and residues
+  crop_inputs <- get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, get_grazing_estimates, total_grazing_table)  # Crops and residues
   pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, pasture_factors, farm_EnZ, total_grazing_table, my_logger, parcel_inputs, get_grazing_estimates)
   fertilizer_inputs <- get_fertilizer_inputs(landUseSummaryOrPractices)
   fuel_inputs <- get_fuel_inputs(farms_everything$energyUsage)
   tree_inputs <- get_agroforestry_inputs(landUseSummaryOrPractices)
-  
+
   # Check input data for validity
   check_animal_data(animal_inputs, animal_factors)
   check_crop_data(crop_inputs, crop_factors)
@@ -250,19 +250,19 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   print("Finished extracting inputs.")
   
   ## Running the soil model and emissions calculations -------------------------
-  
+
   lca_out <- call_lca(init_file=init_file,
                       farms_everything=farms_everything,
                       farm_EnZ = farm_EnZ,
                       inputs = inputs,
                       factors = factors)
-  
+
   emissions <- lca_out[['emissions']]
-  
+
   emissions_detailed <- lca_out[['emissions_detailed']]
-  
+
   productivity <- lca_out[['productivity']]
-  browser()
+
   soil_results_out <- run_soil_model(init_file=init_file,
                                      farms_everything=farms_everything,
                                      farm_EnZ=farm_EnZ,

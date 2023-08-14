@@ -64,7 +64,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   # load("parcel_Cinputs.RData")  # for testing only
   
   scenarios <- c(do.call(paste0, expand_grid("year", 1:10)), baseline_chosen)
-  
+
   for(parcel in unique(parcel_inputs$parcel_ID)){
     
     for(scenario in scenarios){

@@ -3,33 +3,43 @@ library(tidyr)
 ### Calculation of added manure input: Carbon input due to manure/compost/hay daily spreading over a grazed field
 # YEARLY
 get_monthly_Cinputs_orgamendments <- function (orgamendments_inputs, orgamendments, scenario_chosen, parcel){
-  if(nrow(orgamendments_inputs)==0){
-    return(0)}
+  
   orgamendments_inputs = filter(orgamendments_inputs, scenario==scenario_chosen & parcel_ID==parcel)
+  
+  if(nrow(orgamendments_inputs)==0){return(0)}
+  
   orgamendments = merge(x = orgamendments_inputs, y = orgamendments, by = "source", all.x = TRUE) %>% 
     mutate (tC_inputs_orgamendments= quantity_t_ha * remaining_frac*carbon_content)
+  
   tC_inputs_orgamendments = sum(orgamendments$tC_inputs_orgamendments)
+  
   return(tC_inputs_orgamendments)
 }
 
 ### Calculation of animal input: Carbon input due to manure daily spreading over a grazed field
 # YEARLY
 get_monthly_Cinputs_animals <- function (animal_inputs, animal_factors, scenario_chosen, parcel){
-  if(nrow(animal_inputs)==0){
-    return(0)}
+  
   animal_inputs = filter(animal_inputs, scenario == scenario_chosen & parcel_ID == parcel & n_animals > 0)
+  
+  if(nrow(animal_inputs)==0){return(0)}
+  
   animals = merge(x = animal_inputs, y = animal_factors, by = "species", all.x = TRUE) %>% 
     mutate (C_inputs_manure_kg_per_ha_per_year = n_animals*c_kg_per_year_per_animal / area * grazing_days / 365)
+  
   tC_inputs_per_ha_per_year = sum(animals$C_inputs_manure_kg_per_ha_per_year) * 1e-3
+  
   return(tC_inputs_per_ha_per_year)
 }
 
 ### Calculation of agroforestry input
 # YERLY
 get_monthly_Cinputs_agroforestry <- function (agroforestry_inputs, agroforestry_factors, scenario_chosen, parcel, lat_farmer){
-  if(nrow(agroforestry_inputs)==0){
-    return(0)}
+  
   agroforestry_inputs = filter(agroforestry_inputs,scenario==scenario_chosen & parcel_ID==parcel)
+  
+  if(nrow(agroforestry_inputs)==0){ return(0) }
+  
   # Difference in factors depending on climatic zone
   zone=ifelse(lat_farmer<57,"Temperate","Boreal")
   trees = merge(x = agroforestry_inputs, 
@@ -49,18 +59,22 @@ get_monthly_Cinputs_agroforestry <- function (agroforestry_inputs, agroforestry_
 ### Calculation of pasture input: Carbon input from pasture biomass turnover
 # YEARLY
 get_monthly_Cinputs_pasture <- function (pasture_inputs, pasture_factors, scenario_chosen, parcel){
-  if(nrow(pasture_inputs)==0){
-    return(0)}
-  dry_annuals <- pasture_factors %>% filter(grass == 'generic grasses')
+
+  pasture <- pasture_inputs %>% filter(scenario==scenario_chosen & parcel_ID==parcel)
+  
+  if(nrow(pasture)==0){ return(0) }
+
+  annual_factors <- pasture_factors %>% filter(grass == 'Generic grasses', pasture_type == "annual")
+  perennial_factors <- pasture_factors %>% filter(grass == 'Generic grasses', pasture_type == "perennial")
 
   annual_pastures <- 
-    merge(x = pasture_inputs, y = filter(pasture_factors, pasture_type == "annual"), by = "grass", all.x = TRUE) %>% 
-    mutate(c_input_shoot = (dry_residual + dry_grazing * 0.15) * pasture_efficiency * AMP_baseline_factor * dry_c) %>%
+    merge(x = pasture, y = annual_factors, by = "grass", all.x = TRUE) %>% 
+    mutate(c_input_shoot = (dry_residue + dry_grazing * 0.15) * pasture_efficiency * AMP_baseline_factor * dry_c) %>%
     mutate(c_input_root = dry_agb_peak * pasture_efficiency * AMP_baseline_factor * r_s_ratio * dry_c * bg_turnover) %>%
     mutate(c_inputs = c_input_shoot + c_input_root)
   
   perennial_pastures <- 
-    merge(x = pasture_inputs, y = filter(pasture_factors, pasture_type == "perennial"), by = "grass", all.x = TRUE) %>% 
+    merge(x = pasture, y = perennial_factors, by = "grass", all.x = TRUE) %>% 
     mutate(c_input_shoot = (dry_grazing * 0.15 + dry_agb_peak * pasture_efficiency * AMP_baseline_factor * ag_turnover) * dry_c) %>%
     mutate(c_input_root = dry_agb_peak * pasture_efficiency * AMP_baseline_factor * r_s_ratio * dry_c * bg_turnover) %>%
     mutate(c_inputs = c_input_shoot + c_input_root)
@@ -76,7 +90,9 @@ get_monthly_Cinputs_pasture <- function (pasture_inputs, pasture_factors, scenar
 get_monthly_Cinputs_crop <- function (crop_inputs, crop_factors, scenario_chosen, parcel, farm_EnZ){
   
   crops <- filter(crop_inputs, scenario == scenario_chosen & parcel_ID == parcel)
+  
   if(nrow(crops)==0) { return(0) }
+  
   factors <- filter(crop_factors, pedo_climatic_area == farm_EnZ | is.na(pedo_climatic_area) == TRUE)
 
   crops <- merge(x = crops, 
