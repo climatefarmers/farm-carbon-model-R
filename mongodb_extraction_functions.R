@@ -524,6 +524,7 @@ get_animal_inputs = function(landUseSummaryOrPractices,livestock, parcel_inputs)
 get_bare_field_inputs = function(landUseSummaryOrPractices, soil_cover_data, farm_EnZ){
   # takes landUseSummaryOrPractices from farms collection
   # extracts bare soil inputs dataframe 
+  browser()
   bare_field_inputs = data.frame(parcel_ID = c(), scenario = c())
   # one column per month
   for (k in c(1:12)){
@@ -571,8 +572,6 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
         monthly_harvest$grazing = new.as_numeric(year_chosen$grazingYield[[i]])
         monthly_harvest$harvest = new.as_numeric(year_chosen$harvestYield[[i]])
         monthly_harvest$residue = new.as_numeric(year_chosen$estimationAfterResidueGrazingHarvest[[i]])
-        
-        # if(landUseSummaryOrPractices[[1]]$parcelName[i] == 'Llanos 2' & j == 4) browser()
         
         # If get_grazing_estimates is TRUE, total grazing yield is calculated here, replacing input values. Recommended.
         if (get_grazing_estimates){

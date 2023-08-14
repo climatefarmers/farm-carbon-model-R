@@ -225,6 +225,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   fertilizer_inputs <- get_fertilizer_inputs(landUseSummaryOrPractices)
   fuel_inputs <- get_fuel_inputs(farms_everything$energyUsage)
   tree_inputs <- get_agroforestry_inputs(landUseSummaryOrPractices)
+  bare_field_inputs <- get_bare_field_inputs(landUseSummaryOrPractices, soil_cover_data, farm_EnZ)
 
   # Check input data for validity
   check_animal_data(animal_inputs, animal_factors)
@@ -244,7 +245,8 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
     pasture_inputs = pasture_inputs,
     fertilizer_inputs = fertilizer_inputs,
     fuel_inputs = fuel_inputs,
-    tree_inputs = tree_inputs
+    tree_inputs = tree_inputs,
+    bare_field_inputs = bare_field_inputs
   )
   
   print("Finished extracting inputs.")

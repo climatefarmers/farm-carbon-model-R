@@ -40,7 +40,7 @@ settings <- list(
 
 
 farmIds <- c(
-  # 'edf5cce8-eee2-40a8-af32-520d2b93ab5c',
+  'edf5cce8-eee2-40a8-af32-520d2b93ab5c',
   '7fe9ced2-73b8-45aa-b6a2-a9ede144ca1b',
   '3f916c12-3a2c-4904-91cb-bb64e6fb0832',
   'f67333e8-34a9-4030-93af-766f49d01310',
