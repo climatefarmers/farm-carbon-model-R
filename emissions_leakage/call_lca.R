@@ -70,19 +70,19 @@ call_lca <- function(init_file, farms_everything, farm_EnZ, inputs, factors){
                                 get_yearly_productivity_table(productivity_table, crop_inputs, scenario_selected, farm_EnZ))
     # Clean Results 
     if (nrow(fertilizers) > 0){
-      fertilizer_results <- fertilizers %>% select(fertilizer_type, n2o_fertilizer)}else{
+      fertilizer_results <- fertilizers %>% select(fertilizer_type, n2o_fertilizer)} else {
       fertilizer_results <- create_empty_dataframe(c("fertilizer_type", "n2o_fertilizer"))
     }
     if (nrow(animals) > 0){  
-      animal_results <- animals%>% select(species, ch4_manure_dep, ch4_ent_ferm, n2o_urine_dung_indirect, n2o_urine_dung_direct)}else{
+      animal_results <- animals %>% select(species, ch4_manure_dep, ch4_ent_ferm, n2o_urine_dung_indirect, n2o_urine_dung_direct)} else {
       animal_results <- create_empty_dataframe(c("species", "ch4_manure_dep", "ch4_ent_ferm", "n2o_urine_dung_indirect", "n2o_urine_dung_direct"))
     }
     if (nrow(fuel) > 0){  
-      fuel_results <- fuel %>% select(fuel_type, co2_fuel)}else{
+      fuel_results <- fuel %>% select(fuel_type, co2_fuel)} else {
       fuel_results <- create_empty_dataframe(c("fuel_type", "co2_fuel"))
     }
     if (nrow(n_fixing_species_crop) > 0){
-      crop_results <- n_fixing_species_crop %>% select(crop, n2o_n_fixing)}else{
+      crop_results <- n_fixing_species_crop %>% select(crop, n2o_n_fixing)} else {
       crop_results <- create_empty_dataframe(c("crop", "n2o_n_fixing"))
     }
     # # not using pasture n fixation 

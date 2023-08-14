@@ -78,11 +78,11 @@ extract_grazing_amount_parcel_i <- function(landUseSummaryOrPractices, parcel_in
   #takes a landUseSummaryOrPractices from farms collection and a parcel index i
   #extracts grazing yield and bale grazing yield from parcel index
   
+  year_str <- paste0('year', year)
+  
   isBaleGrazing <- landUseSummaryOrPractices[[1]][[year_str]]$baleGrazing[parcel_index]
   baleResidue <- new.as_numeric(landUseSummaryOrPractices[[1]][[year_str]]$residueLeftAfterBaleGrazing[parcel_index])/100
   hayStraw <- new.as_numeric(landUseSummaryOrPractices[[1]][[year_str]]$hayStrawApplication[parcel_index])
-  
-  year_str <- paste0('year', year)
   
   if (is.na(isBaleGrazing) | !isBaleGrazing){ # Fernando: remove? If there is hey input than it cannot be FALSE
     bale_grazing <- 0
@@ -110,14 +110,14 @@ get_total_grazing_table <- function(landUseSummaryOrPractices, livestock, animal
     grazing_non_arable_lands = c()
     )
   
-  browser()
+
   for (year in c(0:10)){
     year_str <- paste0('year', year)
     bale_grazing <- 0
     grazing <- 0
     grazing_non_arable_lands <- 0
     
-    # Bale grazing yield from hay application
+    # Bale grazing from hay application
     for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
       
       isBaleGrazing <- landUseSummaryOrPractices[[1]][[year_str]]$baleGrazing[i]
@@ -167,10 +167,10 @@ get_total_grazing_table <- function(landUseSummaryOrPractices, livestock, animal
   
   status = "futureManagement"
   for (year in c(1:10)){
-    year_srt <- paste0('year', year)
+    year_str <- paste0('year', year)
     for (k in c(1:nrow(livestock[[status]][[1]][[year_str]]))){
       if (is.na(livestock[[status]][[1]][[year_str]]$species[[k]])){next}
-      animals <- rbind(animals,data.frame(
+      animals <- rbind(animals, data.frame(
         scenario = year_str, 
         species = c(livestock[[status]][[1]][[year_str]]$species[[k]]),
         n_animals = c(new.as_numeric(livestock[[status]][[1]][[year_str]]$numberOfHeads[[k]])), 
@@ -226,7 +226,7 @@ detect_crop_rotations <- function(landUseSummaryOrPractices, parcel_index = i){
   # Listing arablecrop years
   list_arablecrop_years = c()
   for (year in c(0:10)){
-    year_srt <- paste0('year', year)
+    year_str <- paste0('year', year)
     if(landUseSummaryOrPractices[[1]][[year_str]]$landUseType[i]=="Arablecrops"){
       list_arablecrop_years = c(list_arablecrop_years,year)
     }
@@ -235,7 +235,7 @@ detect_crop_rotations <- function(landUseSummaryOrPractices, parcel_index = i){
   if (length(list_arablecrop_years) > 0){
     df_crops = data.frame(year = c(), crops = c())
     for (year in c(0:10)){
-      year_srt <- paste0('year', year)
+      year_str <- paste0('year', year)
       year_chosen = landUseSummaryOrPractices[[1]][[year_str]]
       df_crops = rbind(df_crops, data.frame(
         year = year,
@@ -549,7 +549,7 @@ get_bare_field_inputs = function(landUseSummaryOrPractices, soil_cover_data, far
 }
 
 get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_factors, get_grazing_estimates){
-  browser()
+
   crop_inputs = data.frame(scenario = c(), parcel_ID = c(), crop = c(), harvest = c(), 
                            grazing = c(), residue = c(),  agb_peak = c())
   for (j in c(0:10)){ # years
@@ -740,7 +740,7 @@ get_fertilizer_inputs = function(landUseSummaryOrPractices){
     for (j in c(0:10)){
       
       parcel_id <- landUseSummaryOrPractices[[1]]$parcelName[i]
-      year <- paste0('year',j)
+      year_str <- paste0('year',j)
       
       # Determine the field area depending on input source
       use_manual_area <- landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea[i]
@@ -755,7 +755,7 @@ get_fertilizer_inputs = function(landUseSummaryOrPractices){
       fertilizer_temp <- data.frame(
         parcel_ID = parcel_id, 
         field_area = field_area,
-        scenario = year,
+        scenario = year_str,
         usage_boolean = year_chosen$syntheticFertilizer$usage[i],
         fertilizer_type = "synthetic", # here gathering data from the synthetic fertilizer dashboard entry
         quantity_t_ha = ifelse(year_chosen$syntheticFertilizer$usage[i]==TRUE, new.as_numeric(year_chosen$syntheticFertilizer$tonsPerYear[i]),0),

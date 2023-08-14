@@ -177,7 +177,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
 
   ## Reading in calculation factors from csv files
   animal_factors <- read_csv(file.path("data", "carbon_share_manure.csv"), show_col_types = FALSE) %>%
-    filter(type=="manure")
+    filter(type=="manure") %>% mutate(species = source)
   crop_factors <- read_csv(file.path("data", "crop_factors.csv"), show_col_types = FALSE)
   grazing_factors <- read_csv(file.path("data", "grazing_factors.csv"), show_col_types = FALSE)
   manure_factors <- read_csv(file.path("data", "carbon_share_manure.csv"), show_col_types = FALSE)
@@ -220,7 +220,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   animal_inputs <- get_animal_inputs(landUseSummaryOrPractices,livestock, parcel_inputs)  # Animal manure
   crop_inputs <- get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, get_grazing_estimates)  # Crops and residues
   crop_inputs <- get_baseline_crop_inputs(landUseSummaryOrPractices, crop_inputs, crop_factors, my_logger, farm_EnZ)
-  pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, farm_EnZ, total_grazing_table, my_logger, parcel_inputs, get_grazing_estimates)
+  pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, pasture_factors, farm_EnZ, total_grazing_table, my_logger, parcel_inputs, get_grazing_estimates)
   fertilizer_inputs <- get_fertilizer_inputs(landUseSummaryOrPractices)
   fuel_inputs <- get_fuel_inputs(fuel_object)
   tree_inputs <- get_agroforestry_inputs(landUseSummaryOrPractices)
