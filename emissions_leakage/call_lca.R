@@ -27,7 +27,6 @@ call_lca <- function(init_file, farms_everything, farm_EnZ, inputs, factors){
   livestock <- farms_everything$liveStock
   landUseSummaryOrPractices = farms_everything$landUse$landUseSummaryOrPractices
   soilAnalysis <- farms_everything$soilAnalysis
-  climate_zone <- unique(natural_area_factors$climate_zone)
   climate_wet_or_dry <- unique(natural_area_factors$climate_wet_or_dry)
 
   ## Calculation of yearly results
