@@ -343,18 +343,19 @@ get_bulk_density <- function(soilAnalysis, soilMapsData){
 get_orgamendments_inputs = function(landUseSummaryOrPractices){
   # takes landUseSummaryOrPractices from farms collection
   # extracts manure application inputs dataframe 
+  parcel_names <- landUseSummaryOrPractices[[1]]$parcelName
   orgamendments_inputs = data.frame(parcel_ID = c(), scenario = c(), source = c(), 
                                  quantity_t_ha = c(), imported_frac = c(), remaining_frac = c())
-  for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
+  for (i in c(1:length(parcel_names))){
     for (j in c(0:10)){
       year_str <- paste0('year', j)
-      year_chosen = landUseSummaryOrPractices[[1]][[paste('year', j, sep="")]]
+      year_chosen = landUseSummaryOrPractices[[1]][[year_str]]
       if(!is.na(year_chosen$manureApplication[i])){
         # Manure (animal dung)
         if (year_chosen$manureApplication[i]>=0){
           orgamendments_inputs <- rbind(orgamendments_inputs,data.frame(
-            parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
-            scenario = c(paste('year', j, sep="")), 
+            parcel_ID = c(parcel_names[i]), 
+            scenario = c(year_str), 
             source = c("Other Cattle"), # AN UNFOLDING LIST OF MANURE TYPE MIGHT HAVE TO BE ADDED TO UI
             quantity_t_ha = c(new.as_numeric(year_chosen$manureApplication[i])), 
             imported_frac = c(ifelse(is.null(year_chosen$percentManureImported[i]),0,
@@ -367,7 +368,7 @@ get_orgamendments_inputs = function(landUseSummaryOrPractices){
       if(!is.na(year_chosen$compostApplication[i])){
         if (year_chosen$compostApplication[i]>=0){
           orgamendments_inputs <- rbind(orgamendments_inputs,data.frame(
-            parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
+            parcel_ID = c(parcel_names[i]), 
             scenario = c(year_str), 
             source = c("Green compost"), # WARNING the fact that compost entry is GREEN compost might have to be specified
             quantity_t_ha = c(new.as_numeric(year_chosen$compostApplication[i])), 
@@ -381,7 +382,7 @@ get_orgamendments_inputs = function(landUseSummaryOrPractices){
       if(!is.na(year_chosen$hayStrawApplication[i])){
         if (year_chosen$hayStrawApplication[i]>=0){
           orgamendments_inputs <- rbind(orgamendments_inputs, data.frame(
-            parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
+            parcel_ID = c(parcel_names[i]), 
             scenario = c(year_str), 
             source = c("Hay"),
             quantity_t_ha = c(new.as_numeric(year_chosen$hayStrawApplication[i])), 
@@ -391,8 +392,8 @@ get_orgamendments_inputs = function(landUseSummaryOrPractices){
             remaining_frac = c(ifelse(is.null(year_chosen$baleGrazing[i]), 1, # case were variable isn't found
                                       ifelse(is.na(year_chosen$baleGrazing[i]), 1, # case were variable had no value
                                              ifelse(year_chosen$baleGrazing[i]==TRUE, # case were baleGrazing happens
-                                                    ifelse(landUseSummaryOrPractices[[1]][[paste('year', j, sep="")]]$residueLeftAfterBaleGrazing[i]=="10-15", 12.5, # single case hand fix
-                                                           new.as_numeric(landUseSummaryOrPractices[[1]][[paste('year', j, sep="")]]$residueLeftAfterBaleGrazing[i]))/100,
+                                                    ifelse(landUseSummaryOrPractices[[1]][[year_str]]$residueLeftAfterBaleGrazing[i]=="10-15", 12.5, # single case hand fix
+                                                           new.as_numeric(landUseSummaryOrPractices[[1]][[year_str]]$residueLeftAfterBaleGrazing[i]))/100,
                                                     1)))))) #case were no grazing happens meaning it is 100% amended to the soil
         }
       }
@@ -407,9 +408,10 @@ get_orgamendments_inputs = function(landUseSummaryOrPractices){
 get_agroforestry_inputs = function(landUseSummaryOrPractices){
   # takes landUseSummaryOrPractices from farms collection
   # extracts agroforestry inputs dataframe 
+  parcel_names <- landUseSummaryOrPractices[[1]]$parcelName
   agroforestry_inputs = data.frame(parcel_ID = c(), scenario = c(), tree_species = c(), other_name = c(), dbh = c(),
                                    tree_density = c(), area = c())
-  for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
+  for (i in c(1:length(parcel_names))){
     for (j in c(0:10)){
       year_str <- paste0('year', j)
       row_index = 0
@@ -426,7 +428,7 @@ get_agroforestry_inputs = function(landUseSummaryOrPractices){
       if(nrow(typeOfTrees)>0){
         for (k in c(1:nrow(typeOfTrees))){
           agroforestry_inputs <- rbind(agroforestry_inputs,data.frame(
-            parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
+            parcel_ID = c(parcel_names[i]), 
             scenario = c(year_str), 
             tree_species = c(typeOfTrees$treeName[[k]]),
             other_name = c(typeOfTrees$otherTreeName[[k]]),
@@ -437,7 +439,7 @@ get_agroforestry_inputs = function(landUseSummaryOrPractices){
         if (j==0){ #baseline based on pre-project trees
           for (k in c(1:nrow(typeOfTrees))){
             agroforestry_inputs <- rbind(agroforestry_inputs,data.frame(
-              parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
+              parcel_ID = c(parcel_names[i]), 
               scenario = c("baseline"), 
               tree_species = c(typeOfTrees$treeName[[k]]),
               other_name = c(typeOfTrees$otherTreeName[[k]]),
@@ -459,14 +461,15 @@ get_agroforestry_inputs = function(landUseSummaryOrPractices){
 get_animal_inputs = function(landUseSummaryOrPractices,livestock, parcel_inputs){
   # takes landUseSummaryOrPractices & livestock from farms collection
   # extracts animal inputs dataframe 
+  parcel_names <- landUseSummaryOrPractices[[1]]$parcelName
   animal_inputs = data.frame(parcel_ID = c(), scenario = c(), species = c(), n_animals = c(), grazing_days = c(),
                              area = c(), grazing_management = c(), productivity = c())
-  for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
+  for (i in c(1:length(parcel_names))){
     status ="currentManagement"
     for (k in c(1:nrow(livestock[[status]][[1]]))){
       if (is.na(livestock[[status]][[1]]$species[[k]])){next}
       animal_inputs <- rbind(animal_inputs,data.frame(
-        parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
+        parcel_ID = c(parcel_names[i]), 
         scenario = c(paste('year',0,sep="")), 
         species = c(livestock[[status]][[1]]$species[[k]]),
         # n_animal is the total number of animal from a farm weighted by grazing yield fraction of the parcel
@@ -483,7 +486,7 @@ get_animal_inputs = function(landUseSummaryOrPractices,livestock, parcel_inputs)
     for (k in c(1:nrow(livestock[[status]][[1]]))){
       if (is.na(livestock[[status]][[1]]$species[[k]])){next}
       animal_inputs <- rbind(animal_inputs,data.frame(
-        parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
+        parcel_ID = c(parcel_names[i]), 
         scenario = c("baseline"), 
         species = c(livestock[[status]][[1]]$species[[k]]),
         # n_animal is the total number of animal from a farm weighted by grazing yield fraction of the parcel
@@ -503,7 +506,7 @@ get_animal_inputs = function(landUseSummaryOrPractices,livestock, parcel_inputs)
       for (k in c(1:nrow(livestock[[status]][[1]][[scenario]]))){
         if (is.na(livestock[[status]][[1]][[scenario]]$species[[k]])){next}
         animal_inputs <- rbind(animal_inputs,data.frame(
-          parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
+          parcel_ID = c(parcel_names[i]), 
           scenario = scenario, 
           species = c(livestock[[status]][[1]][[scenario]]$species[[k]]),
           # n_animal is the total number of animal from a farm weighted by grazing yield fraction of the parcel
@@ -524,39 +527,52 @@ get_animal_inputs = function(landUseSummaryOrPractices,livestock, parcel_inputs)
 get_bare_field_inputs = function(landUseSummaryOrPractices, soil_cover_data, farm_EnZ){
   # takes landUseSummaryOrPractices from farms collection
   # extracts bare soil inputs dataframe 
-  browser()
-  bare_field_inputs = data.frame(parcel_ID = c(), scenario = c())
-  # one column per month
-  for (k in c(1:12)){
-    bare_field_inputs[[paste("bare_profile_", k, sep="")]] = c()
-  }
-  for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
-    bare_field_inputs_temp <- data.frame(parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
-                                         scenario = c('baseline'))
-    bare_field_inputs <- rbind(bare_field_inputs, cbind(bare_field_inputs_temp, soil_cover_data %>% filter(pedo_climatic_area == farm_EnZ) %>%
-                                                          select(-country,-pedo_climatic_area)))
+
+  bare_field_inputs <- c()
+  parcel_names <- landUseSummaryOrPractices[[1]]$parcelName
+  for (i in 1:length(parcel_names)){
+    
     for (j in c(0:10)){
-      year_chosen = landUseSummaryOrPractices[[1]][[paste('year', j, sep="")]]
-      bare_field_inputs_temp = data.frame(parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
-                                          scenario = c(paste('year', j, sep="")))
+      year_str <- paste0('year', j)
+      year_chosen <- landUseSummaryOrPractices[[1]][[year_str]]
+      bare_field_inputs_temp <- data.frame(parcel_ID = c(parcel_names[i]), 
+                                          scenario = c(year_str))
       for (k in c(1:12)){
         bare_field_inputs_temp[[paste("bare_profile_", k, sep="")]] = ifelse(
-          year_chosen$bareSoilFallow[[1]][[k]]==TRUE, TRUE, FALSE)
+          year_chosen$bareSoilFallow[[i]][[k]]==TRUE, TRUE, FALSE)
       }
       bare_field_inputs <- rbind(bare_field_inputs, bare_field_inputs_temp)
     }
+    
+    # Previous baseline calculation - deprecated
+    # bare_field_inputs_temp <- data.frame(
+    #   parcel_ID = c(parcel_names[i]), 
+    #   scenario = c('baseline') )
+    # bare_field_parcel <- cbind(bare_field_inputs_temp, soil_cover_data %>%
+    #                              filter(pedo_climatic_area == farm_EnZ) %>%
+    #                              select(-country,-pedo_climatic_area))
+    # bare_field_inputs <- rbind( bare_field_inputs, bare_field_data )
+    
   }
+  
+  # Baseline set equal to year0
+  bare_field_baseline <- bare_field_inputs %>% filter(scenario == 'year0') %>%
+    mutate(scenario = 'baseline')
+  bare_field_inputs <- rbind(bare_field_inputs, bare_field_baseline)
+    
   return(bare_field_inputs)
 }
 
 get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_factors, get_grazing_estimates, total_grazing_table){
 
-  crop_inputs = data.frame(scenario = c(), parcel_ID = c(), crop = c(), harvest = c(), 
+  crop_inputs <- data.frame(scenario = c(), parcel_ID = c(), crop = c(), harvest = c(), 
                            grazing = c(), residue = c(),  agb_peak = c())
+  parcel_names <- landUseSummaryOrPractices[[1]]$parcelName
+    
   for (j in c(0:10)){ # years
     year_str <- paste0('year', j)
     year_chosen = landUseSummaryOrPractices[[1]][[year_str]]
-    for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
+    for (i in c(1:length(parcel_names))){
       # we exclude holistic grazing compatible land-uses (no pasture efficiency coef will be used in crop inputs)
       if (year_chosen$landUseType[i]=="Arablecrops"){
         # creating the data frame storing monthly yield and residue
@@ -613,7 +629,7 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
         if (!(dryOrFresh %in% c("Dry", "Fresh"))){
           log4r::info(my_logger, 
                       paste0("WARNING: dryOrFresh value not found for parcel ",
-                             landUseSummaryOrPractices[[1]]$parcelName[i],
+                             parcel_names[i],
                              " for year ", j,". Assuming: Dry."))
           dryOrFresh <- "Dry"
         }
@@ -632,7 +648,7 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
             grazing = sum(new.as_numeric((crop_monthly)$grazing))
             residue = sum((crop_monthly)$residue)
             crop_inputs_temp <-data.frame(scenario = c(year_str),
-                                          parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]),
+                                          parcel_ID = c(parcel_names[i]),
                                           crop = crop_chosen,
                                           harvest = harvest, 
                                           grazing = grazing, 
@@ -647,7 +663,7 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
             grazing = sum(new.as_numeric((other_monthly)$grazing))
             residue = sum((other_monthly)$residue)
             crop_inputs_temp <- data.frame(scenario = c(year_str),
-                                           parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]),
+                                           parcel_ID = c(parcel_names[i]),
                                            # assumed to be "generic grass" if no cash crop
                                            crop = "Non-N-fixing dry forages",# SHOULD WE DIFFERENTIATE PRODUCTIVE FALLOW AND COVER CROPS ?
                                            harvest = harvest, 
@@ -894,7 +910,9 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
     dry_harvest = c(), dry_agb_peak = c(), pasture_efficiency = c()
   )
   
-  for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
+  parcel_names <- landUseSummaryOrPractices[[1]]$parcelName
+  
+  for (i in c(1:length(parcel_names))){
     
     year0_is_AMP <- landUseSummaryOrPractices[[1]][['year0']]$adaptiveMultiPaddockGrazing[i]
     if(is.na(year0_is_AMP)) {year0_is_AMP <- FALSE} # Workaround if value is missing. Should not be allowed. To be enforced at data collection.
@@ -1008,7 +1026,7 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
         }
         
         pasture_df_temp <- data.frame(scenario = c(paste0('year',j)),
-                                      parcel_ID = landUseSummaryOrPractices[[1]]$parcelName[i], 
+                                      parcel_ID = parcel_names[i], 
                                       grass = "Generic grasses",
                                       perennial_frac = AMP_years_current * 0.02,
                                       n_fixing_frac = 0, # WARNING: TO BE AUTOMATED FOR CO2-EMISSION BALANCE 
@@ -1026,7 +1044,7 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
         if (!(dryOrFresh %in% c("Dry", "Fresh"))){
           log4r::info(my_logger, 
                       paste0("WARNING: dryOrFresh value not found for parcel ",
-                             landUseSummaryOrPractices[[1]]$parcelName[i],
+                             parcel_names[i],
                              " for year ", j,". Assuming Fresh."))
           dryOrFresh <- "Fresh"
           }
@@ -1051,12 +1069,13 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
 get_soil_inputs = function(landUseSummaryOrPractices, soilAnalysis, soilMapsData){
   # takes landUseSummaryOrPractices from farms collection
   # extracts parcels input dataframe 
+  parcel_names <- landUseSummaryOrPractices[[1]]$parcelName
   soil_inputs = data.frame(parcel_ID = c(), scenario = c(), clay = c(), irrigation=c())
-  for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
+  for (i in c(1:length(parcel_names))){
     for (j in c(0:10)){
       year_str <- paste0('year', j)
       soil_inputs <- rbind(soil_inputs,data.frame(
-        parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]),
+        parcel_ID = c(parcel_names[i]),
         scenario = c(year_str),
         clay = c(get_clay_content(soilAnalysis, soilMapsData)),
         silt = c(get_silt_content(soilAnalysis, soilMapsData)),
@@ -1067,7 +1086,7 @@ get_soil_inputs = function(landUseSummaryOrPractices, soilAnalysis, soilMapsData
                                      landUseSummaryOrPractices[[1]][[year_str]]$irrigation[i])))))
       if (j==0){
         soil_inputs <- rbind(soil_inputs,data.frame(
-          parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]),
+          parcel_ID = c(parcel_names[i]),
           scenario = c("baseline"),
           clay = c(get_clay_content(soilAnalysis, soilMapsData)),
           silt = c(get_silt_content(soilAnalysis, soilMapsData)),
@@ -1085,12 +1104,13 @@ get_soil_inputs = function(landUseSummaryOrPractices, soilAnalysis, soilMapsData
 get_tilling_inputs = function(landUseSummaryOrPractices, tilling_factors, farm_EnZ){ 
   # takes landUseSummaryOrPractices from farms collection, farm_country (from farmInfo) and tilling factors table
   # extracts tilling inputs dataframe 
+  parcel_names <- landUseSummaryOrPractices[[1]]$parcelName
   tilling_factor = (tilling_factors %>% filter(pedo_climatic_area == farm_EnZ))$tilling_factor
   minimum_tillage_factor = (tilling_factors %>% filter(pedo_climatic_area == farm_EnZ))$minimum_tillage_factor
   tilling_inputs = data.frame(parcel_ID = c(), scenario = c(), tilling_factor = c())
-  for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
+  for (i in c(1:length(parcel_names))){
     tilling_inputs <- rbind(tilling_inputs, data.frame(
-      parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
+      parcel_ID = c(parcel_names[i]), 
       scenario = c('baseline'),
       tilling_factor = c(tilling_factor))) # assumption
     for (j in c(0:10)){
@@ -1098,7 +1118,7 @@ get_tilling_inputs = function(landUseSummaryOrPractices, tilling_factors, farm_E
       year_chosen = landUseSummaryOrPractices[[1]][[year_str]]
       for (k in c(1:12)){
         tilling_inputs <- rbind(tilling_inputs, data.frame(
-          parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
+          parcel_ID = c(parcel_names[i]), 
           scenario = c(year_str),
           tilling_factor = c(ifelse(year_chosen$tillingEvent[i][[1]][[k]]==TRUE, tilling_factor, 
                                     ifelse(year_chosen$minimumTillingEvent[i][[1]][[k]]==TRUE, minimum_tillage_factor, 1)))))
