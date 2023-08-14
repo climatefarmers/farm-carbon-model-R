@@ -8,9 +8,9 @@ call_lca <- function(init_file, farms_everything, farm_EnZ, inputs, factors){
   ## This life cycle analysis function for getting the farm emissions
   ## is meant to be called by passing it the init_file and farm data directly.
   
-  list2env(inputs)
-  list2env(factors)
-  
+  list2env(inputs, envir = environment())
+  list2env(factors, envir = environment())
+
   ## Log start running messages
   log4r::info(my_logger, "run_lca.R started running for all scenario.")
   
@@ -21,12 +21,7 @@ call_lca <- function(init_file, farms_everything, farm_EnZ, inputs, factors){
   source(file.path("emissions_leakage", "results_functions.R"), local = TRUE)
   source(file.path("emissions_leakage", "agroforestry_functions.R"), local = TRUE)
   source(file.path("emissions_leakage", "leakage_functions.R"), local = TRUE)
-  source(file.path("emissions_leakage", "test_functions.R"), local = TRUE)
 
-  fuel_object <- farms_everything$energyUsage
-  livestock <- farms_everything$liveStock
-  landUseSummaryOrPractices = farms_everything$landUse$landUseSummaryOrPractices
-  soilAnalysis <- farms_everything$soilAnalysis
   climate_wet_or_dry <- unique(natural_area_factors$climate_wet_or_dry)
 
   ## Calculation of yearly results
@@ -65,7 +60,7 @@ call_lca <- function(init_file, farms_everything, farm_EnZ, inputs, factors){
     fuel <- co2_fuel_consumption(fuel)
     # add leakage calculations
     leakage <- manure_leakage(amendments)
-    yearly_productivity <- productivity_crops(crop_inputs, scenario_selected, farm_EnZ)
+    yearly_productivity <- productivity_crops(crop_inputs, scenario_selected, farm_EnZ, parcel_inputs)
     productivity_table <- rbind(productivity_table,
                                 get_yearly_productivity_table(productivity_table, crop_inputs, scenario_selected, farm_EnZ))
     # Clean Results 

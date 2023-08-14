@@ -36,10 +36,10 @@ get_monthly_Cinputs_agroforestry <- function (agroforestry_inputs, agroforestry_
                 y = filter(agroforestry_factors,climatic_zone==zone), by = "tree_species", all.x = TRUE) %>% 
     # n_trees removed from input template # mutate (tree_density=ifelse(is.na(tree_density)==FALSE,tree_density,ifelse(is.na(n_trees)==FALSE,n_trees/area,typical_tree_density))) %>%
     # Calculation of c input depending on data availability and dbh
-    mutate (tC_inputs_tree_per_ha_per_year=ifelse(is.na(tree_density)==FALSE & is.na(dbh)==FALSE & is.na(a_bg_over30)==FALSE & is.na(b_bg_over30)==FALSE & is.na(b_bg_below30)==FALSE, 
+    mutate (tC_inputs_tree_per_ha_per_year = ifelse(!is.na(tree_density) & !is.na(dbh) & !is.na(a_bg_over30) & !is.na(b_bg_over30) & !is.na(b_bg_below30), 
                                                   ifelse(dbh>29,tree_density*(a_bg_over30+b_bg_over30*dbh)*C_frac_dry*root_turnover_rate,
                                                          tree_density*(b_bg_below30*dbh**2.5)*C_frac_dry*root_turnover_rate),
-                                                  ifelse(is.na(tree_density)==FALSE & is.na(forest_biomass_kg)==FALSE & is.na(rs_ratio)==FALSE, 
+                                                  ifelse(!is.na(tree_density) & !is.na(forest_biomass_kg) & !is.na(rs_ratio), 
                                                          tree_density*forest_biomass_kg*rs_ratio*C_frac_dry*root_turnover_rate*1e-3,
                                                          paste("Insufficient input data for",tree_species))))
   tC_inputs_per_ha_per_year = sum(as.numeric(trees$tC_inputs_tree_per_ha_per_year))
@@ -51,7 +51,7 @@ get_monthly_Cinputs_agroforestry <- function (agroforestry_inputs, agroforestry_
 get_monthly_Cinputs_pasture <- function (pasture_inputs, pasture_factors, scenario_chosen, parcel){
   if(nrow(pasture_inputs)==0){
     return(0)}
-  dry_annuals <- pasture_factors %>% filter(grasses == 'generic grasses')
+  dry_annuals <- pasture_factors %>% filter(grass == 'generic grasses')
 
   annual_pastures <- 
     merge(x = pasture_inputs, y = filter(pasture_factors, pasture_type == "annual"), by = "grass", all.x = TRUE) %>% 
@@ -73,11 +73,16 @@ get_monthly_Cinputs_pasture <- function (pasture_inputs, pasture_factors, scenar
 
 ### Calculation of crop input: Carbon input from cash crops and cover crops biomass turnover rates
 # YEARLY
-get_monthly_Cinputs_crop <- function (crop_inputs, crop_data, scenario_chosen, parcel, farm_EnZ){
-  if(nrow(crop_inputs)==0){
-    return(0)}
-  crops <- merge(x = filter(crop_inputs, scenario == scenario_chosen & parcel_ID == parcel), 
-                 y = filter(crop_data, pedo_climatic_area == farm_EnZ | is.na(pedo_climatic_area) == TRUE), by = "crop", all.x = TRUE)
+get_monthly_Cinputs_crop <- function (crop_inputs, crop_factors, scenario_chosen, parcel, farm_EnZ){
+  
+  crops <- filter(crop_inputs, scenario == scenario_chosen & parcel_ID == parcel)
+  if(nrow(crops)==0) { return(0) }
+  factors <- filter(crop_factors, pedo_climatic_area == farm_EnZ | is.na(pedo_climatic_area) == TRUE)
+
+  crops <- merge(x = crops, 
+                 y = factors,
+                 by = "crop", all.x = TRUE)
+  
   crops <- crops %>%
     mutate(c_shoot = dry_residue * dry_c) %>%
     mutate(c_root = dry_agb_peak * dry_c * r_s_ratio) %>%

@@ -9,11 +9,11 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   source(file.path("soil", "calc_functions_soil_modelling.R"), local = TRUE)
   source("weather_data_pulling_functions.R", local = TRUE)
   
-  list2env(inputs)
-  list2env(factors)
+  list2env(inputs, envir = environment())
+  list2env(factors, envir = environment())
   
-  landUseSummaryOrPractices = farms_everything$landUse$landUseSummaryOrPractices
-  soilAnalysis = farms_everything$soilAnalysis
+  landUseSummaryOrPractices <- farms_everything$landUse$landUseSummaryOrPractices
+  soilAnalysis <- farms_everything$soilAnalysis
   
   ## Get weather data ---
   # Mean coordinates

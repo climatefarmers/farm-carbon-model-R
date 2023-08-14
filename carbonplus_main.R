@@ -155,7 +155,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   
   source("mongodb_extraction_functions.R", local = TRUE)
   
-  ## Extracting livestock, landUseSummaryOrPractices and soilAnalysis from the farms_everything variable
+  ## Extracting livestock, landUseSummaryOrPractices
   livestock <- farms_everything$liveStock
   landUseSummaryOrPractices <- farms_everything$landUse$landUseSummaryOrPractices
   
@@ -194,6 +194,8 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   methane_factors <- read_csv(file.path("data", "methane_emission_factors.csv"), show_col_types = FALSE) %>%
     filter(climate == natural_area_factors$climate_zone) %>% select(-climate)
   
+  print("Finished reading factors.")
+  
   factors <- list(
     animal_factors = animal_factors,
     crop_factors = crop_factors,
@@ -219,10 +221,9 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   agroforestry_inputs <- get_agroforestry_inputs(landUseSummaryOrPractices)  # Tree biomass turnover
   animal_inputs <- get_animal_inputs(landUseSummaryOrPractices,livestock, parcel_inputs)  # Animal manure
   crop_inputs <- get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, get_grazing_estimates)  # Crops and residues
-  crop_inputs <- get_baseline_crop_inputs(landUseSummaryOrPractices, crop_inputs, crop_factors, my_logger, farm_EnZ)
   pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, pasture_factors, farm_EnZ, total_grazing_table, my_logger, parcel_inputs, get_grazing_estimates)
   fertilizer_inputs <- get_fertilizer_inputs(landUseSummaryOrPractices)
-  fuel_inputs <- get_fuel_inputs(fuel_object)
+  fuel_inputs <- get_fuel_inputs(farms_everything$energyUsage)
   tree_inputs <- get_agroforestry_inputs(landUseSummaryOrPractices)
   
   # Check input data for validity
@@ -246,6 +247,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
     tree_inputs = tree_inputs
   )
   
+  print("Finished extracting inputs.")
   
   ## Running the soil model and emissions calculations -------------------------
   
@@ -260,12 +262,15 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   emissions_detailed <- lca_out[['emissions_detailed']]
   
   productivity <- lca_out[['productivity']]
-  
+  browser()
   soil_results_out <- run_soil_model(init_file=init_file,
-                                     settings=settings,
                                      farms_everything=farms_everything,
                                      farm_EnZ=farm_EnZ,
-                                     inputs=inputs)
+                                     inputs=inputs,
+                                     factors=factors,
+                                     n_runs=n_runs, 
+                                     se_field_carbon_in=se_field_carbon_in
+                                     )
   
   soil_results_yearly <- soil_results_out[[1]]
   

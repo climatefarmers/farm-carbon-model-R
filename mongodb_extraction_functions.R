@@ -595,7 +595,7 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
             monthly_harvest$grazing <- c(1/2 * yearly_grazing_per_ha, rep(0,5), 1/2 * yearly_grazing_per_ha, rep(0,5))
           }
         }
-        
+
         # Check if input values are fresh or dry.
         # Note: the code is not working with fresh plant inputs! Dry fraction in crop factors was wrongly implemented. Air-dry/harvest-dry values should be submitted.
         if (is.na(year_chosen$yieldsResiduesDryOrFresh[i])){
@@ -649,23 +649,14 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
   # Merge with dry factor by crop and correct for moisture content
   crop_inputs <- merge(x = crop_inputs, y = crop_factors %>% select(crop, dry), by = "crop", all.x = TRUE)
   crop_inputs$dry[is.na(crop_inputs$dry)] <- crop_factors$dry[crop_factors$crop == "Other"] # Use option 'Other' if no crop match was found.
-  crop_inputs %>% mutate(
+  crop_inputs <- crop_inputs %>% mutate(
     dry_harvest = harvest * dry,
     dry_grazing = grazing * dry,
     dry_residue = residue * dry,
     dry_agb_peak = agb_peak * dry
     )
   
-  return(crop_inputs)
-}
-
-
-get_baseline_crop_inputs <- function(landUseSummaryOrPractices, crop_inputs, crop_data, my_logger, farm_EnZ){
-  
-  if (nrow(crop_inputs)==0){ # no crops present
-    return(crop_inputs) # returne empty
-  }
-  # Set baseline equal to year0
+  # Set baseline to be equal to year0
   crop_inputs <- rbind(crop_inputs, crop_inputs %>% filter(scenario=='year0') %>% mutate(scenario='baseline'))
   
   return(crop_inputs)
@@ -876,8 +867,8 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
     (grazing_factors %>% filter(pedo_climatic_area==farm_EnZ))$pasture_efficiency_potential_difference
   )
   
-  dw_dry <- pasture_factors %>% filter(grass == 'Generic annual grasses') %>% select(dw_dry)
-  dw_fresh <- pasture_factors %>% filter(grass == 'Generic annual grasses') %>% select(dw_fresh)
+  dw_dry <- (pasture_factors %>% filter(grass == 'Generic annual grasses') %>% select(dw_dry))[[1]]
+  dw_fresh <- (pasture_factors %>% filter(grass == 'Generic annual grasses') %>% select(dw_fresh))[[1]]
   
   pasture_inputs = data.frame(
     scenario = c(), parcel_ID = c(), grass = c(), perennial_frac = c(), 
@@ -1000,14 +991,18 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
                                       pasture_efficiency = pasture_efficiency,
                                       AMP_baseline_factor = AMP_baseline_factor
         )
-        
+
         # Get fresh or dry value.
         dryOrFresh <- year_chosen$yieldsResiduesDryOrFresh[i]
-        if (is.na(dryOrFresh)){
+        if(is.null(dryOrFresh)) dryOrFresh <- NA
+        if (!(dryOrFresh %in% c("Dry", "Fresh"))){
           log4r::info(my_logger, 
-                      paste0("WARNING: dryOrFresh is NA in parcel ", landUseSummaryOrPractices[[1]]$parcelName[i],  " for year ",j,". Assuming Fresh.")
-          ) }
-        
+                      paste0("WARNING: dryOrFresh value not found for parcel ",
+                             landUseSummaryOrPractices[[1]]$parcelName[i],
+                             " for year ", j,". Assuming Fresh."))
+          dryOrFresh <- "Fresh"
+          }
+
         # Correct for moisture content
         if(dryOrFresh == 'Dry') { dw <- dw_dry } else { dw <- dw_fresh }
         
