@@ -544,10 +544,10 @@ get_bareground_inputs = function(landUseSummaryOrPractices, soil_cover_data, far
 
       year_str <- paste0('year', j)
       
-      bare_monthly_reported = landUseSummaryOrPractices[[1]][[year_str]]$bareSoilFallow[i]
+      bare_monthly_reported = landUseSummaryOrPractices[[1]][[year_str]]$bareSoilFallow[i] %>% unlist()
       
       index <- bareground_inputs$parcel_ID == parcel_names[i] & bareground_inputs$year == j
-      
+      browser()
       bareground_inputs <- bareground_inputs %>% mutate(
         bareground = replace(bareground, index, bare_monthly_reported),
         scenario = replace(scenario, index, year_str)
