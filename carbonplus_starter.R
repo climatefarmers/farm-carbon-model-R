@@ -15,15 +15,16 @@ init_file <- fromJSON(file.path(sensitive_data_loc,"init_file.json"))
 
 settings <- list(
   n_runs = 2,
-  se_field_carbon_in=0.10,
-  get_grazing_estimates=TRUE,
-  debug_mode = FALSE, 
+  se_field_carbon_in = 0.0,
+  get_grazing_estimates = TRUE,
+  debug_mode = FALSE,
   save2mongoDB = FALSE,
-  yearX_landuse=1, 
-  yearX_livestock=1, 
-  copy_yearX_to_following_years_landUse=FALSE,
-  copy_yearX_to_following_years_livestock=FALSE,
-  server="dev"  # One of: "prod", dev", "test"
+  copy_yearX_to_following_years_landUse = FALSE,
+  copy_yearX_to_following_years_livestock = FALSE,
+  yearX_landuse = 1,
+  yearX_livestock = 1,
+  server = "dev",  # One of: "prod", "dev", "test"
+  bare_bl_type = "envzone" # One of: "envzone", "reported", "none"
 )
 
 farmIds <- read_csv(file.path(sensitive_data_loc,"farmIds.csv"), show_col_types = FALSE)

@@ -249,6 +249,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
     batch = data.frame(batch)
     
     for(i in c(1:nrow(parcel_inputs))){
+      browser()
       parcel = parcel_inputs$parcel_ID[i]
       farm_frac = parcel_inputs$area[i]/sum(parcel_inputs$area)
       #Select parcel's fixed values
@@ -256,14 +257,14 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
       batch$dr_ratio = ifelse((soil_inputs %>% filter(parcel_ID==parcel))$irrigation==TRUE, dr_ratio_irrigated, dr_ratio_non_irrigated) * batch_coef$dr_ratio
       # choice of scenario = baseline
       batch$field_carbon_in <- (batch_parcel_Cinputs %>% filter (scenario==baseline_chosen & parcel_ID==parcel))$tot_Cinputs
-      batch$bare = as.factor(t(bare_field_inputs %>% filter(scenario==baseline_chosen & parcel_ID==parcel))[c(3:14)])
+      batch$bare = (bare_field_inputs %>% filter(scenario == baseline_chosen & parcel_ID == parcel))$bareground
       batch$tilling_factor = (tilling_inputs %>% filter(scenario==baseline_chosen & parcel_ID==parcel))$tilling_factor
       starting_soil_content = estimate_starting_soil_content(SOC=batch$SOC[1], clay=batch$clay[1]) 
       time_horizon = 1
       C0_df <- calc_carbon_over_time(time_horizon, 
                                      field_carbon_in = rep(batch$field_carbon_in[1], time_horizon), 
                                      dr_ratio = rep(batch$dr_ratio[1], time_horizon), 
-                                     bare = batch$bare, 
+                                     bare = batch$bare,
                                      temp = batch$future_temp, 
                                      precip = batch$future_precip, 
                                      evap = batch$future_evap, 
@@ -280,7 +281,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
       C0_df_mdf <- calc_carbon_over_time(time_horizon, 
                                          field_carbon_in = rep(batch$field_carbon_in[1], time_horizon), 
                                          dr_ratio = rep(batch$dr_ratio[1], time_horizon), 
-                                         bare = batch$bare, 
+                                         bare = batch$bare,
                                          temp = batch$future_temp, 
                                          precip = batch$future_precip, 
                                          evap = batch$future_evap, 
@@ -296,13 +297,13 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
       N_1 = 1 #first year of future modelling
       batch_parcel_Cinputs = parcel_Cinputs %>% mutate(tot_Cinputs=tot_Cinputs*batch_coef$field_carbon_in)
       batch$field_carbon_in <- (batch_parcel_Cinputs %>% filter (scenario==paste("year", N_1, sep="") & parcel_ID==parcel))$tot_Cinputs
-      batch$bare = as.factor(t(bare_field_inputs %>% filter(scenario==paste("year", N_1, sep="") & parcel_ID==parcel))[c(3:14)])
+      batch$bare = (bare_field_inputs %>% filter(scenario == paste("year", N_1, sep="") & parcel_ID == parcel))$bareground
       batch$tilling_factor = (tilling_inputs %>% filter(scenario==paste("year", N_1, sep="") & parcel_ID==parcel))$tilling_factor
       time_horizon = 1
       C0_df_holistic_yearly <- calc_carbon_over_time(time_horizon, 
                                                      field_carbon_in = rep(batch$field_carbon_in[1], time_horizon), 
                                                      dr_ratio = rep(batch$dr_ratio[1], time_horizon), 
-                                                     bare = batch$bare, 
+                                                     bare = batch$bare,
                                                      temp = batch$future_temp, 
                                                      precip = batch$future_precip, 
                                                      evap = batch$future_evap, 
@@ -320,13 +321,13 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
       for (N in c((N_1+1):10)){
         batch_parcel_Cinputs = parcel_Cinputs %>% mutate(tot_Cinputs=tot_Cinputs*batch_coef$field_carbon_in)
         batch$field_carbon_in <- (batch_parcel_Cinputs %>% filter (scenario==paste("year", N, sep="") & parcel_ID==parcel))$tot_Cinputs
-        batch$bare = as.factor(t(bare_field_inputs %>% filter(scenario==paste("year", N, sep="") & parcel_ID==parcel))[c(3:14)])
+        batch$bare = (bare_field_inputs %>% filter(scenario == paste("year", N_1, sep="") & parcel_ID == parcel))$bareground
         batch$tilling_factor = (tilling_inputs %>% filter(scenario==paste("year", N, sep="") & parcel_ID==parcel))$tilling_factor
         time_horizon = 1
         C0_df_holistic_yearly <- calc_carbon_over_time(time_horizon, 
                                                        field_carbon_in = rep(batch$field_carbon_in[1], time_horizon), 
                                                        dr_ratio = rep(batch$dr_ratio[1], time_horizon), 
-                                                       bare = batch$bare, 
+                                                       bare = batch$bare,
                                                        temp = batch$future_temp, 
                                                        precip = batch$future_precip, 
                                                        evap = batch$future_evap, 

@@ -524,44 +524,94 @@ get_animal_inputs = function(landUseSummaryOrPractices,livestock, parcel_inputs)
   return(animal_inputs)
 }
 
-get_bare_field_inputs = function(landUseSummaryOrPractices, soil_cover_data, farm_EnZ){
+get_bareground_inputs = function(landUseSummaryOrPractices, soil_cover_data, farm_EnZ, bare_bl_type){
   # takes landUseSummaryOrPractices from farms collection
-  # extracts bare soil inputs dataframe 
-
-  bare_field_inputs <- c()
+  # extracts bare soil inputs dataframe
+  
   parcel_names <- landUseSummaryOrPractices[[1]]$parcelName
-  for (i in 1:length(parcel_names)){
-    
+  bareground_inputs <- expand_grid(parcel_ID = parcel_names, year = 0:10, month = 1:12)
+  bareground_inputs$bareground <- NA
+  bareground_inputs$scenario <- NA
+
+  bare_monthly_envzone <- soil_cover_data %>% 
+    filter(pedo_climatic_area == farm_EnZ) %>%
+    select(-country,-pedo_climatic_area) %>% slice(1) %>% 
+    unlist(use.names = FALSE)
+  
+  for (i in c(1:length(parcel_names))){
+ 
     for (j in c(0:10)){
+
       year_str <- paste0('year', j)
-      year_chosen <- landUseSummaryOrPractices[[1]][[year_str]]
-      bare_field_inputs_temp <- data.frame(parcel_ID = c(parcel_names[i]), 
-                                          scenario = c(year_str))
-      for (k in c(1:12)){
-        bare_field_inputs_temp[[paste("bare_profile_", k, sep="")]] = ifelse(
-          year_chosen$bareSoilFallow[[i]][[k]]==TRUE, TRUE, FALSE)
-      }
-      bare_field_inputs <- rbind(bare_field_inputs, bare_field_inputs_temp)
+      
+      bare_monthly_reported = landUseSummaryOrPractices[[1]][[year_str]]$bareSoilFallow[i]
+      
+      index <- bareground_inputs$parcel_ID == parcel_names[i] & bareground_inputs$year == j
+      
+      bareground_inputs <- bareground_inputs %>% mutate(
+        bareground = replace(bareground, index, bare_monthly_reported),
+        scenario = replace(scenario, index, year_str)
+      )
     }
     
-    # Previous baseline calculation - deprecated
-    # bare_field_inputs_temp <- data.frame(
-    #   parcel_ID = c(parcel_names[i]), 
-    #   scenario = c('baseline') )
-    # bare_field_parcel <- cbind(bare_field_inputs_temp, soil_cover_data %>%
-    #                              filter(pedo_climatic_area == farm_EnZ) %>%
-    #                              select(-country,-pedo_climatic_area))
-    # bare_field_inputs <- rbind( bare_field_inputs, bare_field_data )
+    if(bare_bl_type=="envzone"){
+      # The baseline bare ground values are set equal to common values for the region
+      bareground_inputs_bl <- bareground_inputs %>% 
+        filter(parcel_ID == parcel_names[i] & year == 0) %>%
+        mutate(scenario = 'baseline', bareground = bare_monthly_envzone)
+      bareground_inputs <- rbind(bareground_inputs, bareground_inputs_bl)
+      
+    } else if(bare_bl_type == "reported") {
+      # The baseline bare ground values are set equal to year 0
+      bareground_inputs_bl <- bareground_inputs %>% 
+        filter(parcel_ID == parcel_names[i] & year == 0) %>%
+        mutate(scenario = 'baseline')
+      bareground_inputs <- rbind(bareground_inputs, bareground_inputs_bl)
+      
+    } else if(bare_bl_type == "none") {
+      # In this case, a baseline is created but all bare ground values are set to false (avoids bare ground effect)
+      bareground_inputs_bl <- bareground_inputs %>% 
+        filter(parcel_ID == parcel_names[i] & year == 0) %>%
+        mutate(scenario = 'baseline')
+      bareground_inputs <- rbind(bareground_inputs, bareground_inputs_bl)
+      bareground_inputs$bareground <- FALSE
+      
+    }
     
   }
-  
-  # Baseline set equal to year0
-  bare_field_baseline <- bare_field_inputs %>% filter(scenario == 'year0') %>%
-    mutate(scenario = 'baseline')
-  bare_field_inputs <- rbind(bare_field_inputs, bare_field_baseline)
-    
-  return(bare_field_inputs)
+
+  return(bareground_inputs)
 }
+
+# Old version
+# get_bareground_inputs = function(landUseSummaryOrPractices, soil_cover_data, farm_EnZ){
+#   # takes landUseSummaryOrPractices from farms collection
+#   # extracts bare soil inputs dataframe 
+# 
+#   bare_field_inputs = data.frame(parcel_ID = c(), scenario = c())
+#   # one column per month
+#   for (k in c(1:12)){
+#     bare_field_inputs[[paste("bare_profile_", k, sep="")]] = c()
+#   }
+#   for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
+#     bare_field_inputs_temp <- data.frame(parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
+#                                          scenario = c('baseline'))
+#     bare_field_inputs <- rbind(bare_field_inputs, cbind(bare_field_inputs_temp, soil_cover_data %>% filter(pedo_climatic_area == farm_EnZ) %>%
+#                                                           select(-country,-pedo_climatic_area)))
+#     for (j in c(0:10)){
+#       year_chosen = landUseSummaryOrPractices[[1]][[paste('year', j, sep="")]]
+#       bare_field_inputs_temp = data.frame(parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
+#                                           scenario = c(paste('year', j, sep="")))
+#       for (k in c(1:12)){
+#         bare_field_inputs_temp[[paste("bare_profile_", k, sep="")]] = ifelse(
+#           year_chosen$bareSoilFallow[[1]][[k]]==TRUE, TRUE, FALSE)
+#       }
+#       bare_field_inputs <- rbind(bare_field_inputs, bare_field_inputs_temp)
+#     }
+#   }
+#   return(bare_field_inputs)
+# }
+
 
 get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_factors, get_grazing_estimates, total_grazing_table){
 

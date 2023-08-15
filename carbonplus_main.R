@@ -23,6 +23,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   # yearX_landuse: setting to 0 will copy baseline
   # yearX_livestock: setting to 0 will copy baseline
   # server: Server to use. One of: "prod", dev", "test"
+  # baregound: How baseline bareground values should be determined: using a regional common practice, using the reported current practice (year0) or setting bareground always to FALSE
   ####################################################################
   
   
@@ -225,7 +226,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   fertilizer_inputs <- get_fertilizer_inputs(landUseSummaryOrPractices)
   fuel_inputs <- get_fuel_inputs(farms_everything$energyUsage)
   tree_inputs <- get_agroforestry_inputs(landUseSummaryOrPractices)
-  bare_field_inputs <- get_bare_field_inputs(landUseSummaryOrPractices, soil_cover_data, farm_EnZ)
+  bare_field_inputs <- get_bareground_inputs(landUseSummaryOrPractices, soil_cover_data, farm_EnZ, bare_bl_type)
 
   # Check input data for validity
   check_animal_data(animal_inputs, animal_factors)
