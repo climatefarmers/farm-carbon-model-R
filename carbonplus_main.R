@@ -23,7 +23,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   # yearX_landuse: setting to 0 will copy baseline
   # yearX_livestock: setting to 0 will copy baseline
   # server: Server to use. One of: "prod", dev", "test"
-  # baregound: How baseline bareground values should be determined: using a regional common practice, using the reported current practice (year0) or setting bareground always to FALSE
+  # bareground: How baseline bare ground values should be determined: "envzone": uses a regional common practice, "reported": uses the reported current practice (year0) or "none": bare ground always FALSE
   ####################################################################
   
   
@@ -355,16 +355,16 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   
   name<-paste0("Results_farm_", farmId)
   
-  graph <- ggplot(data = soil_results_monthly, aes(x = time, y = SOC_farm_mean, colour=scenario)) +
-    geom_line()+
-    #geom_errorbar(aes(ymin=SOC_farm_mean-SOC_farm_sd, ymax=SOC_farm_mean+SOC_farm_sd), width=.1) +
-    scale_color_manual(values = c("darkred","#5CB85C"),labels = c("Modern-day","Holistic"))+
-    theme(legend.position = "bottom")+
-    labs(title = name)+
-    xlab("Time")+
-    ylab("SOC (in tonnes per hectare)")
-  print(graph)
-  
+  # graph <- ggplot(data = soil_results_monthly, aes(x = time, y = SOC_farm_mean, colour=scenario)) +
+  #   geom_line()+
+  #   #geom_errorbar(aes(ymin=SOC_farm_mean-SOC_farm_sd, ymax=SOC_farm_mean+SOC_farm_sd), width=.1) +
+  #   scale_color_manual(values = c("darkred","#5CB85C"),labels = c("Modern-day","Holistic"))+
+  #   theme(legend.position = "bottom")+
+  #   labs(title = name)+
+  #   xlab("Time")+
+  #   ylab("SOC (in tonnes per hectare)")
+  # print(graph)
+  png(filename = paste0(farmId, '_', bare_bl_type, '.png'))
   histogram <- ggplot(yearly_results, aes(x=year, group = 1)) +
     geom_bar(aes(y=CO2eq_soil_mean), stat="identity", fill="#5CB85C", alpha=0.7) +
     geom_errorbar(aes(ymin = CO2eq_soil_mean-1.96*CO2eq_soil_sd,
@@ -373,9 +373,8 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
     geom_bar(aes(y=CO2eq_total), stat="identity", fill="darkred", alpha=0.7) +
     xlab("Time")+
     ylab("Number of certificates issuable (per year)")
-  
   print(histogram)
-  
+  dev.off()
   
   ## End function --------------------------------------------------------------
   return(yearly_results)

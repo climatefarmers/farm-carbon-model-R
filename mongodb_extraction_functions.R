@@ -378,7 +378,7 @@ get_orgamendments_inputs = function(landUseSummaryOrPractices){
             remaining_frac = c(1)))
         }
       }
-      # Hay
+      # Hay. Warning: this used as the value for bale hay/fodder. Should be changed to straw amendments and fodder done separately
       if(!is.na(year_chosen$hayStrawApplication[i])){
         if (year_chosen$hayStrawApplication[i]>=0){
           orgamendments_inputs <- rbind(orgamendments_inputs, data.frame(
@@ -532,54 +532,51 @@ get_bareground_inputs = function(landUseSummaryOrPractices, soil_cover_data, far
   bareground_inputs <- expand_grid(parcel_ID = parcel_names, year = 0:10, month = 1:12)
   bareground_inputs$bareground <- NA
   bareground_inputs$scenario <- NA
-
-  bare_monthly_envzone <- soil_cover_data %>% 
-    filter(pedo_climatic_area == farm_EnZ) %>%
-    select(-country,-pedo_climatic_area) %>% slice(1) %>% 
-    unlist(use.names = FALSE)
   
   for (i in c(1:length(parcel_names))){
- 
+    
     for (j in c(0:10)){
-
+      
       year_str <- paste0('year', j)
       
       bare_monthly_reported = landUseSummaryOrPractices[[1]][[year_str]]$bareSoilFallow[i] %>% unlist()
       
       index <- bareground_inputs$parcel_ID == parcel_names[i] & bareground_inputs$year == j
-      browser()
+      
       bareground_inputs <- bareground_inputs %>% mutate(
         bareground = replace(bareground, index, bare_monthly_reported),
         scenario = replace(scenario, index, year_str)
       )
     }
-    
-    if(bare_bl_type=="envzone"){
-      # The baseline bare ground values are set equal to common values for the region
-      bareground_inputs_bl <- bareground_inputs %>% 
-        filter(parcel_ID == parcel_names[i] & year == 0) %>%
-        mutate(scenario = 'baseline', bareground = bare_monthly_envzone)
-      bareground_inputs <- rbind(bareground_inputs, bareground_inputs_bl)
-      
-    } else if(bare_bl_type == "reported") {
-      # The baseline bare ground values are set equal to year 0
-      bareground_inputs_bl <- bareground_inputs %>% 
-        filter(parcel_ID == parcel_names[i] & year == 0) %>%
-        mutate(scenario = 'baseline')
-      bareground_inputs <- rbind(bareground_inputs, bareground_inputs_bl)
-      
-    } else if(bare_bl_type == "none") {
-      # In this case, a baseline is created but all bare ground values are set to false (avoids bare ground effect)
-      bareground_inputs_bl <- bareground_inputs %>% 
-        filter(parcel_ID == parcel_names[i] & year == 0) %>%
-        mutate(scenario = 'baseline')
-      bareground_inputs <- rbind(bareground_inputs, bareground_inputs_bl)
-      bareground_inputs$bareground <- FALSE
-      
-    }
-    
   }
-
+  
+  bare_monthly_envzone <- soil_cover_data %>% 
+    filter(pedo_climatic_area == farm_EnZ) %>%
+    select(-country,-pedo_climatic_area) %>% slice(1) %>% 
+    unlist(use.names = FALSE)
+    
+  bareground_inputs$bareground_envzone <- bareground_inputs$bareground
+  bareground_inputs$bareground_reported <- bareground_inputs$bareground
+  bareground_inputs$bareground_none <- FALSE
+    
+  bareground_inputs_bl <- bareground_inputs %>% filter(year == 0) %>% mutate(scenario = 'baseline')
+  bareground_inputs <- rbind(bareground_inputs, bareground_inputs_bl)
+    
+  bareground_inputs$bareground_envzone[bareground_inputs$scenario == 'baseline'] <-
+    bare_monthly_envzone
+  
+  if(bare_bl_type=="envzone"){
+    # The baseline bare ground values are set equal to common values for the region
+    bareground_inputs$bareground <- bareground_inputs$bareground_envzone
+  } else if(bare_bl_type == "reported") {
+    # The baseline bare ground values are set equal to year 0
+    bareground_inputs$bareground <- bareground_inputs$bareground_reported
+  } else if(bare_bl_type == "none") {
+    # In this case, a baseline is created but all bare ground values are set to false (avoids bare ground effect)
+    bareground_inputs$bareground <- bareground_inputs$bareground_none
+  }
+  browser()
+  write_csv(x = bareground_inputs[bareground_inputs$year < 3, ], file = "bareground_inputs.csv")
   return(bareground_inputs)
 }
 
