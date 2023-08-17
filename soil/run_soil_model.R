@@ -220,6 +220,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
     
     #Choose randomly one of the two climate scenario
     climate_scenario = ifelse(sample(0:1, 1)==0, 'rcp4.5', 'rcp8.5')
+    if(exists("debug_mode")) {if(debug_mode) climate_scenario <- 'rcp4.5'}
     if (climate_scenario=='rcp4.5'){
       mean_input$future_temp = weather_data$future_temperature_rcp4.5
       mean_input$future_precip = weather_data$future_precipitation_rcp4.5
@@ -249,7 +250,6 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
     batch = data.frame(batch)
     
     for(i in c(1:nrow(parcel_inputs))){
-      browser()
       parcel = parcel_inputs$parcel_ID[i]
       farm_frac = parcel_inputs$area[i]/sum(parcel_inputs$area)
       #Select parcel's fixed values
