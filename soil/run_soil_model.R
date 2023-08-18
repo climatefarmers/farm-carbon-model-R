@@ -1,4 +1,4 @@
-run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factors, n_runs, se_field_carbon_in){ 
+run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factors, settings){ 
   
   ## Log starting run message
   log4r::info(my_logger, "run_soil_model.R started running")
@@ -14,14 +14,13 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   ## Get weather data ---
   # Mean coordinates
   latlon_farm <- c(latitude = mean(inputs$parcel_inputs$latitude), longitude = mean(inputs$parcel_inputs$longitude))
-  if(exists("debug_mode")) {
-    if(debug_mode){  # will skip fetching climate data and use dummy data if debug_mode is set
-      weather_data <- read_csv(file.path("data", "test_weather_data.csv"), show_col_types = FALSE) # For testing only
-    } else {
-      weather_data=cbind(get_past_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"]), 
-                         get_future_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], scenario="rcp4.5"), 
-                         get_future_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], scenario="rcp8.5"))
-    }
+
+  if(settings$debug_mode){  # will skip fetching climate data and use dummy data if debug_mode is set
+    weather_data <- read_csv(file.path("data", "test_weather_data.csv"), show_col_types = FALSE) # For testing only
+  } else {
+    weather_data=cbind(get_past_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"]), 
+                       get_future_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], scenario="rcp4.5"), 
+                       get_future_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], scenario="rcp8.5"))
   }
   
   ## Soil data ---
@@ -155,7 +154,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   ## Standard deviation for each input
   # Modelling perform several times with different inputs
   # Let's define standard deviation for each input representing extrinsic uncertainty of the model
-  se=data.frame(field_carbon_in=se_field_carbon_in, 
+  se=data.frame(field_carbon_in=settings$se_field_carbon_in, 
                 dr_ratio = 0.025, 
                 temp = 0.025, 
                 precip = 0.025, 
@@ -192,7 +191,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   run_ID = 0
   
   ## Model runs
-  for (n in c(1:n_runs)){
+  for (n in c(1:settings$n_runs)){
     run_ID = run_ID + 1
     all_results_batch <- data.frame(run=c(), parcel_ID=c(), time=c(), SOC=c(), scenario=c(), farm_frac=c())
     farm_results_batch <- data.frame(run=c(), time=c(), SOC_farm=c(), scenario=c())
@@ -212,7 +211,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
     
     #Choose randomly one of the two climate scenario
     climate_scenario = ifelse(sample(0:1, 1)==0, 'rcp4.5', 'rcp8.5')
-    if(exists("debug_mode")) {if(debug_mode) climate_scenario <- 'rcp4.5'}
+    if(settings$debug_mode) climate_scenario <- 'rcp4.5'
     if (climate_scenario=='rcp4.5'){
       mean_input$future_temp = weather_data$future_temperature_rcp4.5
       mean_input$future_precip = weather_data$future_precipitation_rcp4.5
@@ -360,7 +359,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
                                              mutate(yearly_CO2diff=holistic_step_total_CO2-baseline_step_total_CO2)))
     all_results <- rbind(all_results_batch, all_results)
     farm_results <- rbind(farm_results_batch, farm_results)
-    print(paste("Run ", n, "over", n_runs, "done"))
+    print(paste("Run ", n, "over", settings$n_runs, "done"))
     
   } # End of model runs
   

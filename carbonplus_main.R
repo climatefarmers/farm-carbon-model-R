@@ -26,7 +26,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   # bareground: How baseline bare ground values should be determined: "envzone": uses a regional common practice, "reported": uses the reported current practice (year0) or "none": bare ground always FALSE
   ####################################################################
   
-  
+
   ## Loading libraries ---------------------------------------------------------
   
   library(pacman)
@@ -82,13 +82,13 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   }
   
   if(!is.na(farmId)) {
-    if(server == "prod") {
+    if(settings$server == "prod") {
       connection_string = init_file$connection_string_prod
       db <- "carbonplus_production_db"
-    } else if(server == "dev") {
+    } else if(settings$server == "dev") {
       connection_string = init_file$connection_string_cfdev
       db <- "carbonplusdb"
-    } else if(server == "test") {
+    } else if(settings$server == "test") {
       connection_string = init_file$connection_string_test
       db <- "test_server_db"
     } else {stop("Wrong value for variable: server")}
@@ -158,19 +158,19 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   landUseSummaryOrPractices <- farms_everything$landUse$landUseSummaryOrPractices
   
   ## If set, copy data from a specific year to following years (disabled for monitoring / credit issuance runs!)
-  if(!monitoring){
-    if (copy_yearX_to_following_years_landUse == TRUE){
-      for(i in c(yearX_landuse+1:10)){
+  if(!settings$production){
+    if (settings$copy_yearX_to_following_years_landUse == TRUE){
+      for(i in c(settings$yearX_landuse+1:10)){
         landUseSummaryOrPractices[[1]][[paste0("year", i)]] <- 
-          landUseSummaryOrPractices[[1]][[paste0("year", yearX_landuse)]]}
-      log4r::info(my_logger, paste("MODIF: EVERY PARCELS: Data from year", yearX_landuse,
+          landUseSummaryOrPractices[[1]][[paste0("year", settings$yearX_landuse)]]}
+      log4r::info(my_logger, paste("MODIF: EVERY PARCELS: Data from year", settings$yearX_landuse,
                                    "was pasted to every following years", sep=" "))
     }
-    if (copy_yearX_to_following_years_livestock == TRUE){
-      for(i in c(yearX_livestock+1:10)){
+    if (settings$copy_yearX_to_following_years_livestock == TRUE){
+      for(i in c(settings$yearX_livestock+1:10)){
         livestock[["futureManagement"]][[1]][[paste("year",i,sep="")]] <-
-          livestock[["futureManagement"]][[1]][[paste("year",yearX_livestock,sep="")]]}
-      log4r::info(my_logger, paste("MODIF: LIVESTOCK: Data from year", yearX_livestock,
+          livestock[["futureManagement"]][[1]][[paste("year", settings$yearX_livestock,sep="")]]}
+      log4r::info(my_logger, paste("MODIF: LIVESTOCK: Data from year", settings$yearX_livestock,
                                    "was pasted to every following years", sep=" "))
     }    
   }
@@ -221,12 +221,12 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   orgamendments_inputs <- get_orgamendments_inputs(landUseSummaryOrPractices)  # Organic amendments: hay, compost, manure
   agroforestry_inputs <- get_agroforestry_inputs(landUseSummaryOrPractices)  # Tree biomass turnover
   animal_inputs <- get_animal_inputs(landUseSummaryOrPractices,livestock, parcel_inputs)  # Animal manure
-  crop_inputs <- get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, get_grazing_estimates, total_grazing_table)  # Crops and residues
-  pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, pasture_factors, farm_EnZ, total_grazing_table, my_logger, parcel_inputs, get_grazing_estimates)
+  crop_inputs <- get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, settings$get_grazing_estimates, total_grazing_table)  # Crops and residues
+  pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, pasture_factors, farm_EnZ, total_grazing_table, my_logger, parcel_inputs, settings$get_grazing_estimates)
   fertilizer_inputs <- get_fertilizer_inputs(landUseSummaryOrPractices)
   fuel_inputs <- get_fuel_inputs(farms_everything$energyUsage)
   tree_inputs <- get_agroforestry_inputs(landUseSummaryOrPractices)
-  bare_field_inputs <- get_bareground_inputs(landUseSummaryOrPractices, soil_cover_factors, farm_EnZ, bare_bl_type)
+  bare_field_inputs <- get_bareground_inputs(landUseSummaryOrPractices, soil_cover_factors, farm_EnZ, settings$bare_bl_type)
   tilling_inputs <- get_tilling_inputs(landUseSummaryOrPractices, tilling_factors, farm_EnZ)
 
   # Check input data for validity
@@ -273,8 +273,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
                                      farm_EnZ=farm_EnZ,
                                      inputs=inputs,
                                      factors=factors,
-                                     n_runs=n_runs, 
-                                     se_field_carbon_in=se_field_carbon_in
+                                     settings = settings
                                      )
   
   soil_results_yearly <- soil_results_out[[1]]
@@ -297,7 +296,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   
   ## Push results to mongoDB ---------------------------------------------------
   
-  if(save2mongoDB) {
+  if(settings$save2mongoDB) {
     # Get code version and time info
     tag <- system2(command = "git", args = "describe", stdout = TRUE)
     full_tag <- paste0("R-model-version: ", tag)
@@ -341,16 +340,16 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
               '.\nCredits per year (before emission reductions): ', 
               list(yearly_results$CO2eq_soil_final),
               '.\nArea considered: ', round(sum(parcel_inputs$area), 2), ' ha.', 
-              "\nNumber of runs: ", n_runs,
-              ".\nGrazing estimations by CF (Y/N): ", get_grazing_estimates,
+              "\nNumber of runs: ", settings$n_runs,
+              ".\nGrazing estimations by CF (Y/N): ", settings$get_grazing_estimates,
               "\nStandard deviation used for extrinsic uncertainty of practices (Cinputs): ",
-              se_field_carbon_in,
-              ifelse(copy_yearX_to_following_years_landUse==TRUE,
+              settings$se_field_carbon_in,
+              ifelse(settings$copy_yearX_to_following_years_landUse==TRUE,
                      paste("\nWARNING: Duplicated and applied land use from 'year",
-                           yearX_landuse,"' to following years in EVERY parcel.",sep=""),""),
-              ifelse(copy_yearX_to_following_years_livestock==TRUE,
+                           settings$yearX_landuse,"' to following years in EVERY parcel.",sep=""),""),
+              ifelse(settings$copy_yearX_to_following_years_livestock==TRUE,
                      paste("\nWARNING: Duplicated and applied livestock from 'year",
-                           yearX_livestock,"' to ALL following years.",sep=""),""),sep="")
+                           settings$yearX_livestock,"' to ALL following years.",sep=""),""),sep="")
   
   
   ## Plotting ------------------------------------------------------------------
@@ -366,7 +365,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   #   xlab("Time")+
   #   ylab("SOC (in tonnes per hectare)")
   # print(graph)
-  png(filename = paste0(farmId, '_', bare_bl_type, '.png'))
+  png(filename = paste0(farmId, '.png'))
   histogram <- ggplot(yearly_results, aes(x=year, group = 1)) +
     geom_bar(aes(y=CO2eq_soil_mean), stat="identity", fill="#5CB85C", alpha=0.7) +
     geom_errorbar(aes(ymin = CO2eq_soil_mean-1.96*CO2eq_soil_sd,

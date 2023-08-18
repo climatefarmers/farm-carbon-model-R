@@ -25,26 +25,27 @@ settings_testing <- list(
   yearX_livestock = 1,
   server = "dev",  # One of: "prod", "dev", "test"
   bare_bl_type = "reported", # One of: "envzone", "reported", "none". USE REPORTED, NOT ENVZONE!
-  monitoring = TRUE, # Is this a monitoring run? If TRUE, no prediction adjustments are done until curr_monit_year. In particular, AMP projections using pasture_efficiency are deactivated.
-  curr_monit_year = 2  # Current monitoring year: what is the last year for which monitoring data has been updated
+  production = TRUE, # Is this a monitoring run? If TRUE, no prediction adjustments are done until curr_monit_year. In particular, AMP projections using pasture_efficiency are deactivated.
+  curr_monit_year = 2  # Current monitoring year: what is the last year for which monitoring data has been provided
 )
+settings <- settings_testing
 
-settings_production <- list(
-  n_runs = 100,
-  se_field_carbon_in = 0.1,
-  get_grazing_estimates = TRUE,
-  debug_mode = FALSE,
-  save2mongoDB = TRUE,
-  copy_yearX_to_following_years_landUse = FALSE,
-  copy_yearX_to_following_years_livestock = FALSE,
-  yearX_landuse = 1,
-  yearX_livestock = 1,
-  server = "dev",  # One of: "prod", "dev", "test"
-  bare_bl_type = "reported", # One of: "envzone", "reported", "none". USE REPORTED, NOT ENVZONE!
-  monitoring = TRUE, # Is this a monitoring run? If TRUE, no prediction adjustments are done until curr_monit_year. In particular, AMP projections using pasture_efficiency are deactivated.
-  curr_monit_year = 2  # Current monitoring year: what is the last year for which monitoring data has been updated
-)
+## Uncomment block below for production runs ------
+# settings_production <- list(
+#   n_runs = 100,
+#   se_field_carbon_in = 0.1,
+#   get_grazing_estimates = TRUE,
+#   debug_mode = FALSE,
+#   save2mongoDB = TRUE,
+#   server = "dev",  # One of: "prod", "dev", "test"
+#   bare_bl_type = "reported", # One of: "envzone", "reported", "none". USE REPORTED, NOT ENVZONE!
+#   production = TRUE, # Is this a production run? If TRUE, no prediction adjustments are done until curr_monit_year (no AMP adjustments with pasture_efficiency).
+#   curr_monit_year = 2  # Current monitoring year: what is the last year for which monitoring data has been provided
+# )
+# settings <- settings_production
 
+
+## --------------------------------------------------
 # farmIds <- read_csv(file.path(sensitive_data_loc,"farmIds.csv"), show_col_types = FALSE)
 # farmId <- farmIds$farmId[2]
 # farmId <- "a9f9b719-b301-4a7d-a89c-824f73e2c966" # This is a test Id from user Suhas
@@ -71,3 +72,4 @@ farmIds <- c(
 for (farmId in farmIds){
   carbonplus_main(init_file=init_file, settings=settings, farmId=farmId)
 }
+

@@ -10,17 +10,20 @@ library(jsonlite)
 
 source("carbonplus_main.R")
 
-settings <- list(
+settings_testing <- list(
   n_runs = 2,
-  se_field_carbon_in=0.10,
-  get_grazing_estimates=TRUE,
-  debug_mode = FALSE, 
+  se_field_carbon_in = 0.0,
+  get_grazing_estimates = TRUE,
+  debug_mode = TRUE,
   save2mongoDB = FALSE,
-  yearX_landuse=1, 
-  yearX_livestock=1, 
-  copy_yearX_to_following_years_landUse=FALSE,
-  copy_yearX_to_following_years_livestock=FALSE,
-  server="dev"  # One of: "prod", dev", "test"
+  copy_yearX_to_following_years_landUse = FALSE,
+  copy_yearX_to_following_years_livestock = FALSE,
+  yearX_landuse = 1,
+  yearX_livestock = 1,
+  server = "dev",  # One of: "prod", "dev", "test"
+  bare_bl_type = "reported", # One of: "envzone", "reported", "none". USE REPORTED, NOT ENVZONE!
+  monitoring = TRUE, # Is this a monitoring run? If TRUE, no prediction adjustments are done until curr_monit_year. In particular, AMP projections using pasture_efficiency are deactivated.
+  curr_monit_year = 2  # Current monitoring year: what is the last year for which monitoring data has been provided
 )
 
 sensitive_data_loc <- "../sensitive-data"
