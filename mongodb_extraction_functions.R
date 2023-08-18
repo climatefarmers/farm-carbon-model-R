@@ -84,7 +84,7 @@ extract_grazing_amount_parcel_i <- function(landUseSummaryOrPractices, parcel_in
   baleResidue <- new.as_numeric(landUseSummaryOrPractices[[1]][[year_str]]$residueLeftAfterBaleGrazing[parcel_index])/100
   hayStraw <- new.as_numeric(landUseSummaryOrPractices[[1]][[year_str]]$hayStrawApplication[parcel_index])
   
-  if (is.na(isBaleGrazing) | !isBaleGrazing){ # Fernando: remove? If there is hey input than it cannot be FALSE
+  if (is.na(isBaleGrazing) | !isBaleGrazing){ # Fernando: If there is hey input can this be FALSE? 
     bale_grazing <- 0
   } else if (isBaleGrazing){
     bale_grazing = hayStraw * (1 - ifelse(is.na(baleResidue), 0.15, baleResidue))
@@ -116,24 +116,25 @@ get_total_grazing_table <- function(landUseSummaryOrPractices, livestock, animal
     bale_grazing <- 0
     grazing <- 0
     grazing_non_arable_lands <- 0
+    year_chosen <- landUseSummaryOrPractices[[1]][[year_str]]
     
     # Bale grazing from hay application
     for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
       
-      isBaleGrazing <- landUseSummaryOrPractices[[1]][[year_str]]$baleGrazing[i]
-      baleResidue <- new.as_numeric(landUseSummaryOrPractices[[1]][[year_str]]$residueLeftAfterBaleGrazing[i])/100
-      hayStraw <- new.as_numeric(landUseSummaryOrPractices[[1]][[year_str]]$hayStrawApplication[i])
-      landUseType <- landUseSummaryOrPractices[[1]][[year_str]]$landUseType[i]
+      isBaleGrazing <- year_chosen$baleGrazing[i]
+      baleResidue <- new.as_numeric(year_chosen$residueLeftAfterBaleGrazing[i])/100
+      hayStraw <- new.as_numeric(year_chosen$hayStrawApplication[i])
+      landUseType <- year_chosen$landUseType[i]
       
       # Add the bale grazing of all parcels after subtracting residues left on field 
-      if (is.na(isBaleGrazing) | !bale_grazing) { # Fernando: this condition doesn't make sense. If ther was hay put out, then there was bale grazing.
+      if (is.na(isBaleGrazing) | !bale_grazing) { # Fernando: this condition should be revised once straw amendments is separated from hay as fodder.
         bale_grazing <- bale_grazing + 0
       } else if (isBaleGrazing){
         bale_grazing <- bale_grazing + hayStraw * (1 - ifelse(is.na(baleResidue), 0.15, baleResidue)) * parcel_inputs$area[i]
       } 
       
       for (k in c(1:12)){
-        monthlyGrazing <- new.as_numeric(landUseSummaryOrPractices[[1]][[year_str]]$grazingYield[i][[1]][[k]])
+        monthlyGrazing <- new.as_numeric(year_chosen$grazingYield[i][[1]][[k]])
         # grazing yield from monthly grazing yield data
           grazing <- grazing + monthlyGrazing * parcel_inputs$area[i]
           # grazing yield of non-arable land from monthly grazing yield data
@@ -345,63 +346,65 @@ get_orgamendments_inputs = function(landUseSummaryOrPractices){
   # extracts manure application inputs dataframe 
   parcel_names <- landUseSummaryOrPractices[[1]]$parcelName
   orgamendments_inputs = data.frame(parcel_ID = c(), scenario = c(), source = c(), 
-                                 quantity_t_ha = c(), imported_frac = c(), remaining_frac = c())
+                                    quantity_t_ha = c(), imported_frac = c(), remaining_frac = c())
   for (i in c(1:length(parcel_names))){
     for (j in c(0:10)){
       year_str <- paste0('year', j)
       year_chosen = landUseSummaryOrPractices[[1]][[year_str]]
-      if(!is.na(year_chosen$manureApplication[i])){
-        # Manure (animal dung)
-        if (year_chosen$manureApplication[i]>=0){
-          orgamendments_inputs <- rbind(orgamendments_inputs,data.frame(
-            parcel_ID = c(parcel_names[i]), 
-            scenario = c(year_str), 
-            source = c("Other Cattle"), # AN UNFOLDING LIST OF MANURE TYPE MIGHT HAVE TO BE ADDED TO UI
-            quantity_t_ha = c(new.as_numeric(year_chosen$manureApplication[i])), 
-            imported_frac = c(ifelse(is.null(year_chosen$percentManureImported[i]),0,
-                                     ifelse(is.na(year_chosen$percentManureImported[i]),0,
-                                            new.as_numeric(year_chosen$percentManureImported[i])/100))),
-            remaining_frac = c(1)))
-        }
-      }
+      
+      # Data check and correction (should not be necessary: data checks should be done upstream)
+      if(is.na(year_chosen$manureApplication[i] | year_chosen$manureApplication[i] < 0)) { year_chosen$manureApplication[i] <- 0 }
+      if(is.na(year_chosen$compostApplication[i] | year_chosen$compostApplication[i] < 0)) { year_chosen$compostApplication[i] <- 0 }
+      if(is.na(year_chosen$hayStrawApplication[i] | year_chosen$hayStrawApplication[i] < 0)) { year_chosen$hayStrawApplication[i] <- 0 }
+      if(is.null(year_chosen$percentManureImported[i])) {year_chosen$percentManureImported[i] <- 0}
+      if(is.na(year_chosen$percentManureImported[i])) {year_chosen$percentManureImported[i] <- 0}
+      if(is.null(year_chosen$percentCompostImported[i])) {year_chosen$percentCompostImported[i] <- 0}
+      if(is.na(year_chosen$percentCompostImported[i])) {year_chosen$percentCompostImported[i] <- 0}
+      if(is.null(year_chosen$percentageOfHayStrawImported[i])) {year_chosen$percentageOfHayStrawImported[i] <- 0}
+      if(is.na(year_chosen$percentageOfHayStrawImported[i])) {year_chosen$percentageOfHayStrawImported[i] <- 0}
+      if(is.null(year_chosen$baleGrazing[i])) {year_chosen$baleGrazing[i] <- FALSE}
+      if(is.na(year_chosen$baleGrazing[i])) {year_chosen$baleGrazing[i] <- FALSE}
+      if(is.null(year_chosen$residueLeftAfterBaleGrazing[i])) {year_chosen$residueLeftAfterBaleGrazing[i] <- NA}
+      if(is.na(year_chosen$residueLeftAfterBaleGrazing[i])) {year_chosen$residueLeftAfterBaleGrazing[i] <- 15} # 15 is the default % residue left after grazing 
+      
+      # Manure (animal dung)
+      orgamendments_temp <- data.frame(
+        parcel_ID = parcel_names[i], 
+        scenario = year_str, 
+        source = "Other Cattle", # AN UNFOLDING LIST OF MANURE TYPE MIGHT HAVE TO BE ADDED TO UI
+        quantity_t_ha = new.as_numeric(year_chosen$manureApplication[i]),
+        imported_frac = new.as_numeric(year_chosen$percentManureImported[i])/100,
+        remaining_frac = 1
+        )
+      orgamendments_inputs <- rbind(orgamendments_inputs, orgamendments_temp)
+      
       # Compost
-      if(!is.na(year_chosen$compostApplication[i])){
-        if (year_chosen$compostApplication[i]>=0){
-          orgamendments_inputs <- rbind(orgamendments_inputs,data.frame(
-            parcel_ID = c(parcel_names[i]), 
-            scenario = c(year_str), 
-            source = c("Green compost"), # WARNING the fact that compost entry is GREEN compost might have to be specified
-            quantity_t_ha = c(new.as_numeric(year_chosen$compostApplication[i])), 
-            imported_frac = c(ifelse(is.null(year_chosen$percentCompostImported[i]),0,
-                                     ifelse(is.na(year_chosen$percentCompostImported[i]),0,
-                                            new.as_numeric(year_chosen$percentCompostImported[i])/100))),
-            remaining_frac = c(1)))
-        }
-      }
+      orgamendments_temp <- data.frame(
+        parcel_ID = parcel_names[i], 
+        scenario = year_str, 
+        source = "Green compost",
+        quantity_t_ha = new.as_numeric(year_chosen$compostApplication[i]),
+        imported_frac = new.as_numeric(year_chosen$percentCompostImported[i])/100,
+        remaining_frac = 1
+      )
+      orgamendments_inputs <- rbind(orgamendments_inputs, orgamendments_temp)
+      
       # Hay. Warning: this used as the value for bale hay/fodder. Should be changed to straw amendments and fodder done separately
-      if(!is.na(year_chosen$hayStrawApplication[i])){
-        if (year_chosen$hayStrawApplication[i]>=0){
-          orgamendments_inputs <- rbind(orgamendments_inputs, data.frame(
-            parcel_ID = c(parcel_names[i]), 
-            scenario = c(year_str), 
-            source = c("Hay"),
-            quantity_t_ha = c(new.as_numeric(year_chosen$hayStrawApplication[i])), 
-            imported_frac = c(ifelse(is.null(year_chosen$percentageOfHayStrawImported[i]),0,
-                                     ifelse(is.na(year_chosen$percentageOfHayStrawImported[i]),0,
-                                            new.as_numeric(year_chosen$percentageOfHayStrawImported[i])/100))),
-            remaining_frac = c(ifelse(is.null(year_chosen$baleGrazing[i]), 1, # case were variable isn't found
-                                      ifelse(is.na(year_chosen$baleGrazing[i]), 1, # case were variable had no value
-                                             ifelse(year_chosen$baleGrazing[i]==TRUE, # case were baleGrazing happens
-                                                    ifelse(landUseSummaryOrPractices[[1]][[year_str]]$residueLeftAfterBaleGrazing[i]=="10-15", 12.5, # single case hand fix
-                                                           new.as_numeric(landUseSummaryOrPractices[[1]][[year_str]]$residueLeftAfterBaleGrazing[i]))/100,
-                                                    1)))))) #case were no grazing happens meaning it is 100% amended to the soil
-        }
-      }
+      orgamendments_temp <- data.frame(
+        parcel_ID = parcel_names[i], 
+        scenario = year_str, 
+        source = "Hay",
+        quantity_t_ha = new.as_numeric(year_chosen$hayStrawApplication[i]),
+        imported_frac = new.as_numeric(year_chosen$percentageOfHayStrawImported[i])/100,
+        remaining_frac = ifelse(year_chosen$baleGrazing[i], year_chosen$residueLeftAfterBaleGrazing[i]/100, 1)
+      )
+      orgamendments_inputs <- rbind(orgamendments_inputs, orgamendments_temp)
+      
     }
   }
   orgamendments_inputs <- rbind(orgamendments_inputs, orgamendments_inputs%>%
-                               filter(scenario=='year0')%>%
-                               mutate(scenario='baseline')) # Manure addition baseline is based on previous years
+                                  filter(scenario=='year0')%>%
+                                  mutate(scenario='baseline')) # Manure addition baseline is based on previous years
   return(orgamendments_inputs)
 }
 
