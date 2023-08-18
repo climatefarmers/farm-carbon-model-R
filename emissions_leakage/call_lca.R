@@ -7,9 +7,6 @@
 call_lca <- function(init_file, farms_everything, farm_EnZ, inputs, factors){
   ## This life cycle analysis function for getting the farm emissions
   ## is meant to be called by passing it the init_file and farm data directly.
-  
-  list2env(inputs, envir = environment())
-  list2env(factors, envir = environment())
 
   ## Log start running messages
   log4r::info(my_logger, "run_lca.R started running for all scenario.")
@@ -22,7 +19,7 @@ call_lca <- function(init_file, farms_everything, farm_EnZ, inputs, factors){
   source(file.path("emissions_leakage", "agroforestry_functions.R"), local = TRUE)
   source(file.path("emissions_leakage", "leakage_functions.R"), local = TRUE)
 
-  climate_wet_or_dry <- unique(natural_area_factors$climate_wet_or_dry)
+  climate_wet_or_dry <- unique(factors$natural_area_factors$climate_wet_or_dry)
 
   ## Calculation of yearly results
   # Preparation of data frames
@@ -31,23 +28,23 @@ call_lca <- function(init_file, farms_everything, farm_EnZ, inputs, factors){
   productivity_table = data.frame(year = c(), crop = c(), productivity = c())
   
   years <- seq(0,10) # year sequence
-  scenarios <- c("baseline",paste0("year", c(1:10)))
+  scenarios <- c("baseline", paste0("year", c(1:10)))
   
   # merge in factors into lca data
   for (i in years){
     scenario_selected <- scenarios[i+1]
-    animals <- merge(filter(animal_inputs, scenario==scenario_selected), animal_factors, by = "species", all.x = TRUE)
-    animals <- merge(animals, methane_factors, by = c("species" = "species", "grazing_management" = "grazing_management", "productivity" = "productivity"), all.x = TRUE)
-    n_fixing_species_crop <- merge(filter(crop_inputs, scenario==scenario_selected), crop_factors, by = "crop", all.x = TRUE)
-    n_fixing_species_crop <- merge(n_fixing_species_crop, parcel_inputs, by = "parcel_ID", all.x = TRUE)
-    #n_fixing_species_pasture <- merge(filter(pasture_inputs, scenario==scenario_selected), pasture_factors, by = "grass", all.x = TRUE)
-    #n_fixing_species_pasture <- merge(n_fixing_species_pasture, parcel_inputs, by = "parcel_ID", all.x = TRUE)
-    fertilizers <- merge(filter(fertilizer_inputs, scenario==scenario_selected), fertilizer_factors, by = "fertilizer_type", all.x = TRUE)
-    if(nrow(fuel_inputs)>0){
-      fuel <- merge(filter(fuel_inputs, scenario==scenario_selected), fuel_factors, by = "fuel_type", all.x = TRUE)
-    }else{fuel<-data.frame(fuel_inputs)}
-    amendments <- merge(filter(orgamendments_inputs, scenario==scenario_selected), manure_factors, by = "source", all.x = TRUE)
-    amendments <- merge(filter(amendments, scenario==scenario_selected), parcel_inputs, by = "parcel_ID", all.x = TRUE)
+    animals <- merge(filter(inputs$animal_inputs, scenario==scenario_selected), factors$animal_factors, by = "species", all.x = TRUE)
+    animals <- merge(animals, factors$methane_factors, by = c("species" = "species", "grazing_management" = "grazing_management", "productivity" = "productivity"), all.x = TRUE)
+    n_fixing_species_crop <- merge(filter(inputs$crop_inputs, scenario==scenario_selected), factors$crop_factors, by = "crop", all.x = TRUE)
+    n_fixing_species_crop <- merge(n_fixing_species_crop, inputs$parcel_inputs, by = "parcel_ID", all.x = TRUE)
+    #n_fixing_species_pasture <- merge(filter(inputs$pasture_inputs, scenario==scenario_selected), factors$pasture_factors, by = "grass", all.x = TRUE)
+    #n_fixing_species_pasture <- merge(n_fixing_species_pasture, inputs$parcel_inputs, by = "parcel_ID", all.x = TRUE)
+    fertilizers <- merge(filter(inputs$fertilizer_inputs, scenario==scenario_selected), factors$fertilizer_factors, by = "fertilizer_type", all.x = TRUE)
+    if(nrow(inputs$fuel_inputs)>0){
+      fuel <- merge(filter(inputs$fuel_inputs, scenario==scenario_selected), factors$fuel_factors, by = "fuel_type", all.x = TRUE)
+    }else{fuel<-data.frame(inputs$fuel_inputs)}
+    amendments <- merge(filter(inputs$orgamendments_inputs, scenario==scenario_selected), factors$manure_factors, by = "source", all.x = TRUE)
+    amendments <- merge(filter(amendments, scenario==scenario_selected), inputs$parcel_inputs, by = "parcel_ID", all.x = TRUE)
     # Run through calculations
     fertilizers <- n2o_fertilizer(fertilizers, ef_fertilizer = 0.011) 
     animals<- ch4_enteric_fermentation(animals)
@@ -60,9 +57,9 @@ call_lca <- function(init_file, farms_everything, farm_EnZ, inputs, factors){
     fuel <- co2_fuel_consumption(fuel)
     # add leakage calculations
     leakage <- manure_leakage(amendments)
-    yearly_productivity <- productivity_crops(crop_inputs, scenario_selected, farm_EnZ, parcel_inputs)
+    yearly_productivity <- productivity_crops(inputs$crop_inputs, scenario_selected, farm_EnZ, inputs$parcel_inputs)
     productivity_table <- rbind(productivity_table,
-                                get_yearly_productivity_table(productivity_table, crop_inputs, scenario_selected, farm_EnZ))
+                                get_yearly_productivity_table(productivity_table, inputs$crop_inputs, scenario_selected, farm_EnZ))
     # Clean Results 
     if (nrow(fertilizers) > 0){
       fertilizer_results <- fertilizers %>% select(fertilizer_type, n2o_fertilizer)} else {
@@ -100,7 +97,7 @@ call_lca <- function(init_file, farms_everything, farm_EnZ, inputs, factors){
       filter(!is.na(value)) %>% 
       mutate(gas = substr(source,1,3),
              source = substr(source, 5, nchar(source))) %>% 
-      left_join(co2eq_factors, by = "gas") %>% 
+      left_join(factors$co2eq_factors, by = "gas") %>% 
       mutate(kgCO2_eq = co2eq_factor * value)
     all_results$scenario_selected=scenario_selected
     all_results$year = i

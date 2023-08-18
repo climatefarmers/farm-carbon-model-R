@@ -9,15 +9,11 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   source(file.path("soil", "calc_functions_soil_modelling.R"), local = TRUE)
   source("weather_data_pulling_functions.R", local = TRUE)
   
-  list2env(inputs, envir = environment())
-  list2env(factors, envir = environment())
-  
   landUseSummaryOrPractices <- farms_everything$landUse$landUseSummaryOrPractices
-  soilAnalysis <- farms_everything$soilAnalysis
-  
+
   ## Get weather data ---
   # Mean coordinates
-  latlon_farm <- c(latitude = mean(parcel_inputs$latitude), longitude = mean(parcel_inputs$longitude))
+  latlon_farm <- c(latitude = mean(inputs$parcel_inputs$latitude), longitude = mean(inputs$parcel_inputs$longitude))
   if(exists("debug_mode")) {
     if(debug_mode){  # will skip fetching climate data and use dummy data if debug_mode is set
       weather_data <- read_csv(file.path("data", "test_weather_data.csv"), show_col_types = FALSE) # For testing only
@@ -40,11 +36,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
                             silt=mean(silt_df$`silt_5-15cm_mean`)/10, silt_Q0.05=mean(silt_df$`silt_5-15cm_Q0.05`)/10, silt_Q0.95=mean(silt_df$`silt_5-15cm_Q0.95`)/10, 
                             bulk_density=mean(bdod_df$`bdod_5-15cm_mean`)/100, bdod_Q0.05=mean(bdod_df$`bdod_5-15cm_Q0.05`)/100, bdod_Q0.95=mean(bdod_df$`bdod_5-15cm_Q0.95`)/100)# waiting for values from soil maps
   # Final soil inputs
-  soil_inputs <- get_soil_inputs(landUseSummaryOrPractices, soilAnalysis, soilMapsData)
-  
-  ## Tilling inputs
-  tilling_inputs <- get_tilling_inputs(landUseSummaryOrPractices, tilling_factors, farm_EnZ)
-  
+  soil_inputs <- get_soil_inputs(landUseSummaryOrPractices, farms_everything$soilAnalysis, soilMapsData)
   
   ################# Calculations of C inputs per parcel and scenario
   
@@ -61,17 +53,17 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   
   # load("parcel_Cinputs.RData")  # for testing only
   
-  scenarios <- c(do.call(paste0, expand_grid("year", 1:10)), baseline_chosen)
+  scenarios <- c(baseline_chosen, paste0("year", c(1:10)))
 
-  for(parcel in unique(parcel_inputs$parcel_ID)){
+  for(parcel in unique(inputs$parcel_inputs$parcel_ID)){
     
     for(scenario in scenarios){
       
-      orgamendments_Cinputs <- get_monthly_Cinputs_orgamendments(orgamendments_inputs, manure_factors, scenario, parcel)
-      agroforestry_Cinputs <- 0 # get_monthly_Cinputs_agroforestry(agroforestry_inputs, agroforestry_factors, scenario, parcel, lat_farmer) # TREES NOT COUNTED BEFORE GOOD CHECK OF DATA QUALITY
-      animal_Cinputs <- get_monthly_Cinputs_animals(animal_inputs, animal_factors, scenario, parcel)
-      crop_Cinputs <- get_monthly_Cinputs_crop(crop_inputs, crop_factors, scenario, parcel, farm_EnZ)
-      pasture_Cinputs <- get_monthly_Cinputs_pasture(pasture_inputs, pasture_factors, scenario, parcel)
+      orgamendments_Cinputs <- get_monthly_Cinputs_orgamendments(inputs$orgamendments_inputs, factors$manure_factors, scenario, parcel)
+      agroforestry_Cinputs <- 0 # get_monthly_Cinputs_agroforestry(inputs$agroforestry_inputs, factors$agroforestry_factors, scenario, parcel, lat_farmer) # TREES NOT COUNTED BEFORE GOOD CHECK OF DATA QUALITY
+      animal_Cinputs <- get_monthly_Cinputs_animals(inputs$animal_inputs, factors$animal_factors, scenario, parcel)
+      crop_Cinputs <- get_monthly_Cinputs_crop(inputs$crop_inputs, factors$crop_factors, scenario, parcel, farm_EnZ)
+      pasture_Cinputs <- get_monthly_Cinputs_pasture(inputs$pasture_inputs, factors$pasture_factors, scenario, parcel)
       
       parcel_Cinputs_temp <- data.frame(parcel_ID = parcel, 
                                         scenario = scenario, 
@@ -96,7 +88,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   ################# Calculations of additional C inputs compared to baseline per parcel and scenario -- Fernando: NOT USED FURTHER IN CODE!
   
   parcel_Cinputs_addition = merge(x= parcel_Cinputs, 
-                                  y= parcel_inputs %>% 
+                                  y= inputs$parcel_inputs %>% 
                                     select(parcel_ID, area) %>%
                                     mutate(farm_frac= paste(round(area/sum(area)*100), '%')), by="parcel_ID") %>% 
     group_by(parcel_ID, farm_frac) %>% 
@@ -113,7 +105,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   ## Calculation of total c inputs for the whole farm -- Fernando: NOT BEING USED FURTHER IN CODE!
   # Sum over all parcels
   yearly_Cinputs_farm = merge(x= parcel_Cinputs, 
-                              y= parcel_inputs, 
+                              y= inputs$parcel_inputs, 
                               by="parcel_ID") %>%
     group_by(scenario) %>%
     summarise(tot_Cinputs=sum(tot_Cinputs*area), 
@@ -134,9 +126,9 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   mean_bulk_density = mean(soil_inputs$bulk_density)
   
   ## Pulling DMP/RPM ratios from different kind of land use in corresponding pedoclimatic area 
-  dr_ratio_agroforestry = unique(natural_area_factors$dr_ratio_agroforestry)
-  dr_ratio_non_irrigated = unique(natural_area_factors$dr_ratio_non_irrigated)
-  dr_ratio_irrigated = unique(natural_area_factors$dr_ratio_irrigated)
+  dr_ratio_agroforestry = unique(factors$natural_area_factors$dr_ratio_agroforestry)
+  dr_ratio_non_irrigated = unique(factors$natural_area_factors$dr_ratio_non_irrigated)
+  dr_ratio_irrigated = unique(factors$natural_area_factors$dr_ratio_irrigated)
   
   ## Building a mean input dataframe to feed RothC
   # Mean value for each model input parameter
@@ -249,16 +241,16 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
                      tilling_factor = mean_input$tilling_factor*batch_coef$tilling_factor)
     batch = data.frame(batch)
     
-    for(i in c(1:nrow(parcel_inputs))){
-      parcel = parcel_inputs$parcel_ID[i]
-      farm_frac = parcel_inputs$area[i]/sum(parcel_inputs$area)
+    for(i in c(1:nrow(inputs$parcel_inputs))){
+      parcel = inputs$parcel_inputs$parcel_ID[i]
+      farm_frac = inputs$parcel_inputs$area[i]/sum(inputs$parcel_inputs$area)
       #Select parcel's fixed values
       batch_parcel_Cinputs = parcel_Cinputs %>% mutate(tot_Cinputs=tot_Cinputs*batch_coef$field_carbon_in)
       batch$dr_ratio = ifelse((soil_inputs %>% filter(parcel_ID==parcel))$irrigation==TRUE, dr_ratio_irrigated, dr_ratio_non_irrigated) * batch_coef$dr_ratio
       # choice of scenario = baseline
       batch$field_carbon_in <- (batch_parcel_Cinputs %>% filter (scenario==baseline_chosen & parcel_ID==parcel))$tot_Cinputs
-      batch$bare = (bare_field_inputs %>% filter(scenario == baseline_chosen & parcel_ID == parcel))$bareground
-      batch$tilling_factor = (tilling_inputs %>% filter(scenario==baseline_chosen & parcel_ID==parcel))$tilling_factor
+      batch$bare = (inputs$bare_field_inputs %>% filter(scenario == baseline_chosen & parcel_ID == parcel))$bareground
+      batch$tilling_factor = (inputs$tilling_inputs %>% filter(scenario==baseline_chosen & parcel_ID==parcel))$tilling_factor
       starting_soil_content = estimate_starting_soil_content(SOC=batch$SOC[1], clay=batch$clay[1]) 
       time_horizon = 1
       C0_df <- calc_carbon_over_time(time_horizon, 
@@ -297,8 +289,8 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
       N_1 = 1 #first year of future modelling
       batch_parcel_Cinputs = parcel_Cinputs %>% mutate(tot_Cinputs=tot_Cinputs*batch_coef$field_carbon_in)
       batch$field_carbon_in <- (batch_parcel_Cinputs %>% filter (scenario==paste("year", N_1, sep="") & parcel_ID==parcel))$tot_Cinputs
-      batch$bare = (bare_field_inputs %>% filter(scenario == paste("year", N_1, sep="") & parcel_ID == parcel))$bareground
-      batch$tilling_factor = (tilling_inputs %>% filter(scenario==paste("year", N_1, sep="") & parcel_ID==parcel))$tilling_factor
+      batch$bare = (inputs$bare_field_inputs %>% filter(scenario == paste("year", N_1, sep="") & parcel_ID == parcel))$bareground
+      batch$tilling_factor = (inputs$tilling_inputs %>% filter(scenario==paste("year", N_1, sep="") & parcel_ID==parcel))$tilling_factor
       time_horizon = 1
       C0_df_holistic_yearly <- calc_carbon_over_time(time_horizon, 
                                                      field_carbon_in = rep(batch$field_carbon_in[1], time_horizon), 
@@ -321,8 +313,8 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
       for (N in c((N_1+1):10)){
         batch_parcel_Cinputs = parcel_Cinputs %>% mutate(tot_Cinputs=tot_Cinputs*batch_coef$field_carbon_in)
         batch$field_carbon_in <- (batch_parcel_Cinputs %>% filter (scenario==paste("year", N, sep="") & parcel_ID==parcel))$tot_Cinputs
-        batch$bare = (bare_field_inputs %>% filter(scenario == paste("year", N_1, sep="") & parcel_ID == parcel))$bareground
-        batch$tilling_factor = (tilling_inputs %>% filter(scenario==paste("year", N, sep="") & parcel_ID==parcel))$tilling_factor
+        batch$bare = (inputs$bare_field_inputs %>% filter(scenario == paste("year", N_1, sep="") & parcel_ID == parcel))$bareground
+        batch$tilling_factor = (inputs$tilling_inputs %>% filter(scenario==paste("year", N, sep="") & parcel_ID==parcel))$tilling_factor
         time_horizon = 1
         C0_df_holistic_yearly <- calc_carbon_over_time(time_horizon, 
                                                        field_carbon_in = rep(batch$field_carbon_in[1], time_horizon), 
@@ -363,8 +355,8 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
                                                       year=year_temp, 
                                                       baseline_step_SOC_per_hectare=step_baseline, 
                                                       holistic_step_SOC_per_hectare=step_holistic, 
-                                                      baseline_step_total_CO2=step_baseline*sum(parcel_inputs$area) * 44 / 12, 
-                                                      holistic_step_total_CO2=step_holistic*sum(parcel_inputs$area) * 44 / 12) %>%
+                                                      baseline_step_total_CO2=step_baseline*sum(inputs$parcel_inputs$area) * 44 / 12, 
+                                                      holistic_step_total_CO2=step_holistic*sum(inputs$parcel_inputs$area) * 44 / 12) %>%
                                              mutate(yearly_CO2diff=holistic_step_total_CO2-baseline_step_total_CO2)))
     all_results <- rbind(all_results_batch, all_results)
     farm_results <- rbind(farm_results_batch, farm_results)
