@@ -60,7 +60,6 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
       
       scenario <- paste0("year", year)
       if(year == 0) scenario <- baseline_chosen
-      
       orgamendments_Cinputs <- get_monthly_Cinputs_orgamendments(inputs$orgamendments_inputs, factors$manure_factors, scenario, parcel)
       agroforestry_Cinputs <- 0 # get_monthly_Cinputs_agroforestry(inputs$agroforestry_inputs, factors$agroforestry_factors, scenario, parcel, lat_farmer) # TREES NOT COUNTED BEFORE GOOD CHECK OF DATA QUALITY
       animal_Cinputs <- get_monthly_Cinputs_animals(inputs$animal_inputs, factors$animal_factors, scenario, parcel)
@@ -78,7 +77,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
       parcel_Cinputs<-rbind(parcel_Cinputs, parcel_Cinputs_temp)
     }
   }
-  
+
   parcel_Cinputs <- parcel_Cinputs %>% mutate(tot_Cinputs = orgamendments_Cinputs + agroforestry_Cinputs + animal_Cinputs + crop_Cinputs + pasture_Cinputs)
   
   if (length(apply(is.na(parcel_Cinputs), 2, which))==0){
@@ -344,7 +343,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
                                                                scenario=c(rep("baseline", 132), rep("holistic", 132)), 
                                                                farm_frac=rep(farm_frac, 264))) #, C0_df_baseline$TOT#, rep("current", 120)
     }
-    
+
     farm_results_batch <- data.frame(unique(all_results_batch %>% group_by(time, scenario) %>% mutate(SOC_farm=sum(SOC * farm_frac)) %>% select(run, time, scenario, SOC_farm)))
     months <- format(farm_results_batch$time, format="%m")
     step_in_results <- farm_results_batch[months==12, ]  # SOC content at end of year (December, month 12) is selected.
@@ -365,7 +364,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
     print(paste("Run ", n, "over", settings$n_runs, "done"))
     
   } # End of model runs
-  
+
   ## Final data frames by taking the average over the runs
   # Results of soc and co2 per year
   step_in_table_final <- step_in_table %>% group_by(year) %>% 
@@ -395,14 +394,6 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
               SOC_farm_sd=sd(SOC_farm)) %>%
     select(time, scenario, SOC_farm_mean, SOC_farm_sd)
   
-  ## Write out land use type
-  write.csv(landUseType, file.path("logs", 
-                                   paste("landUseType_", 
-                                         farms_everything$farmInfo$farmManagerFirstName, 
-                                         farms_everything$farmInfo$farmManagerLastName, 
-                                         ".csv", sep="")
-  ), row.names = FALSE)
-  
   
   if (length(apply(is.na(step_in_table_final), 2, which))==0){
     log4r::info(my_logger, 'soil_run_model.R calculations ran smoothly.', sep=" ")
@@ -412,5 +403,6 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   
   return(list(step_in_table_final=step_in_table_final, 
               farm_results_final=farm_results_final, 
-              all_results_final=all_results_final))
+              all_results_final=all_results_final,
+              parcel_Cinputs=parcel_Cinputs))
 }
