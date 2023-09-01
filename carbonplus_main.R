@@ -92,8 +92,8 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
       connection_string = init_file$connection_string_test
       db <- "test_server_db"
     } else {stop("Wrong value for variable: server")}
-    # farms_collection = mongo(collection="farms", db=db, url=connection_string)
-    farms_collection = mongo(collection="farms_backups", db=db, url=connection_string)
+    farms_collection = mongo(collection="farms", db=db, url=connection_string)
+    # farms_collection = mongo(collection="farms_backups", db=db, url=connection_string)
     farms_everything = farms_collection$find(paste('{"farmInfo.farmId":"',farmId,'"}',sep=""))
   }
   
@@ -353,15 +353,12 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   
   ## Write output to files -----------------------------------------------------
   
-  file_append <- paste0(
-    '_',
-    farms_everything$farmInfo$farmManagerFirstName,
-    farms_everything$farmInfo$farmManagerLastName, 
-    ".csv"
-    )
-  
+  file_append <- paste0('_', farms_everything$farmInfo$farmManagerLastName, 
+                        # farms_everything$farmInfo$farmManagerFirstName
+                        '_', farmId, ".csv")
+
   write_csv(landUseType, file.path("logs", paste0("landUseType", file_append)))
-  write_csv(soil_results_out['parcel_Cinputs'], file.path("logs", paste0("parcel_Cinputs", file_append)))
+  write_csv(soil_results_out$parcel_Cinputs, file.path("logs", paste0("parcel_Cinputs", file_append)))
   write_csv(yearly_results, file.path("logs", paste0("yearly_results", file_append)))
   
   
