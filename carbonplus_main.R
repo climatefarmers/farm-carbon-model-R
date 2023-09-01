@@ -93,6 +93,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
       db <- "test_server_db"
     } else {stop("Wrong value for variable: server")}
     farms_collection = mongo(collection="farms", db=db, url=connection_string)
+    # farms_collection = mongo(collection="farms_backups", db=db, url=connection_string)
     farms_everything = farms_collection$find(paste('{"farmInfo.farmId":"',farmId,'"}',sep=""))
   }
   
@@ -158,22 +159,21 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   landUseSummaryOrPractices <- farms_everything$landUse$landUseSummaryOrPractices
   
   ## If set, copy data from a specific year to following years (disabled for monitoring / credit issuance runs!)
-  if(!settings$production){
-    if (settings$copy_yearX_to_following_years_landUse == TRUE){
-      for(i in c(settings$yearX_landuse+1:10)){
-        landUseSummaryOrPractices[[1]][[paste0("year", i)]] <- 
-          landUseSummaryOrPractices[[1]][[paste0("year", settings$yearX_landuse)]]}
-      log4r::info(my_logger, paste("MODIF: EVERY PARCELS: Data from year", settings$yearX_landuse,
-                                   "was pasted to every following years", sep=" "))
-    }
-    if (settings$copy_yearX_to_following_years_livestock == TRUE){
-      for(i in c(settings$yearX_livestock+1:10)){
-        livestock[["futureManagement"]][[1]][[paste("year",i,sep="")]] <-
-          livestock[["futureManagement"]][[1]][[paste("year", settings$yearX_livestock,sep="")]]}
-      log4r::info(my_logger, paste("MODIF: LIVESTOCK: Data from year", settings$yearX_livestock,
-                                   "was pasted to every following years", sep=" "))
-    }    
+
+  if (settings$copy_yearX_to_following_years_landUse == TRUE){
+    for(i in c(settings$yearX_landuse+1:10)){
+      landUseSummaryOrPractices[[1]][[paste0("year", i)]] <- 
+        landUseSummaryOrPractices[[1]][[paste0("year", settings$yearX_landuse)]]}
+    log4r::info(my_logger, paste("MODIF: EVERY PARCELS: Data from year", settings$yearX_landuse,
+                                 "was pasted to every following years", sep=" "))
   }
+  if (settings$copy_yearX_to_following_years_livestock == TRUE){
+    for(i in c(settings$yearX_livestock+1:10)){
+      livestock[["futureManagement"]][[1]][[paste("year",i,sep="")]] <-
+        livestock[["futureManagement"]][[1]][[paste("year", settings$yearX_livestock,sep="")]]}
+    log4r::info(my_logger, paste("MODIF: LIVESTOCK: Data from year", settings$yearX_livestock,
+                                 "was pasted to every following years", sep=" "))
+  }    
 
 
   ## Reading in calculation factors from csv files
@@ -356,16 +356,17 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   
   name<-paste0("Results_farm_", farmId)
   
-  # graph <- ggplot(data = soil_results_monthly, aes(x = time, y = SOC_farm_mean, colour=scenario)) +
-  #   geom_line()+
-  #   #geom_errorbar(aes(ymin=SOC_farm_mean-SOC_farm_sd, ymax=SOC_farm_mean+SOC_farm_sd), width=.1) +
-  #   scale_color_manual(values = c("darkred","#5CB85C"),labels = c("Modern-day","Holistic"))+
-  #   theme(legend.position = "bottom")+
-  #   labs(title = name)+
-  #   xlab("Time")+
-  #   ylab("SOC (in tonnes per hectare)")
-  # print(graph)
-  png(filename = paste0(farmId, '.png'))
+  graph <- ggplot(data = soil_results_monthly, aes(x = time, y = SOC_farm_mean, colour=scenario)) +
+    geom_line()+
+    #geom_errorbar(aes(ymin=SOC_farm_mean-SOC_farm_sd, ymax=SOC_farm_mean+SOC_farm_sd), width=.1) +
+    scale_color_manual(values = c("darkred","#5CB85C"),labels = c("Modern-day","Holistic"))+
+    theme(legend.position = "bottom")+
+    labs(title = name)+
+    xlab("Time")+
+    ylab("SOC (in tonnes per hectare)")
+  print(graph)
+  
+  # png(filename = paste0(farmId, '.png'))
   histogram <- ggplot(yearly_results, aes(x=year, group = 1)) +
     geom_bar(aes(y=CO2eq_soil_mean), stat="identity", fill="#5CB85C", alpha=0.7) +
     geom_errorbar(aes(ymin = CO2eq_soil_mean-1.96*CO2eq_soil_sd,
@@ -375,7 +376,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
     xlab("Time")+
     ylab("Number of certificates issuable (per year)")
   print(histogram)
-  dev.off()
+  # dev.off()
   
   ## End function --------------------------------------------------------------
   return(yearly_results)
