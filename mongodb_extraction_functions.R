@@ -1139,6 +1139,9 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
     }
   }
   
+  # Set baseline to be equal to year0
+  pasture_inputs <- rbind(pasture_inputs, pasture_inputs %>% filter(scenario=='year0') %>% mutate(scenario='baseline'))
+  
   return(pasture_inputs)
 }
 
