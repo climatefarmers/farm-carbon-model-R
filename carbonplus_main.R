@@ -92,8 +92,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
       connection_string = init_file$connection_string_test
       db <- "test_server_db"
     } else {stop("Wrong value for variable: server")}
-    farms_collection = mongo(collection="farms", db=db, url=connection_string)
-    # farms_collection = mongo(collection="farms_backups", db=db, url=connection_string)
+    farms_collection = mongo(collection="farms", db=db, url=connection_string) # farms_collection = mongo(collection="farms_backups", db=db, url=connection_string) 
     farms_everything = farms_collection$find(paste('{"farmInfo.farmId":"',farmId,'"}',sep=""))
   }
   
@@ -353,13 +352,11 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   
   ## Write output to files -----------------------------------------------------
   
-  file_append <- paste0('_', farms_everything$farmInfo$farmManagerLastName, 
-                        # farms_everything$farmInfo$farmManagerFirstName
-                        '_', farmId, ".csv")
+  file_prefix <- paste0(farmId, "_", farms_everything$farmInfo$farmManagerLastName, '_') # farms_everything$farmInfo$farmManagerFirstName
 
-  write_csv(landUseType, file.path("logs", paste0("landUseType", file_append)))
-  write_csv(soil_results_out$parcel_Cinputs, file.path("logs", paste0("parcel_Cinputs", file_append)))
-  write_csv(yearly_results, file.path("logs", paste0("yearly_results", file_append)))
+  write_csv(landUseType, file.path("logs", paste0(file_prefix, "landUseType", ".csv")))
+  write_csv(soil_results_out$parcel_Cinputs, file.path("logs", paste0( file_prefix, "parcel_Cinputs", ".csv")))
+  write_csv(yearly_results, file.path("logs", paste0(file_prefix, "yearly_results", ".csv")))
   
   
   ## Plotting ------------------------------------------------------------------
@@ -375,8 +372,8 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
     xlab("Time")+
     ylab("SOC (in tonnes per hectare)")
   print(graph)
-  
-  # png(filename = paste0(farmId, '.png'))
+
+  png(filename = file.path('logs', paste0(farmId, '.png')))
   histogram <- ggplot(yearly_results, aes(x=year, group = 1)) +
     geom_bar(aes(y=CO2eq_soil_mean), stat="identity", fill="#5CB85C", alpha=0.7) +
     geom_errorbar(aes(ymin = CO2eq_soil_mean-1.96*CO2eq_soil_sd,
@@ -386,7 +383,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
     xlab("Time")+
     ylab("Number of certificates issuable (per year)")
   print(histogram)
-  # dev.off()
+  dev.off()
   
   ## End function --------------------------------------------------------------
   return(yearly_results)
