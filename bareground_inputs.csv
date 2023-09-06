@@ -1,0 +1,1393 @@
+parcel_ID,year,month,bareground,scenario,bareground_envzone,bareground_reported,bareground_none
+Llanos 2,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 2,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 2,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 2,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 2,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 2,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 2,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 2,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 2,0,9,TRUE,year0,TRUE,TRUE,FALSE
+Llanos 2,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 2,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 2,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 2,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 2,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 2,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 2,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 2,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 2,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 2,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 2,1,8,TRUE,year1,TRUE,TRUE,FALSE
+Llanos 2,1,9,TRUE,year1,TRUE,TRUE,FALSE
+Llanos 2,1,10,TRUE,year1,TRUE,TRUE,FALSE
+Llanos 2,1,11,TRUE,year1,TRUE,TRUE,FALSE
+Llanos 2,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 2,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 2,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 2,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 2,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 2,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 2,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 2,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 2,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 2,2,9,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 2,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 2,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 2,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Cortijo,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Cortijo,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Cortijo,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Cortijo,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Cortijo,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Cortijo,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Cortijo,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Cortijo,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Cortijo,0,9,TRUE,year0,TRUE,TRUE,FALSE
+Cortijo,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Cortijo,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Cortijo,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Cortijo,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Cortijo,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Cortijo,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Cortijo,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Cortijo,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Cortijo,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Cortijo,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Cortijo,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Cortijo,1,9,FALSE,year1,FALSE,FALSE,FALSE
+Cortijo,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Cortijo,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Cortijo,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Cortijo,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Cortijo,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Cortijo,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Cortijo,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Cortijo,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Cortijo,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Cortijo,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Cortijo,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Cortijo,2,9,FALSE,year2,FALSE,FALSE,FALSE
+Cortijo,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Cortijo,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Cortijo,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Linde Antonio / Habas,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Linde Antonio / Habas,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Linde Antonio / Habas,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Linde Antonio / Habas,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Linde Antonio / Habas,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Linde Antonio / Habas,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Linde Antonio / Habas,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Linde Antonio / Habas,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Linde Antonio / Habas,0,9,TRUE,year0,TRUE,TRUE,FALSE
+Linde Antonio / Habas,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Linde Antonio / Habas,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Linde Antonio / Habas,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Linde Antonio / Habas,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Linde Antonio / Habas,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Linde Antonio / Habas,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Linde Antonio / Habas,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Linde Antonio / Habas,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Linde Antonio / Habas,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Linde Antonio / Habas,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Linde Antonio / Habas,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Linde Antonio / Habas,1,9,FALSE,year1,FALSE,FALSE,FALSE
+Linde Antonio / Habas,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Linde Antonio / Habas,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Linde Antonio / Habas,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Linde Antonio / Habas,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Linde Antonio / Habas,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Linde Antonio / Habas,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Linde Antonio / Habas,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Linde Antonio / Habas,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Linde Antonio / Habas,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Linde Antonio / Habas,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Linde Antonio / Habas,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Linde Antonio / Habas,2,9,FALSE,year2,FALSE,FALSE,FALSE
+Linde Antonio / Habas,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Linde Antonio / Habas,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Linde Antonio / Habas,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Linde Ventillas,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Linde Ventillas,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Linde Ventillas,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Linde Ventillas,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Linde Ventillas,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Linde Ventillas,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Linde Ventillas,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Linde Ventillas,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Linde Ventillas,0,9,TRUE,year0,TRUE,TRUE,FALSE
+Linde Ventillas,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Linde Ventillas,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Linde Ventillas,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Linde Ventillas,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Linde Ventillas,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Linde Ventillas,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Linde Ventillas,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Linde Ventillas,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Linde Ventillas,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Linde Ventillas,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Linde Ventillas,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Linde Ventillas,1,9,FALSE,year1,FALSE,FALSE,FALSE
+Linde Ventillas,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Linde Ventillas,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Linde Ventillas,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Linde Ventillas,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Linde Ventillas,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Linde Ventillas,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Linde Ventillas,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Linde Ventillas,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Linde Ventillas,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Linde Ventillas,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Linde Ventillas,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Linde Ventillas,2,9,FALSE,year2,FALSE,FALSE,FALSE
+Linde Ventillas,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Linde Ventillas,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Linde Ventillas,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 1,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 1,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 1,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 1,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 1,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 1,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 1,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 1,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 1,0,9,TRUE,year0,TRUE,TRUE,FALSE
+Llanos 1,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 1,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 1,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 1,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 1,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 1,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 1,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 1,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 1,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 1,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 1,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 1,1,9,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 1,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 1,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 1,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 1,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 1,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 1,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 1,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 1,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 1,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 1,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 1,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 1,2,9,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 1,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 1,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 1,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,0,9,TRUE,year0,TRUE,TRUE,FALSE
+Comedero Alberizas / Sacrificio,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,1,9,TRUE,year1,TRUE,TRUE,FALSE
+Comedero Alberizas / Sacrificio,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,2,9,TRUE,year2,TRUE,TRUE,FALSE
+Comedero Alberizas / Sacrificio,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Alberizas,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Alberizas,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Alberizas,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Alberizas,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Alberizas,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Alberizas,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Alberizas,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Alberizas,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Alberizas,0,9,TRUE,year0,TRUE,TRUE,FALSE
+Alberizas,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Alberizas,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Alberizas,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Alberizas,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Alberizas,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Alberizas,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Alberizas,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Alberizas,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Alberizas,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Alberizas,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Alberizas,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Alberizas,1,9,FALSE,year1,FALSE,FALSE,FALSE
+Alberizas,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Alberizas,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Alberizas,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Alberizas,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Alberizas,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Alberizas,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Alberizas,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Alberizas,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Alberizas,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Alberizas,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Alberizas,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Alberizas,2,9,FALSE,year2,FALSE,FALSE,FALSE
+Alberizas,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Alberizas,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Alberizas,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Las Rosas,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Las Rosas,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Las Rosas,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Las Rosas,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Las Rosas,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Las Rosas,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Las Rosas,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Las Rosas,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Las Rosas,0,9,TRUE,year0,TRUE,TRUE,FALSE
+Las Rosas,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Las Rosas,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Las Rosas,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Las Rosas,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Las Rosas,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Las Rosas,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Las Rosas,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Las Rosas,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Las Rosas,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Las Rosas,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Las Rosas,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Las Rosas,1,9,FALSE,year1,FALSE,FALSE,FALSE
+Las Rosas,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Las Rosas,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Las Rosas,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Las Rosas,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Las Rosas,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Las Rosas,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Las Rosas,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Las Rosas,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Las Rosas,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Las Rosas,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Las Rosas,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Las Rosas,2,9,FALSE,year2,FALSE,FALSE,FALSE
+Las Rosas,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Las Rosas,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Las Rosas,2,12,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,1,FALSE,year0,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,2,FALSE,year0,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,3,FALSE,year0,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,4,FALSE,year0,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,5,FALSE,year0,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,6,FALSE,year0,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,7,FALSE,year0,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,8,FALSE,year0,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,9,TRUE,year0,TRUE,TRUE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,10,FALSE,year0,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,11,FALSE,year0,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,12,FALSE,year0,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",1,1,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",1,2,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",1,3,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",1,4,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",1,5,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",1,6,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",1,7,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",1,8,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",1,9,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",1,10,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",1,11,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",1,12,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",2,1,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",2,2,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",2,3,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",2,4,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",2,5,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",2,6,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",2,7,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",2,8,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",2,9,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",2,10,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",2,11,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",2,12,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,1,FALSE,year0,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,2,FALSE,year0,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,3,FALSE,year0,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,4,FALSE,year0,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,5,FALSE,year0,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,6,FALSE,year0,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,7,FALSE,year0,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,8,FALSE,year0,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,9,TRUE,year0,TRUE,TRUE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,10,FALSE,year0,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,11,FALSE,year0,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,12,FALSE,year0,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",1,1,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",1,2,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",1,3,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",1,4,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",1,5,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",1,6,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",1,7,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",1,8,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",1,9,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",1,10,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",1,11,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",1,12,FALSE,year1,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",2,1,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",2,2,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",2,3,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",2,4,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",2,5,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",2,6,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",2,7,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",2,8,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",2,9,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",2,10,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",2,11,FALSE,year2,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",2,12,FALSE,year2,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,9,TRUE,year0,TRUE,TRUE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,1,9,FALSE,year1,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,2,9,FALSE,year2,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,9,FALSE,year0,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,1,9,FALSE,year1,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,2,9,FALSE,year2,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,9,TRUE,year0,TRUE,TRUE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,1,9,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,2,8,TRUE,year2,TRUE,TRUE,FALSE
+Llanos 3 / Trigo Blando Candeal,2,9,TRUE,year2,TRUE,TRUE,FALSE
+Llanos 3 / Trigo Blando Candeal,2,10,TRUE,year2,TRUE,TRUE,FALSE
+Llanos 3 / Trigo Blando Candeal,2,11,TRUE,year2,TRUE,TRUE,FALSE
+Llanos 3 / Trigo Blando Candeal,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,9,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,1,9,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,2,9,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,0,9,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,1,9,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,2,9,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Linde Pajarete,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Linde Pajarete,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Linde Pajarete,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Linde Pajarete,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Linde Pajarete,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Linde Pajarete,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Linde Pajarete,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Linde Pajarete,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Linde Pajarete,0,9,TRUE,year0,TRUE,TRUE,FALSE
+Linde Pajarete,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Linde Pajarete,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Linde Pajarete,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Linde Pajarete,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Linde Pajarete,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Linde Pajarete,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Linde Pajarete,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Linde Pajarete,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Linde Pajarete,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Linde Pajarete,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Linde Pajarete,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Linde Pajarete,1,9,FALSE,year1,FALSE,FALSE,FALSE
+Linde Pajarete,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Linde Pajarete,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Linde Pajarete,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Linde Pajarete,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Linde Pajarete,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Linde Pajarete,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Linde Pajarete,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Linde Pajarete,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Linde Pajarete,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Linde Pajarete,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Linde Pajarete,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Linde Pajarete,2,9,FALSE,year2,FALSE,FALSE,FALSE
+Linde Pajarete,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Linde Pajarete,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Linde Pajarete,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito 2,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito 2,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito 2,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito 2,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito 2,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito 2,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito 2,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito 2,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito 2,0,9,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito 2,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito 2,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito 2,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito 2,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito 2,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito 2,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito 2,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito 2,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito 2,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito 2,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito 2,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito 2,1,9,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito 2,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito 2,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito 2,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito 2,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito 2,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito 2,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito 2,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito 2,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito 2,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito 2,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito 2,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito 2,2,9,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito 2,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito 2,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito 2,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,0,9,TRUE,year0,TRUE,TRUE,FALSE
+Comedero Cortijo / Sacrificio,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,1,9,TRUE,year1,TRUE,TRUE,FALSE
+Comedero Cortijo / Sacrificio,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,2,9,TRUE,year2,TRUE,TRUE,FALSE
+Comedero Cortijo / Sacrificio,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Pasada,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Pasada,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Pasada,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Pasada,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Pasada,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Pasada,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Pasada,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Pasada,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Pasada,0,9,TRUE,year0,TRUE,TRUE,FALSE
+Pasada,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Pasada,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Pasada,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Pasada,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Pasada,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Pasada,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Pasada,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Pasada,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Pasada,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Pasada,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Pasada,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Pasada,1,9,FALSE,year1,FALSE,FALSE,FALSE
+Pasada,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Pasada,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Pasada,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Pasada,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Pasada,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Pasada,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Pasada,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Pasada,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Pasada,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Pasada,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Pasada,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Pasada,2,9,FALSE,year2,FALSE,FALSE,FALSE
+Pasada,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Pasada,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Pasada,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Viuda,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Viuda,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Viuda,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Viuda,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Viuda,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Viuda,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Viuda,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Viuda,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Viuda,0,9,TRUE,year0,TRUE,TRUE,FALSE
+Viuda,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Viuda,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Viuda,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Viuda,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Viuda,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Viuda,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Viuda,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Viuda,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Viuda,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Viuda,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Viuda,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Viuda,1,9,FALSE,year1,FALSE,FALSE,FALSE
+Viuda,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Viuda,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Viuda,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Viuda,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Viuda,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Viuda,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Viuda,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Viuda,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Viuda,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Viuda,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Viuda,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Viuda,2,9,FALSE,year2,FALSE,FALSE,FALSE
+Viuda,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Viuda,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Viuda,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada 2,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada 2,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada 2,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada 2,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada 2,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada 2,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada 2,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada 2,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada 2,0,9,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada 2,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada 2,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada 2,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada 2,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada 2,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada 2,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada 2,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada 2,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada 2,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada 2,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada 2,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada 2,1,9,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada 2,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada 2,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada 2,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada 2,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada 2,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada 2,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada 2,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada 2,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada 2,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada 2,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada 2,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada 2,2,9,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada 2,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada 2,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada 2,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,0,9,TRUE,year0,TRUE,TRUE,FALSE
+Comedero Dorada / Sacrificio,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,1,9,TRUE,year1,TRUE,TRUE,FALSE
+Comedero Dorada / Sacrificio,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,2,9,TRUE,year2,TRUE,TRUE,FALSE
+Comedero Dorada / Sacrificio,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Dorada,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Dorada,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Dorada,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Dorada,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Dorada,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Dorada,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Dorada,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Dorada,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Dorada,0,9,TRUE,year0,TRUE,TRUE,FALSE
+Dorada,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Dorada,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Dorada,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Dorada,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Dorada,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Dorada,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Dorada,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Dorada,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Dorada,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Dorada,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Dorada,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Dorada,1,9,FALSE,year1,FALSE,FALSE,FALSE
+Dorada,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Dorada,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Dorada,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Dorada,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Dorada,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Dorada,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Dorada,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Dorada,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Dorada,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Dorada,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Dorada,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Dorada,2,9,FALSE,year2,FALSE,FALSE,FALSE
+Dorada,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Dorada,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Dorada,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Tornos,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Tornos,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Tornos,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Tornos,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Tornos,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Tornos,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Tornos,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Tornos,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Tornos,0,9,TRUE,year0,TRUE,TRUE,FALSE
+Tornos,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Tornos,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Tornos,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Tornos,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Tornos,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Tornos,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Tornos,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Tornos,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Tornos,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Tornos,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Tornos,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Tornos,1,9,FALSE,year1,FALSE,FALSE,FALSE
+Tornos,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Tornos,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Tornos,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Tornos,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Tornos,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Tornos,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Tornos,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Tornos,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Tornos,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Tornos,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Tornos,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Tornos,2,9,FALSE,year2,FALSE,FALSE,FALSE
+Tornos,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Tornos,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Tornos,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Lenon,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Lenon,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Lenon,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Lenon,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Lenon,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Lenon,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Lenon,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Lenon,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Lenon,0,9,TRUE,year0,TRUE,TRUE,FALSE
+Lenon,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Lenon,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Lenon,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Lenon,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Lenon,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Lenon,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Lenon,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Lenon,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Lenon,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Lenon,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Lenon,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Lenon,1,9,FALSE,year1,FALSE,FALSE,FALSE
+Lenon,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Lenon,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Lenon,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Lenon,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Lenon,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Lenon,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Lenon,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Lenon,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Lenon,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Lenon,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Lenon,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Lenon,2,9,FALSE,year2,FALSE,FALSE,FALSE
+Lenon,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Lenon,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Lenon,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada,0,9,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Monte Dorada,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada,1,9,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Monte Dorada,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada,2,9,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Monte Dorada,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito,0,9,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Monte Chorrito,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito,1,9,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Monte Chorrito,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito,2,9,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Monte Chorrito,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Monte Las Rosas,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Monte Las Rosas,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Monte Las Rosas,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Monte Las Rosas,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Monte Las Rosas,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Monte Las Rosas,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Monte Las Rosas,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Monte Las Rosas,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Monte Las Rosas,0,9,FALSE,year0,FALSE,FALSE,FALSE
+Monte Las Rosas,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Monte Las Rosas,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Monte Las Rosas,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Monte Las Rosas,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Monte Las Rosas,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Monte Las Rosas,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Monte Las Rosas,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Monte Las Rosas,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Monte Las Rosas,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Monte Las Rosas,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Monte Las Rosas,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Monte Las Rosas,1,9,FALSE,year1,FALSE,FALSE,FALSE
+Monte Las Rosas,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Monte Las Rosas,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Monte Las Rosas,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Monte Las Rosas,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Monte Las Rosas,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Monte Las Rosas,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Monte Las Rosas,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Monte Las Rosas,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Monte Las Rosas,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Monte Las Rosas,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Monte Las Rosas,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Monte Las Rosas,2,9,FALSE,year2,FALSE,FALSE,FALSE
+Monte Las Rosas,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Monte Las Rosas,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Monte Las Rosas,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Monte Alberizas,0,1,FALSE,year0,FALSE,FALSE,FALSE
+Monte Alberizas,0,2,FALSE,year0,FALSE,FALSE,FALSE
+Monte Alberizas,0,3,FALSE,year0,FALSE,FALSE,FALSE
+Monte Alberizas,0,4,FALSE,year0,FALSE,FALSE,FALSE
+Monte Alberizas,0,5,FALSE,year0,FALSE,FALSE,FALSE
+Monte Alberizas,0,6,FALSE,year0,FALSE,FALSE,FALSE
+Monte Alberizas,0,7,FALSE,year0,FALSE,FALSE,FALSE
+Monte Alberizas,0,8,FALSE,year0,FALSE,FALSE,FALSE
+Monte Alberizas,0,9,FALSE,year0,FALSE,FALSE,FALSE
+Monte Alberizas,0,10,FALSE,year0,FALSE,FALSE,FALSE
+Monte Alberizas,0,11,FALSE,year0,FALSE,FALSE,FALSE
+Monte Alberizas,0,12,FALSE,year0,FALSE,FALSE,FALSE
+Monte Alberizas,1,1,FALSE,year1,FALSE,FALSE,FALSE
+Monte Alberizas,1,2,FALSE,year1,FALSE,FALSE,FALSE
+Monte Alberizas,1,3,FALSE,year1,FALSE,FALSE,FALSE
+Monte Alberizas,1,4,FALSE,year1,FALSE,FALSE,FALSE
+Monte Alberizas,1,5,FALSE,year1,FALSE,FALSE,FALSE
+Monte Alberizas,1,6,FALSE,year1,FALSE,FALSE,FALSE
+Monte Alberizas,1,7,FALSE,year1,FALSE,FALSE,FALSE
+Monte Alberizas,1,8,FALSE,year1,FALSE,FALSE,FALSE
+Monte Alberizas,1,9,FALSE,year1,FALSE,FALSE,FALSE
+Monte Alberizas,1,10,FALSE,year1,FALSE,FALSE,FALSE
+Monte Alberizas,1,11,FALSE,year1,FALSE,FALSE,FALSE
+Monte Alberizas,1,12,FALSE,year1,FALSE,FALSE,FALSE
+Monte Alberizas,2,1,FALSE,year2,FALSE,FALSE,FALSE
+Monte Alberizas,2,2,FALSE,year2,FALSE,FALSE,FALSE
+Monte Alberizas,2,3,FALSE,year2,FALSE,FALSE,FALSE
+Monte Alberizas,2,4,FALSE,year2,FALSE,FALSE,FALSE
+Monte Alberizas,2,5,FALSE,year2,FALSE,FALSE,FALSE
+Monte Alberizas,2,6,FALSE,year2,FALSE,FALSE,FALSE
+Monte Alberizas,2,7,FALSE,year2,FALSE,FALSE,FALSE
+Monte Alberizas,2,8,FALSE,year2,FALSE,FALSE,FALSE
+Monte Alberizas,2,9,FALSE,year2,FALSE,FALSE,FALSE
+Monte Alberizas,2,10,FALSE,year2,FALSE,FALSE,FALSE
+Monte Alberizas,2,11,FALSE,year2,FALSE,FALSE,FALSE
+Monte Alberizas,2,12,FALSE,year2,FALSE,FALSE,FALSE
+Llanos 2,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Llanos 2,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Llanos 2,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Llanos 2,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Llanos 2,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Llanos 2,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Llanos 2,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Llanos 2,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Llanos 2,0,9,TRUE,baseline,TRUE,TRUE,FALSE
+Llanos 2,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Llanos 2,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Llanos 2,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Cortijo,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Cortijo,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Cortijo,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Cortijo,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Cortijo,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Cortijo,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Cortijo,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Cortijo,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Cortijo,0,9,TRUE,baseline,TRUE,TRUE,FALSE
+Cortijo,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Cortijo,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Cortijo,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Antonio / Habas,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Antonio / Habas,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Antonio / Habas,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Antonio / Habas,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Antonio / Habas,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Antonio / Habas,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Antonio / Habas,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Antonio / Habas,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Linde Antonio / Habas,0,9,TRUE,baseline,TRUE,TRUE,FALSE
+Linde Antonio / Habas,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Linde Antonio / Habas,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Linde Antonio / Habas,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Ventillas,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Ventillas,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Ventillas,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Ventillas,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Ventillas,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Ventillas,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Ventillas,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Ventillas,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Linde Ventillas,0,9,TRUE,baseline,TRUE,TRUE,FALSE
+Linde Ventillas,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Linde Ventillas,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Linde Ventillas,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Llanos 1,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Llanos 1,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Llanos 1,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Llanos 1,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Llanos 1,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Llanos 1,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Llanos 1,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Llanos 1,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Llanos 1,0,9,TRUE,baseline,TRUE,TRUE,FALSE
+Llanos 1,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Llanos 1,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Llanos 1,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,0,9,TRUE,baseline,TRUE,TRUE,FALSE
+Comedero Alberizas / Sacrificio,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Comedero Alberizas / Sacrificio,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Alberizas,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Alberizas,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Alberizas,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Alberizas,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Alberizas,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Alberizas,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Alberizas,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Alberizas,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Alberizas,0,9,TRUE,baseline,TRUE,TRUE,FALSE
+Alberizas,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Alberizas,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Alberizas,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Las Rosas,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Las Rosas,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Las Rosas,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Las Rosas,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Las Rosas,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Las Rosas,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Las Rosas,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Las Rosas,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Las Rosas,0,9,TRUE,baseline,TRUE,TRUE,FALSE
+Las Rosas,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Las Rosas,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Las Rosas,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,1,FALSE,baseline,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,2,FALSE,baseline,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,3,FALSE,baseline,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,4,FALSE,baseline,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,5,FALSE,baseline,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,6,FALSE,baseline,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,7,FALSE,baseline,FALSE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,8,FALSE,baseline,TRUE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,9,TRUE,baseline,TRUE,TRUE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,10,FALSE,baseline,TRUE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,11,FALSE,baseline,TRUE,FALSE,FALSE
+"Altos 4 / Mezcla Cebada, Veza, Avena",0,12,FALSE,baseline,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,1,FALSE,baseline,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,2,FALSE,baseline,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,3,FALSE,baseline,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,4,FALSE,baseline,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,5,FALSE,baseline,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,6,FALSE,baseline,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,7,FALSE,baseline,FALSE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,8,FALSE,baseline,TRUE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,9,TRUE,baseline,TRUE,TRUE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,10,FALSE,baseline,TRUE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,11,FALSE,baseline,TRUE,FALSE,FALSE
+"Altos 3 / Mezcla Cebada, Veza, Avena",0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,9,TRUE,baseline,TRUE,TRUE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Altos 1 / Trigo Duro Recio de Ronda,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,9,FALSE,baseline,TRUE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Altos 2 / Mezcla Forrajera,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,9,TRUE,baseline,TRUE,TRUE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Llanos 3 / Trigo Blando Candeal,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,9,FALSE,baseline,TRUE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Cantera 2 / Lavanda 2021,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Cantera 1 / Lavanda,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Cantera 1 / Lavanda,0,9,FALSE,baseline,TRUE,FALSE,FALSE
+Cantera 1 / Lavanda,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Cantera 1 / Lavanda,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Cantera 1 / Lavanda,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Pajarete,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Pajarete,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Pajarete,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Pajarete,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Pajarete,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Pajarete,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Pajarete,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Linde Pajarete,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Linde Pajarete,0,9,TRUE,baseline,TRUE,TRUE,FALSE
+Linde Pajarete,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Linde Pajarete,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Linde Pajarete,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Chorrito 2,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Chorrito 2,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Chorrito 2,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Chorrito 2,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Chorrito 2,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Chorrito 2,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Chorrito 2,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Chorrito 2,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Chorrito 2,0,9,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Chorrito 2,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Chorrito 2,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Chorrito 2,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,0,9,TRUE,baseline,TRUE,TRUE,FALSE
+Comedero Cortijo / Sacrificio,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Comedero Cortijo / Sacrificio,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Pasada,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Pasada,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Pasada,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Pasada,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Pasada,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Pasada,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Pasada,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Pasada,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Pasada,0,9,TRUE,baseline,TRUE,TRUE,FALSE
+Pasada,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Pasada,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Pasada,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Viuda,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Viuda,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Viuda,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Viuda,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Viuda,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Viuda,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Viuda,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Viuda,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Viuda,0,9,TRUE,baseline,TRUE,TRUE,FALSE
+Viuda,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Viuda,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Viuda,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Dorada 2,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Dorada 2,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Dorada 2,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Dorada 2,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Dorada 2,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Dorada 2,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Dorada 2,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Dorada 2,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Dorada 2,0,9,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Dorada 2,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Dorada 2,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Dorada 2,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Comedero Dorada / Sacrificio,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Comedero Dorada / Sacrificio,0,9,TRUE,baseline,TRUE,TRUE,FALSE
+Comedero Dorada / Sacrificio,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Comedero Dorada / Sacrificio,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Comedero Dorada / Sacrificio,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Dorada,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Dorada,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Dorada,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Dorada,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Dorada,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Dorada,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Dorada,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Dorada,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Dorada,0,9,TRUE,baseline,TRUE,TRUE,FALSE
+Dorada,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Dorada,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Dorada,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Tornos,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Tornos,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Tornos,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Tornos,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Tornos,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Tornos,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Tornos,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Tornos,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Tornos,0,9,TRUE,baseline,TRUE,TRUE,FALSE
+Tornos,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Tornos,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Tornos,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Lenon,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Lenon,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Lenon,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Lenon,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Lenon,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Lenon,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Lenon,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Lenon,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Lenon,0,9,TRUE,baseline,TRUE,TRUE,FALSE
+Lenon,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Lenon,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Lenon,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Dorada,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Dorada,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Dorada,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Dorada,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Dorada,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Dorada,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Dorada,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Dorada,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Dorada,0,9,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Dorada,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Dorada,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Dorada,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Chorrito,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Chorrito,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Chorrito,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Chorrito,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Chorrito,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Chorrito,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Chorrito,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Chorrito,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Chorrito,0,9,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Chorrito,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Chorrito,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Chorrito,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Las Rosas,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Las Rosas,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Las Rosas,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Las Rosas,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Las Rosas,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Las Rosas,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Las Rosas,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Las Rosas,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Las Rosas,0,9,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Las Rosas,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Las Rosas,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Las Rosas,0,12,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Alberizas,0,1,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Alberizas,0,2,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Alberizas,0,3,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Alberizas,0,4,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Alberizas,0,5,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Alberizas,0,6,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Alberizas,0,7,FALSE,baseline,FALSE,FALSE,FALSE
+Monte Alberizas,0,8,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Alberizas,0,9,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Alberizas,0,10,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Alberizas,0,11,FALSE,baseline,TRUE,FALSE,FALSE
+Monte Alberizas,0,12,FALSE,baseline,FALSE,FALSE,FALSE
