@@ -698,20 +698,14 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
         }
 
         # Check if input values are fresh or dry.
-        # Note: the code is not working with fresh plant inputs! Dry fraction in crop factors was wrongly implemented. Air-dry/harvest-dry values are required.
+        # Fresh is now interpreted as weight at harvest. The term should be changed accordingly.
 
         dryOrFresh <- year_chosen$yieldsResiduesDryOrFresh[i]
         if(is.null(dryOrFresh)) dryOrFresh <- NA
         if (!(dryOrFresh %in% c("Dry", "Fresh"))){
           log4r::info(my_logger, 
-                      paste0("WARNING: dryOrFresh value not found for parcel ",
-                             parcel_names[i],
-                             " for year ", j,". Assuming: Dry."))
-          dryOrFresh <- "Dry"
-        }
-        
-        if(dryOrFresh=="Fresh") {
-          stop("Code not working with fresh crop inputs! Air-dried values required.")
+                      paste0("WARNING: dryOrFresh value not found for parcel ", parcel_names[i], " for year ", j,". Assuming: Fresh."))
+          dryOrFresh <- "Fresh"
         }
         
         # case of cash crop with no grazing
@@ -731,7 +725,6 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
                                           residue = residue+grazing * 0.15, 
                                           agb_peak = max(yield_sums)
             )
-            crop_inputs <- rbind(crop_inputs, crop_inputs_temp)
           } else { # crop_chosen = NA, meaning no cash crop
             other_monthly <- monthly_harvest %>% filter(is.na(crop))
             yield_sum <- other_monthly$harvest + other_monthly$grazing + other_monthly$residue
@@ -744,26 +737,29 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
                                            crop = "Non-N-fixing dry forages",# SHOULD WE DIFFERENTIATE PRODUCTIVE FALLOW AND COVER CROPS ?
                                            harvest = harvest, 
                                            grazing = grazing, 
-                                           residue = residue+grazing * 0.15, 
+                                           residue = residue + grazing * 0.15, 
                                            agb_peak = max(yield_sum)
             )
-
-            crop_inputs <- rbind(crop_inputs, crop_inputs_temp)
           }
+          
+          # Merge with dry weight factor by crop and correct for moisture content
+          crop_inputs_temp <- merge(x = crop_inputs_temp, y = crop_factors %>% select(crop, dw_fresh), by = "crop", all.x = TRUE)
+          crop_inputs_temp$dw_fresh[is.na(crop_inputs_temp$dw_fresh)] <- crop_factors$dw_fresh[crop_factors$crop == "Other"] # Using option 'Other' if no crop match was found
+          # Select the dw correction according to dry or fresh variable.
+          if(dryOrFresh=="Dry") {crop_inputs_temp$dw <- 1} else {crop_inputs_temp$dw <- crop_inputs_temp$dw_fresh}
+          crop_inputs_temp <- crop_inputs_temp %>% mutate(
+            dry_harvest = harvest * dw,
+            dry_grazing = grazing * dw,
+            dry_residue = residue * dw,
+            dry_agb_peak = agb_peak * dw
+          )
+          
+          # Merge crop with previous crops 
+          crop_inputs <- rbind(crop_inputs, crop_inputs_temp)
         }
       }
     }
   }
-  
-  # Merge with dry factor by crop and correct for moisture content
-  crop_inputs <- merge(x = crop_inputs, y = crop_factors %>% select(crop, dry), by = "crop", all.x = TRUE)
-  crop_inputs$dry[is.na(crop_inputs$dry)] <- crop_factors$dry[crop_factors$crop == "Other"] # Use option 'Other' if no crop match was found.
-  crop_inputs <- crop_inputs %>% mutate(
-    dry_harvest = harvest * dry,
-    dry_grazing = grazing * dry,
-    dry_residue = residue * dry,
-    dry_agb_peak = agb_peak * dry
-    )
   
   # Set baseline to be equal to year0
   crop_inputs <- rbind(crop_inputs, crop_inputs %>% filter(scenario=='year0') %>% mutate(scenario='baseline'))
@@ -976,8 +972,9 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
     (grazing_factors %>% filter(pedo_climatic_area==farm_EnZ))$pasture_efficiency_potential_difference
   )
   
-  dw_dry <- (pasture_factors %>% filter(grass == 'Generic annual grasses') %>% select(dw_dry))[[1]]
-  dw_fresh <- (pasture_factors %>% filter(grass == 'Generic annual grasses') %>% select(dw_fresh))[[1]]
+  # Dry weight
+  dw_dry <- 1  # dry fraction of fully dehydrated plant material
+  dw_fresh <- (pasture_factors %>% filter(grass == 'Generic annual grasses') %>% select(dw_fresh))[[1]]  # dry fraction of harvest weight
   
   pasture_inputs = data.frame(
     scenario = c(), parcel_ID = c(), grass = c(), perennial_frac = c(), 
@@ -1126,7 +1123,7 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
           }
 
         # Correct for moisture content
-        if(dryOrFresh == 'Dry') { dw <- dw_dry } else { dw <- dw_fresh }
+        if(dryOrFresh == 'Fresh') { dw <- dw_fresh } else { dw <- dw_dry }
         
         pasture_df_temp <- pasture_df_temp %>% mutate(
           dry_harvest = harvest * dw,
