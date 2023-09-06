@@ -48,22 +48,11 @@ n2o_n_fixing_species_crop <- function(
 ){
   if(nrow(n_fixing_species_crop) > 0){ # add pastures and update the crop residue calc function
     n_fixing_species_crop <- n_fixing_species_crop %>% 
-      mutate(agr= ifelse(is.na(dry_residue)==FALSE, dry_residue,
-                         ifelse(is.na(fresh_residue)==FALSE, fresh_residue*dry,
-                                ifelse(is.na(dry_residue)==TRUE & is.na(fresh_residue)==TRUE & is.na(residue_frac)==TRUE,NA,
-                                       ifelse(is.na(dry_yield)==FALSE, dry_yield*residue_frac,
-                                              ifelse(is.na(fresh_yield)==FALSE, fresh_yield*dry*residue_frac,
-                                                     ifelse(is.na(ag_dm_peak)==FALSE, ag_dm_peak*residue_frac,
-                                                            NA)))))),
-             bgr= ifelse(is.na(dry_residue)==FALSE & is.na(dry_yield)==FALSE, (dry_yield+dry_residue)*r_s_ratio,
-                         ifelse(is.na(fresh_residue)==FALSE & is.na(fresh_yield)==FALSE, (fresh_yield+fresh_residue)*dry*r_s_ratio,
-                                ifelse(is.na(residue_frac)==TRUE,NA,
-                                       ifelse(is.na(dry_yield)==FALSE, dry_yield/(1-residue_frac)*r_s_ratio,
-                                              ifelse(is.na(fresh_yield)==FALSE, fresh_yield/(1-residue_frac)*dry*residue_frac*r_s_ratio,
-                                                     ifelse(is.na(ag_dm_peak)==FALSE, ag_dm_peak*r_s_ratio,
-                                                            NA)))))),
-             n2o_n_fixing = (area * n_fixing_frac *(agr * n_ag + bgr * n_bg))* ef_n * (44/28) * 1000)  # 1000 converts t to kg
-  }else{
+      mutate(agr = dry_residue, 
+             bgr = (dry_harvest + dry_residue) * r_s_ratio,
+             n2o_n_fixing = (area * n_fixing_frac * (agr * n_ag + bgr * n_bg)) * ef_n * (44/28) * 1000 # 1000 converts t to kg
+             )
+  } else {
     warning("No n-fixing crop species data provided - or included in project")
   }
   
@@ -77,15 +66,6 @@ n2o_n_fixing_species_pasture <- function(
 ){
   if(nrow(n_fixing_species_pasture) > 0){
     n_fixing_species_pasture <- n_fixing_species_pasture %>%
-      mutate(dry_residual = ifelse(is.na(dry_residual)==FALSE, dry_residual, 
-                                   ifelse(is.na(fresh_residual)==FALSE,fresh_residual*dry,
-                                          NA))) %>%
-      mutate(dry_yield = ifelse(is.na(dry_yield)==FALSE, dry_yield, 
-                                ifelse(is.na(fresh_yield)==FALSE,fresh_yield*dry,
-                                       NA))) %>%
-      mutate(ag_dry_peak = ifelse(is.na(ag_dry_peak)==FALSE, ag_dry_peak, 
-                                  ifelse(is.na(ag_fresh_peak)==FALSE,ag_fresh_peak*dry,
-                                         NA)))
     annual_pastures <- filter(n_fixing_species_pasture, pasture_type=="annual") %>% 
       mutate(n_input_shoot= (dry_residual+dry_yield*0.15)*pasture_efficiency*n_ag) %>%
       mutate(n_input_root= pasture_efficiency*ag_dry_peak*r_s_ratio*n_bg*bg_turnover) %>%

@@ -43,7 +43,10 @@ prep_soil_moisture_factor <- function(
   
   # Calculate effect of coverage
   
-  fCov = ifelse(bare == TRUE, 1, 0.6)
+  # fCov has a strong impact on soil C and bare data carries a lot of uncertainty
+  # This effect is therefore deactivated and a mean value is used.
+  # fCov = ifelse(bare == TRUE, 1, 0.6)
+  fCov = 0.8 
   
   if(length(bare) == 1 & version=="Normal"){
     # Calculate monthly moisture effects

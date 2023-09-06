@@ -24,24 +24,24 @@ get_residue_management_data <- function(pasture_inputs,crop_inputs, parcel_input
 residues = get_residue_management_data(pasture_inputs,crop_inputs, parcel_inputs)
 
 #Project activity: Add manures
-get_manure_data <- function(add_manure_inputs, parcel_inputs) {
+get_manure_data <- function(orgamendments_inputs, parcel_inputs) {
   
   # Needs to be adapted depending on considering dry or fresh residues
-  total_add_manure_table <- left_join(add_manure_inputs, parcel_inputs, by = "parcel_ID")
+  total_orgamendments_table <- left_join(orgamendments_inputs, parcel_inputs, by = "parcel_ID")
   
-  total_add_manure_inputs <- total_add_manure_table %>% filter(quantity_t_ha != 0) %>% group_by(scenario,manure_source) %>% summarise(total_add_manure = sum(quantity_t_ha*area/sum(area)))
-  total_add_manure_area <- total_add_manure_table %>% filter(quantity_t_ha != 0) %>% group_by(scenario,manure_source) %>% summarise(total_area = sum(area))
-  #total_add_manure_inputs <- total_add_manure_inputs %>% mutate(quantity_parcel = quantity_t_ha*area) %>% group_by(scenario,manure_source) %>% summarise(total_add_manure = sum(quantity_t_ha))
-  total_add_manure_import_frac <- total_add_manure_table %>% filter(quantity_t_ha != 0) %>% group_by(scenario,manure_source) %>% summarise(average_imported_fraction= mean(imported_frac))
+  total_orgamendments_inputs <- total_orgamendments_table %>% filter(quantity_t_ha != 0) %>% group_by(scenario,source) %>% summarise(total_orgamendments = sum(quantity_t_ha*area/sum(area)))
+  total_orgamendments_area <- total_orgamendments_table %>% filter(quantity_t_ha != 0) %>% group_by(scenario,source) %>% summarise(total_area = sum(area))
+  #total_orgamendments_inputs <- total_orgamendments_inputs %>% mutate(quantity_parcel = quantity_t_ha*area) %>% group_by(scenario,source) %>% summarise(total_orgamendments = sum(quantity_t_ha))
+  total_orgamendments_import_frac <- total_orgamendments_table %>% filter(quantity_t_ha != 0) %>% group_by(scenario,source) %>% summarise(average_imported_fraction= mean(imported_frac))
   
-  total_add_manure_inputs <- pivot_wider(total_add_manure_inputs, names_from = manure_source, values_from = total_add_manure)
-  total_add_manure_area <- pivot_wider(total_add_manure_area, names_from = manure_source, values_from = total_area)
-  total_add_manure_import_frac <- pivot_wider(total_add_manure_import_frac, names_from = manure_source, values_from = average_imported_fraction)
+  total_orgamendments_inputs <- pivot_wider(total_orgamendments_inputs, names_from = source, values_from = total_orgamendments)
+  total_orgamendments_area <- pivot_wider(total_orgamendments_area, names_from = source, values_from = total_area)
+  total_orgamendments_import_frac <- pivot_wider(total_orgamendments_import_frac, names_from = source, values_from = average_imported_fraction)
   
-  #total_add_manure_area <- pivot_wider(total_add_manure_area,names_from = manure_source, values_from = total_area)
-  total_add_manure_table <- left_join(total_add_manure_inputs,total_add_manure_area, by = "scenario")
-  total_add_manure_table <- left_join(total_add_manure_table,total_add_manure_import_frac, by = "scenario")
-  return(total_add_manure_table)
+  #total_orgamendments_area <- pivot_wider(total_orgamendments_area,names_from = source, values_from = total_area)
+  total_orgamendments_table <- left_join(total_orgamendments_inputs,total_orgamendments_area, by = "scenario")
+  total_orgamendments_table <- left_join(total_orgamendments_table,total_orgamendments_import_frac, by = "scenario")
+  return(total_orgamendments_table)
 
 }
 
@@ -78,9 +78,9 @@ get_cc_yield_list <- function(farmId_list){
           monthly_harvesting_yield$crop = get_monthly_cash_crop(parcel_index = i, year_chosen)
           monthly_harvesting_yield$coverCrop = year_chosen$coverCropMonthlyData[[i]]
           monthly_harvesting_yield$productiveFallow = year_chosen$productiveFallow[[i]]
-          monthly_harvesting_yield$grazing_yield = new.as_numeric(year_chosen$grazingYield[[i]])
-          monthly_harvesting_yield$harvesting_yield = new.as_numeric(year_chosen$harvestYield[[i]])
-          monthly_harvesting_yield$residue_left = new.as_numeric(year_chosen$estimationAfterResidueGrazingHarvest[[i]])
+          monthly_harvesting_yield$grazing_yield = missing_to_zero(year_chosen$grazingYield[[i]])
+          monthly_harvesting_yield$harvesting_yield = missing_to_zero(year_chosen$harvestYield[[i]])
+          monthly_harvesting_yield$residue_left = missing_to_zero(year_chosen$estimationAfterResidueGrazingHarvest[[i]])
           # fresh or dry tOM/ha
           if (is.na(year_chosen$yieldsResiduesDryOrFresh[i])==TRUE){
             dryOrFresh = "Dry"
@@ -93,7 +93,7 @@ get_cc_yield_list <- function(farmId_list){
           for (crop_chosen in unique(monthly_harvesting_yield$crop)){
             if(is.na(crop_chosen)==TRUE){ # crop_chosen = NA, meaning no cash crop
               harvesting_yield = sum((monthly_harvesting_yield %>% filter(is.na(crop)==TRUE))$harvesting_yield)
-              grazing_yield = sum(new.as_numeric((monthly_harvesting_yield %>% filter(is.na(crop)==TRUE))$grazing_yield))
+              grazing_yield = sum(missing_to_zero((monthly_harvesting_yield %>% filter(is.na(crop)==TRUE))$grazing_yield))
               residue_left = sum((monthly_harvesting_yield %>% filter(is.na(crop)==TRUE))$residue_left)
               crop_inputs <- rbind(crop_inputs, 
                                    data.frame(scenario = c(paste('year',j,sep="")),
@@ -107,10 +107,10 @@ get_cc_yield_list <- function(farmId_list){
                                               dry_residue = c(ifelse(dryOrFresh=="Dry", residue_left+grazing_yield*0.15,0)), 
                                               fresh_residue = c(ifelse(dryOrFresh=="Fresh", residue_left+grazing_yield*0.15,0)), 
                                               dry_agb_peak = c(ifelse(dryOrFresh=="Dry", max((monthly_harvesting_yield %>% filter(is.na(crop)==TRUE))$harvesting_yield+
-                                                                                               new.as_numeric((monthly_harvesting_yield %>% filter(is.na(crop)==TRUE))$grazing_yield)+
+                                                                                               missing_to_zero((monthly_harvesting_yield %>% filter(is.na(crop)==TRUE))$grazing_yield)+
                                                                                                (monthly_harvesting_yield %>% filter(is.na(crop)==TRUE))$residue_left),0)), 
                                               fresh_agb_peak = c(ifelse(dryOrFresh=="Fresh",  max((monthly_harvesting_yield %>% filter(is.na(crop)==TRUE))$harvesting_yield+
-                                                                                                    new.as_numeric((monthly_harvesting_yield %>% filter(is.na(crop)==TRUE))$grazing_yield)+
+                                                                                                    missing_to_zero((monthly_harvesting_yield %>% filter(is.na(crop)==TRUE))$grazing_yield)+
                                                                                                     (monthly_harvesting_yield %>% filter(is.na(crop)==TRUE))$residue_left),0))))
             }
           }
