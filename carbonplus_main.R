@@ -216,10 +216,12 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   # Extraction of inputs per parcel and scenario
   parcel_inputs <- get_parcel_inputs(landUseSummaryOrPractices)  # Parcel information
   landUseType <- get_land_use_type(landUseSummaryOrPractices, parcel_inputs)
-  total_grazing_table <- get_total_grazing_table(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs)  # grazing data
+  grazing_tables <- get_total_grazing_table(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs)  # grazing data
+  total_grazing_table <- grazing_tables[[1]]; total_grazing_parcels <- grazing_tables[[2]]
   orgamendments_inputs <- get_orgamendments_inputs(landUseSummaryOrPractices)  # Organic amendments: hay, compost, manure
   agroforestry_inputs <- get_agroforestry_inputs(landUseSummaryOrPractices)  # Tree biomass turnover
-  animal_inputs <- get_animal_inputs(landUseSummaryOrPractices,livestock, parcel_inputs)  # Animal manure
+  browser()
+  animal_inputs <- get_animal_inputs(landUseSummaryOrPractices, livestock, parcel_inputs)  # Animal manure
   crop_inputs <- get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, settings$get_grazing_estimates, total_grazing_table)  # Crops and residues
   pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, pasture_factors, farm_EnZ, total_grazing_table, my_logger, parcel_inputs, settings$get_grazing_estimates)
   fertilizer_inputs <- get_fertilizer_inputs(landUseSummaryOrPractices)
