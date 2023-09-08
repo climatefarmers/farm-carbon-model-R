@@ -667,10 +667,12 @@ get_bareground_inputs = function(landUseSummaryOrPractices, soil_cover_data, far
 
 
 get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_factors, get_grazing_estimates, total_grazing_table){
-
-  crop_inputs <- data.frame(scenario = c(), parcel_ID = c(), crop = c(), harvest = c(), 
-                           grazing = c(), residue = c(),  agb_peak = c())
-  parcel_names <- landUseSummaryOrPractices[[1]]$parcelName
+  browser()
+  year_strings <- paste0("year", 0:10)
+  parcel_names <- parcel_inputs$parcel_ID
+  
+  crop_inputs <- data.frame(expand_grid(scenario = year_strings, parcel_ID = parcel_names, crop = "", harvest = c(), 
+                                        grazing = c(), residue = c(),  agb_peak = c()))
     
   for (j in c(0:10)){ # years
     year_str <- paste0('year', j)
