@@ -230,19 +230,17 @@ get_total_grazing_table <- function(landUseSummaryOrPractices, livestock, animal
       total_grazing_parcels$fodder[ind] <- hayStraw
     }
     
-    total_grazing_parcels = total_grazing_parcels %>% group_by(year) %>%
-      mutate(grazing_calc = grazing_rep
-    )
-    
     ind <- total_grazing_table$scenario == year_str
     total_grazing_table$fodder_eaten_total[ind] <- fodder_eaten
     total_grazing_table$grazing_rep[ind] <- grazing_rep
     total_grazing_table$grazing_non_arable_lands[ind] <- grazing_non_arable_lands
     
-    
+    grazing_calc_year <- total_grazing_table$grazing_calc
+
+    total_grazing_parcels = total_grazing_parcels %>% group_by(year) %>%
+      mutate(grazing_calc = grazing_rep)
   }
   
-
   total_grazing_table = merge(x = total_grazing_table, y = grazing_yearly_calc, by = "scenario", all.x = TRUE)
   
   total_grazing_table = total_grazing_table %>%
@@ -634,7 +632,7 @@ get_bareground_inputs = function(landUseSummaryOrPractices, soil_cover_data, far
     bareground_inputs$bareground <- bareground_inputs$bareground_none
   }
 
-  write_csv(x = bareground_inputs[bareground_inputs$year < 3, ], file = "bareground_inputs.csv")
+  # write_csv(x = bareground_inputs[bareground_inputs$year < 3, ], file = "bareground_inputs.csv") # for debugging
   return(bareground_inputs)
 }
 
