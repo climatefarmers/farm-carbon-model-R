@@ -24,6 +24,7 @@ settings_testing <- list(
   monitoring_run = TRUE, # (NOT YET IMPLEMENTED) TRUE/FALSE. If TRUE, not a prediction run and years after curr_monit_year will be excluded from the output
   curr_monit_year = 2  # Current monitoring year: what is the last project year for which monitoring data has been provided
 )
+settings <- settings_testing
 
 sensitive_data_loc <- "../sensitive-data"
 init_file <- fromJSON(file.path(sensitive_data_loc,"init_file.json"))
