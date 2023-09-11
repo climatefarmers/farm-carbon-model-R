@@ -71,143 +71,156 @@ extract_longitude_landUseSummaryOrPractices <- function(landUseSummaryOrPractice
   return(mean(longitudes))
 }
 
-## Helper function to calculate animal_inputs: extracts total grazing amount
-extract_total_grazing_amount <- function(landUseSummaryOrPractices, year, area){
-  # Takes a landUseSummaryOrPractices from farms collection
-  # Extracts the overall grazing yield and bale grazing yield from the whole farm
-  
-  year_str <- paste0('year', year)
-  bale_grazing <- 0
-  grazing <- 0
-  year_chosen <- landUseSummaryOrPractices[[1]][[year_str]]
-  
-  for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
-    
-    isBaleGrazing <- year_chosen$baleGrazing[i]
-    baleResidue <- missing_to_zero(year_chosen$residueLeftAfterBaleGrazing[i]) / 100
-    hayStraw <- missing_to_zero(year_chosen$hayStrawApplication[i])
-    
-    if (is.na(isBaleGrazing) | !bale_grazing) {
-      bale_grazing = bale_grazing + 0
-    } else if (isBaleGrazing){
-      # Add bale grazing of all parcels after subtracting residues left on field 
-      bale_grazing <- bale_grazing + hayStraw * (1 - ifelse(is.na(baleResidue), 0.15, baleResidue))
-    }
-    
-    for (k in c(1:12)){
-      grazing_month <- missing_to_zero(year_chosen$grazingYield[i][[1]][[k]] )
-      grazing = grazing + grazing_month
-    }
-    
-  }
-  
-  return((bale_grazing + grazing) * area)
-}
+# ## Helper function to calculate animal_inputs: extracts total grazing amount
+# extract_total_grazing_amount <- function(landUseSummaryOrPractices, year, area){
+#   # Takes a landUseSummaryOrPractices from farms collection
+#   # Extracts the overall grazing yield and bale grazing yield from the whole farm
+#   
+#   year_str <- paste0('year', year)
+#   bale_grazing <- 0
+#   grazing <- 0
+#   year_chosen <- landUseSummaryOrPractices[[1]][[year_str]]
+#   
+#   for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
+#     
+#     isBaleGrazing <- year_chosen$baleGrazing[i]
+#     baleResidue <- missing_to_zero(year_chosen$residueLeftAfterBaleGrazing[i]) / 100
+#     hayStraw <- missing_to_zero(year_chosen$hayStrawApplication[i])
+#     
+#     if (is.na(isBaleGrazing) | !bale_grazing) {
+#       bale_grazing = bale_grazing + 0
+#     } else if (isBaleGrazing){
+#       # Add bale grazing of all parcels after subtracting residues left on field 
+#       bale_grazing <- bale_grazing + hayStraw * (1 - ifelse(is.na(baleResidue), 0.15, baleResidue))
+#     }
+#     
+#     for (k in c(1:12)){
+#       grazing_month <- missing_to_zero(year_chosen$grazingYield[i][[1]][[k]] )
+#       grazing = grazing + grazing_month
+#     }
+#     
+#   }
+#   
+#   return((bale_grazing + grazing) * area)
+# }
 
-## Helper function to calculate animal_inputs: extracts grazing amount per parcel 
-extract_grazing_amount_parcel_i <- function(landUseSummaryOrPractices, parcel_index, year, area){
-  #takes a landUseSummaryOrPractices from farms collection and a parcel index i
-  #extracts grazing yield and bale grazing yield from parcel index
-  
-  year_str <- paste0('year', year)
-  
-  isBaleGrazing <- landUseSummaryOrPractices[[1]][[year_str]]$baleGrazing[parcel_index]
-  baleResidue <- missing_to_zero(landUseSummaryOrPractices[[1]][[year_str]]$residueLeftAfterBaleGrazing[parcel_index])/100
-  hayStraw <- missing_to_zero(landUseSummaryOrPractices[[1]][[year_str]]$hayStrawApplication[parcel_index])
-  
-  if (is.na(isBaleGrazing) | !isBaleGrazing){ # Fernando: If there is hay input can this be FALSE? 
-    bale_grazing <- 0
-  } else if (isBaleGrazing){
-    bale_grazing = hayStraw * (1 - ifelse(is.na(baleResidue), 0.15, baleResidue))
-  }
-  
-  grazing = 0
-  for (k in c(1:12)){
-    grazing_month <- missing_to_zero(landUseSummaryOrPractices[[1]][[year_str]]$grazingYield[parcel_index][[1]][[k]])
-    grazing = grazing + grazing_month
-  }
-  return((bale_grazing + grazing) * area)
-}
+# ## Helper function to calculate animal_inputs: extracts grazing amount per parcel 
+# extract_grazing_amount_parcel_i <- function(landUseSummaryOrPractices, parcel_index, year, area){
+#   #takes a landUseSummaryOrPractices from farms collection and a parcel index i
+#   #extracts grazing yield and bale grazing yield from parcel index
+#   
+#   year_str <- paste0('year', year)
+#   
+#   isBaleGrazing <- landUseSummaryOrPractices[[1]][[year_str]]$baleGrazing[parcel_index]
+#   baleResidue <- missing_to_zero(landUseSummaryOrPractices[[1]][[year_str]]$residueLeftAfterBaleGrazing[parcel_index])/100
+#   hayStraw <- missing_to_zero(landUseSummaryOrPractices[[1]][[year_str]]$hayStrawApplication[parcel_index])
+#   
+#   if (is.na(isBaleGrazing) | !isBaleGrazing){ # Fernando: If there is hay input can this be FALSE? 
+#     bale_grazing <- 0
+#   } else if (isBaleGrazing){
+#     bale_grazing = hayStraw * (1 - ifelse(is.na(baleResidue), 0.15, baleResidue))
+#   }
+#   
+#   grazing = 0
+#   for (k in c(1:12)){
+#     grazing_month <- missing_to_zero(landUseSummaryOrPractices[[1]][[year_str]]$grazingYield[parcel_index][[1]][[k]])
+#     grazing = grazing + grazing_month
+#   }
+#   return((bale_grazing + grazing) * area)
+# }
 
-## Helper function to extract total grazing and bale grazing yield from the whole farm over all years
-get_total_grazing_table <- function(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs){
-  # Extracts the overall grazing and fodder (bale) grazing from the whole farm
+get_livestock_table <- function(livestock) {
   
-  year_strings = paste0("year", 0:10)
+  year_strings <- paste0("year", 0:10)
   
-  # Create database holding yearly total grazing numbers
-  total_grazing_table <- data.frame(
-    scenario = year_strings,
-    fodder_eaten = NA,
-    grazing_rep = NA,
-    grazing_calc = NA,
-    grazing_final = NA,
-    grazing_non_arable_lands = NA
+  animals = expand.grid(
+    scenario = year_strings, 
+    species = animal_factors$species, 
+    n_animals = 0, 
+    grazing_days = 0
   )
   
-  ## Get dry weight grazing calculated from animal data ----
-  animals = data.frame(scenario = year_strings, species = NA, n_animals = NA, grazing_days = NA)
-  
-  for (year in c(0:10)){
-    year_str <- paste0('year', year)
-    if(year == 0) {
+  for (y in c(0:10)){
+    year_str <- year_strings[y+1]
+    if(y == 0) {
       livestock_scenario = livestock[["currentManagement"]][[1]]
     } else {
       livestock_scenario = livestock[["futureManagement"]][[1]][[year_str]] 
     }
+    n_animals <- missing_to_zero(livestock_scenario$numberOfHeads)
+    grazing_days <- missing_to_zero(livestock_scenario$grazingOrPasturedDaysPerYear)
     for (k in c(1:nrow(livestock_scenario))){
-      if (is.na(livestock_scenario$species[[k]])) {next}
-      ind <- animals$scenario == year_str
-      animals$species[ind] <- livestock_scenario$species[[k]]
-      animals$n_animals[ind] <- missing_to_zero(livestock_scenario$numberOfHeads[[k]])
-      animals$grazing_days[ind] <- missing_to_zero(livestock_scenario$grazingOrPasturedDaysPerYear[[k]])
+      species <- livestock_scenario$species[k]
+      if (is.na(species)) {next}  # This line should not be needed if data is input correctly. Consider eventual removal.
+      ind <- animals$scenario == year_str & animals$species == species
+      animals$n_animals[ind] <- animals$n_animals[ind] + n_animals[k]  # adding to deal with current situation that same species can be given more than once.
+      animals$grazing_days[ind] <- max(animals$grazing_days[ind], grazing_days[k])  # This line doesn't work well with mutliple entries of same species with different days grazing. Using max otherwise entries with 0 nulify all.
     }
   }
+  animals <- animals[animals$n_animals!=0, ] # removing all rows that do not apply.
   
-  # Merge with factors and calculate the grazing per animal type
-  animals = merge(x = animals, y = animal_factors, by = "species", all.x = TRUE)
-  animals = animals %>%
-    mutate(yearly_grazing_needs_tDM = n_animals * mass_kg_per_animal / 1000 * 0.025 * grazing_days) # 0.025 is the 2.5% of animal mass required as feed every day
-  # Sum up the calculated grazing of all animal types for each year
-  grazing_yearly_calc = animals  %>% group_by(scenario) %>%
-    summarise(grazing_yearly_calc = sum(yearly_grazing_needs_tDM))
-  # Write results to grzing table
-  total_grazing_table$grazing_calc <- grazing_yearly_calc$grazing_yearly_calc
+  return(animals)
+}
+
+## Helper function to extract total grazing and bale grazing yield from the whole farm over all years
+get_grazing_amounts <- function(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs, livestock_table, use_calculated_grazing){
+  # Extracts the overall grazing and fodder (bale) grazing from the whole farm
+
+  year_strings = paste0("year", 0:10)
+  
+  parcel_names <- parcel_inputs$parcel_ID
+  
+  # Dry weight
+  dw_dry <- 1  # dry fraction of fully dehydrated plant material
+  dw_fresh <- (pasture_factors %>% filter(grass == 'Generic annual grasses') %>% select(dw_fresh))[[1]]  # dry fraction of estimated yields
   
   # Prepare data frame for yearly per parcel data
   grazing_yearly_parcels <- expand_grid(
-      parcel = parcel_inputs$parcel_ID,
-      year = 0:10,
-      landuse = NA,
-      grazing_rep = NA,
-      fodder = NA,
-      fodder_eaten = NA,
-      fodder_residue = NA,
-      forage_rep = NA,
-      forage_calc = NA
+    parcel = parcel_names,
+    year = 0:10,
+    landuse = NA,
+    grazing_rep = NA,
+    fodder = NA,
+    fodder_eaten = NA,
+    fodder_residue = NA,
+    forage_rep = NA,
+    grazing_calc = NA,
+    forage_calc = NA
+  )
+  
+  # Create database holding yearly total grazing numbers
+  total_grazing_table <- data.frame(
+    scenario = year_strings,
+    year = 0:10,
+    fodder_eaten = NA,
+    grazing_rep = NA,
+    grazing_calc = NA,
+    grazing_final = NA
   )
   
   # Get reported grazing numbers ß----
-  for (year in c(0:10)){
+  for (y in c(0:10)){
     
     # Variables for yearly table
-    year_str <- paste0('year', year)
+    year_str <- paste0('year', y)
     fodder_eaten <- 0
     grazing_rep <- 0
-    grazing_non_arable_lands <- 0
     year_chosen <- landUseSummaryOrPractices[[1]][[year_str]]
     
     # Bale grazing from hay application
-    for (i in c(1:length(parcel_inputs$parcel_ID))){
+    for (i in 1:length(parcel_names)){
       
-      parcel <- parcel_inputs$parcel_ID[i]
+      parcel <- parcel_names[i]
+      # if(parcel=="Cabeço dos Sobreiros") browser()
       baleResidue <- missing_to_na(year_chosen$residueLeftAfterBaleGrazing[i])/100
-      if(is.na(baleResidue)) {baleResidue <- 0.15}  # 0.15 is the 15% assumed residue left of fodder on field
-      hayStraw <- missing_to_zero(year_chosen$hayStrawApplication[i])
+      if(is.na(baleResidue)) {baleResidue <- 0.15}  # 15% assumed residue left of fodder on field
+      fodder_parcel <- missing_to_zero(year_chosen$hayStrawApplication[i]) * parcel_inputs$area[i]
       landUseType <- year_chosen$landUseType[i]
       
       # Add to total bale grazed after subtracting residues left on field 
-      fodder_eaten_parcel <- hayStraw * (1 - baleResidue) * parcel_inputs$area[i]
+    
+      fodder_eaten_parcel <- fodder_parcel * (1 - baleResidue)
+      fodder_residue_parcel <- fodder_parcel * baleResidue
       grazing_parcel <- 0
       
       for (k in c(1:12)){
@@ -217,38 +230,75 @@ get_total_grazing_table <- function(landUseSummaryOrPractices, livestock, animal
         grazing_parcel <- grazing_parcel + grazing_month * parcel_inputs$area[i]
       }
       
-      fodder_eaten <- fodder_eaten + fodder_eaten_parcel
-      grazing_rep <- grazing_rep + grazing_parcel
-      
-      grazing_final = NA,
-      grazing_non_arable_lands = NA
-      
-      ind <- (total_grazing_parcels$parcel==parcel & total_grazing_parcels$year==year)
-      total_grazing_parcels$landuse[ind] <- landUseType
-      total_grazing_parcels$grazing_rep[ind] <- grazing_parcel
-      total_grazing_parcels$fodder[ind] <- hayStraw
-    }
-    grazing_rep <- sum(total_grazing_parcels %>% filter(year == year) %>% select(grazing_rep))
-    
-    ind <- total_grazing_table$scenario == year_str
-    total_grazing_table$fodder_eaten[ind] <- fodder_eaten
-    total_grazing_table$grazing_rep[ind] <- grazing_rep
+      # Correct for moisture content
+      dryOrFresh <- year_chosen$yieldsResiduesDryOrFresh[i]
+      if(is.null(dryOrFresh)) dryOrFresh <- NA
+      if (!(dryOrFresh %in% c("Dry", "Fresh"))) { dryOrFresh <- "Fresh" }
+      if(dryOrFresh == 'Fresh') { dw <- dw_fresh } else { dw <- dw_dry }
+      grazing_parcel <- grazing_parcel * dw
 
-    grazing_calc_year <- total_grazing_table$grazing_calc
-    grazing_rep_year <- sum(total_grazing_parcels %>% filter(year == year) %>% select(grazing_rep))
-    total_grazing_parcels = total_grazing_parcels %>% group_by(year) %>%
-      mutate(grazing_calc = grazing_calc_year * grazing_rep)
+      ind <- (grazing_yearly_parcels$parcel==parcel & grazing_yearly_parcels$year==y)
+      grazing_yearly_parcels$landuse[ind] <- landUseType
+      grazing_yearly_parcels$grazing_rep[ind] <- grazing_parcel
+      grazing_yearly_parcels$fodder[ind] <- fodder_parcel
+      grazing_yearly_parcels$fodder_eaten[ind] <- fodder_eaten_parcel 
+      grazing_yearly_parcels$fodder_residue[ind] <- fodder_residue_parcel
+      
+    }
   }
   
-  total_grazing_table = merge(x = total_grazing_table, y = grazing_yearly_calc, by = "scenario", all.x = TRUE)
+  ## Get dry weight grazing calculated from animal data ----
   
+  # Merge with factors and calculate the grazing per animal type
+  animals <- merge(x = livestock_table, y = animal_factors, by = "species", all.x = TRUE)
+  animals <- animals %>%
+    mutate(yearly_grazing_needs_tDM = n_animals * mass_kg_per_animal / 1000 * 0.025 * grazing_days) # 0.025 is the 2.5% of animal mass required as feed every day
+  # Sum up the calculated grazing of all animal types for each year
+  grazing_yearly_calc <- animals  %>% group_by(scenario) %>%
+    summarise(grazing_yearly_calc = sum(yearly_grazing_needs_tDM))
+  
+  ## Distribute the yearly calculated grazing to the different parcels
+  for(y in 0:10) {
+    year_str <- paste0('year', y)
+    grazing_calc_year <- sum(grazing_yearly_calc$grazing_yearly_calc[grazing_yearly_calc$scenario==year_str])
+    grazing_rep_year <- sum(grazing_yearly_parcels$grazing_rep[total_grazing_table$year==y])
+    if(grazing_rep_year == 0) {
+      # In years with no reported grazing distribute calculated grazing among parcels weighted by area
+      for(i in 1:length(parcel_names)) {
+        parcel <- parcel_names[i]
+        area_parcel <- parcel_inputs$area[parcel_inputs$parcel_ID == parcel]
+        area_total <- sum(parcel_inputs$area)
+        ind <- (grazing_yearly_parcels$year == y & grazing_yearly_parcels$parcel == parcel)
+        grazing_yearly_parcels$grazing_calc[ind] <- grazing_calc_year * area_parcel / area_total
+      }
+    } else {
+      # In years with reported grazing, distribute calculated grazing to proportionally match the reported grazing
+      ind <- grazing_yearly_parcels$year == y
+      grazing_yearly_parcels$grazing_calc[ind] <- grazing_calc_year * grazing_yearly_parcels$grazing_rep[ind] / grazing_rep_year
+    }
+  }
+  
+  grazing_yearly_parcels <- grazing_yearly_parcels %>% 
+    mutate(forage_rep = grazing_rep - fodder_eaten)
+  grazing_yearly_parcels <- grazing_yearly_parcels %>% 
+    mutate(forage_calc = grazing_calc - fodder_eaten)
+  grazing_yearly_parcels$scenario <- paste0("year",grazing_yearly_parcels$year)
+  
+  # Select what rgazing to use depending on settings (could be changed to depend on reported data availability)
+  if(use_calculated_grazing) {
+    grazing_yearly_parcels$grazing <- grazing_yearly_parcels$grazing_calc
+    grazing_yearly_parcels$forage <- grazing_yearly_parcels$forage_calc
+  } else {
+    grazing_yearly_parcels$grazing <- grazing_yearly_parcels$grazing_rep
+    grazing_yearly_parcels$forage <- grazing_yearly_parcels$forage_rep
+  }
+  
+  total_grazing_table <- grazing_yearly_parcels %>% group_by(year) %>% 
+    summarise(fodder_eaten = sum(fodder_eaten), grazing_rep = sum(grazing_rep), grazing_calc = sum(grazing_calc))
   total_grazing_table = total_grazing_table %>%
-    mutate(relative_difference_perc = paste(round((grazing_rep-grazing_yearly_calc)/grazing_yearly_calc*100),"%"),
-           grazing_yearly_calc_pastures = grazing_yearly_calc*grazing_non_arable_lands/grazing_rep,
-           pasture_weighted_fodder_eaten = fodder_eaten * grazing_non_arable_lands / grazing_rep # distributing bale grazing as grazing is distributed. May be improved
-    )
+    mutate(relative_difference_perc = paste(round((grazing_rep-grazing_calc)/grazing_calc*100),"%"))
   
-  return(list(total_grazing_table=total_grazing_table, total_grazing_parcels=total_grazing_parcels))
+  return(list(total_grazing_table=total_grazing_table, grazing_yearly_parcels=grazing_yearly_parcels))
 }
 
 # Helper function that extracts crop type per month per parcel:
@@ -527,48 +577,42 @@ get_agroforestry_inputs = function(landUseSummaryOrPractices){
   return(na.omit(agroforestry_inputs))
 }
 
-get_animal_inputs = function(landUseSummaryOrPractices, livestock, parcel_inputs){
+get_animal_inputs = function(grazing_yearly_parcels, livestock_table, parcel_inputs){
   # takes landUseSummaryOrPractices & livestock from farms collection
   # extracts animal inputs dataframe
   
   parcel_names <- parcel_inputs$parcel_ID
-  animal_inputs = data.frame(parcel_ID = c(), scenario = c(), species = c(), n_animals = c(), grazing_days = c(),
-                             area = c(), grazing_management = c(), productivity = c())
+  animal_inputs = data.frame()
   
   for (i in c(1:length(parcel_names))){
     
-    for (year in c(0:10)){
+    for (y in c(0:10)){
       
-      year_str <- paste0('year', year)
+      year_str <- paste0('year', y)
+
+      grazing_year <- grazing_yearly_parcels %>% filter(scenario == year_str) %>% select(grazing, parcel)
+      grazing_year_total <- sum(grazing_year$grazing)
+      grazing_year_parcel <- grazing_year$grazing[grazing_year$parcel == parcel_names[i]]
       
-      if(year == 0) {
-        livestock_scenario = livestock[["currentManagement"]][[1]]
-      } else {
-        livestock_scenario = livestock[["futureManagement"]][[1]][[year_str]] 
-      }
-      
-      for (k in c(1:nrow(livestock_scenario))){
-        
-        if (is.na(livestock_scenario$species[[k]])) {next}
-        
-        grazing_total <- extract_total_grazing_amount(landUseSummaryOrPractices, year, parcel_inputs$area[i])
-        grazing_parcel <- extract_grazing_amount_parcel_i(landUseSummaryOrPractices, i, year, parcel_inputs$area[i])
-        n_animals_total <- missing_to_zero(livestock_scenario$numberOfHeads[[k]])
-        n_animals_parcel <- ifelse(grazing_total == 0, 0, n_animals_total * grazing_parcel / grazing_total)
+      livestock_temp <- livestock_table %>% filter(scenario == year_str)
+
+      for (k in 1:nrow(livestock_temp)){
+
+        n_animals <- livestock_temp$n_animals[k]
+        n_animals_parcel <- ifelse(grazing_year_total == 0, 0, n_animals * grazing_year_parcel / grazing_year_total)
         
         animal_inputs_temp <- data.frame(
           parcel_ID = parcel_names[i], 
           scenario = year_str, 
-          species = livestock_scenario$species[[k]],
-          # n_animal is the total number of animal from a farm weighted by grazing yield fraction of the parcel
-          n_animals = n_animals_parcel, 
-          grazing_days = missing_to_zero(livestock_scenario$grazingOrPasturedDaysPerYear[[k]]), 
+          species = livestock_temp$species[[k]],
+          n_animals = n_animals_parcel,  # n_animal is the total number of animal from a farm weighted by grazing fraction of the parcel
+          grazing_days = livestock_temp$grazing_days[k], 
           area = parcel_inputs$area[i],
           grazing_management = "Daily Spread", 
           productivity = "Low Productivity"
         )
         
-        animal_inputs <- rbind(animal_inputs, animal_inputs_temp) # WARNING, NEEDED FOR LCA SHOULD PRODUCTIVITY INFO COMES FROM FARMER OR DEDUCED FROM MANAGEMENT?
+        animal_inputs <- rbind(animal_inputs, animal_inputs_temp)
         
       }
     }
@@ -665,7 +709,7 @@ get_bareground_inputs = function(landUseSummaryOrPractices, soil_cover_data, far
 # }
 
 
-get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_factors, get_grazing_estimates, total_grazing_table){
+get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_factors, use_calculated_grazing, grazing_yearly_parcels){
   
   year_strings <- paste0("year", 0:10)
   parcel_names <- parcel_inputs$parcel_ID
@@ -699,36 +743,39 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
       monthly_harvest$harvest = missing_to_zero(year_chosen$harvestYield[[i]])
       monthly_harvest$residue = missing_to_zero(year_chosen$estimationAfterResidueGrazingHarvest[[i]])
       
-      # If get_grazing_estimates is TRUE, total grazing yield is calculated here, replacing input values. Recommended.
-      if (get_grazing_estimates){
+      # If use_calculated_grazing is TRUE, total grazing yield is calculated here, replacing input values. Recommended.
+      if (use_calculated_grazing){
+        browser()
+        grazing_table_temp <- grazing_yearly_parcels %>% filter(scenario==year_str & parcel == parcel_names[i])
+        monthly_harvest$grazing <- c(1/2 * yearly_grazing_per_ha, rep(0,5), 1/2 * yearly_grazing_per_ha, rep(0,5))
         
-        grazing_table_temp <- total_grazing_table %>% filter(scenario==year_str)
-        grazing_yearly_calc <- grazing_table_temp$grazing_yearly_calc
-        fodder_eaten <- grazing_table_temp$fodder_eaten
-        grazing_yearly_calc_pastures <- grazing_table_temp$grazing_yearly_calc_pastures
-        balegrazing_pastures_reported <- grazing_table_temp$pasture_weighted_bale_grazing
-        grazing_total_reported <- grazing_table_temp$grazing_total
-        grazing_pastures_reported <- grazing_table_temp$grazing_non_arable_lands
-        
-        if (fodder_eaten > grazing_yearly_calc){
-          log4r::warn(my_logger,"WARNING! Bale grazing exceeds expected total grazing needs. Check data.")
-        }
-        if (grazing_total_reported==0){
-          # Grazing arbitrarily equally distributed over farm area, 2 month a year (6 months apart) if no grazing values provided
-          # (The distribution over 2 months is meant to reflect that grazing over a particular parcel happens a couple of times a year. This probably doesn't affect the model calculations.)
-          yearly_grazing_per_ha = max((grazing_yearly_calc - fodder_eaten) / sum(parcel_inputs$area), 0)
-          monthly_harvest$grazing <- c(1/2 * yearly_grazing_per_ha, rep(0,5), 1/2 * yearly_grazing_per_ha, rep(0,5))
-        } else {
-          # Grazing arbitrarily equally distributed over time weighted by parcel grazing relatively to farm level
-          expected_grazing_on_arable <- (grazing_yearly_calc - grazing_yearly_calc_pastures) - (fodder_eaten - balegrazing_pastures_reported) # expected grazing yield arable lands after deduction of bale grazing distributed in arable lands 
-          if(expected_grazing_on_arable == 0) {
-            monthly_harvest$grazing <- rep(0, 12)
-          } else {
-            grazing_on_parcel_fraction <- (sum(monthly_harvest$grazing) * parcel_inputs$area[i]) / (grazing_total_reported - grazing_pastures_reported)
-            yearly_grazing_per_ha <- expected_grazing_on_arable * grazing_on_parcel_fraction / parcel_inputs$area[i] # Grazing yield arable lands
-            monthly_harvest$grazing <- c(1/2 * yearly_grazing_per_ha, rep(0,5), 1/2 * yearly_grazing_per_ha, rep(0,5))
-          }
-        }
+        # grazing_table_temp <- total_grazing_table %>% filter(scenario==year_str)
+        # grazing_calc <- grazing_table_temp$grazing_calc
+        # fodder_eaten <- grazing_table_temp$fodder_eaten
+        # grazing_calc_pastures <- grazing_table_temp$grazing_calc_pastures
+        # balegrazing_pastures_reported <- grazing_table_temp$pasture_weighted_bale_grazing
+        # grazing_total_reported <- grazing_table_temp$grazing_total
+        # grazing_pastures_reported <- grazing_table_temp$grazing_non_arable_lands
+        # 
+        # if (fodder_eaten > grazing_calc){
+        #   log4r::warn(my_logger,"WARNING! Bale grazing exceeds expected total grazing needs. Check data.")
+        # }
+        # if (grazing_total_reported==0){
+        #   # Grazing arbitrarily equally distributed over farm area, 2 month a year (6 months apart) if no grazing values provided
+        #   # (The distribution over 2 months is meant to reflect that grazing over a particular parcel happens a couple of times a year. This probably doesn't affect the model calculations.)
+        #   yearly_grazing_per_ha = max((grazing_calc - fodder_eaten) / sum(parcel_inputs$area), 0)
+        #   monthly_harvest$grazing <- c(1/2 * yearly_grazing_per_ha, rep(0,5), 1/2 * yearly_grazing_per_ha, rep(0,5))
+        # } else {
+        #   # Grazing arbitrarily equally distributed over time weighted by parcel grazing relatively to farm level
+        #   expected_grazing_on_arable <- (grazing_calc - grazing_calc_pastures) - (fodder_eaten - balegrazing_pastures_reported) # expected grazing yield arable lands after deduction of bale grazing distributed in arable lands 
+        #   if(expected_grazing_on_arable == 0) {
+        #     monthly_harvest$grazing <- rep(0, 12)
+        #   } else {
+        #     grazing_on_parcel_fraction <- (sum(monthly_harvest$grazing) * parcel_inputs$area[i]) / (grazing_total_reported - grazing_pastures_reported)
+        #     yearly_grazing_per_ha <- expected_grazing_on_arable * grazing_on_parcel_fraction / parcel_inputs$area[i] # Grazing yield arable lands
+        #     monthly_harvest$grazing <- c(1/2 * yearly_grazing_per_ha, rep(0,5), 1/2 * yearly_grazing_per_ha, rep(0,5))
+        #   }
+        # }
       }
       
       # Check if input values are fresh or dry.
@@ -1003,7 +1050,7 @@ get_parcel_inputs <- function(landUseSummaryOrPractices){
   return(parcel_inputs)
 }
 
-get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pasture_factors, farm_EnZ, total_grazing_table, my_logger, parcel_inputs, get_grazing_estimates){
+get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pasture_factors, farm_EnZ, grazing_yearly_parcels, my_logger, parcel_inputs, use_calculated_grazing){
   # Takes landUseSummaryOrPractices from farms collection
   # Extracts yield and residues left on site when grazing happened
   
@@ -1045,7 +1092,7 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
     years_lost_by_mintill = 1
     
     for (j in c(0:10)){
-      year_str <- year_strings[j]
+      year_str <- year_strings[j+1]
       year_chosen <- landUseSummaryOrPractices[[1]][[year_str]]
       year_is_AMP <- landUseSummaryOrPractices[[1]][[year_str]]$adaptiveMultiPaddockGrazing[i]
       if(is.na(year_is_AMP)) {year_is_AMP <- FALSE} # Workaround if value is missing. Should not be allowed. To be enforced at data collection.
@@ -1090,27 +1137,27 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
         monthly_nonarables$harvest[k] <- missing_to_zero(year_chosen$harvestYield[i][[1]][[k]])
       }
       
-      # If get_grazing_estimates is TRUE total grazing yield is calculated here, replacing reported values.
-      if (get_grazing_estimates){
+      # If use_calculated_grazing is TRUE total grazing yield is calculated here, replacing reported values.
+      if (use_calculated_grazing){
         
         grazing_table_temp <- total_grazing_table %>% filter(scenario==paste0('year', j))
-        grazing_yearly_calc <- grazing_table_temp$grazing_yearly_calc
+        grazing_calc <- grazing_table_temp$grazing_calc
         fodder_eaten <- grazing_table_temp$fodder_eaten
-        grazing_yearly_calc_pastures <- grazing_table_temp$grazing_yearly_calc_pastures
+        grazing_calc_pastures <- grazing_table_temp$grazing_calc_pastures
         balegrazing_pastures_reported <- grazing_table_temp$pasture_weighted_bale_grazing
         grazing_total_reported <- grazing_table_temp$grazing_total
         grazing_pastures_reported <- grazing_table_temp$grazing_non_arable_lands
         
-        if (fodder_eaten > grazing_yearly_calc){
+        if (fodder_eaten > grazing_calc){
           log4r::error(my_logger,"WARNING ! Bale grazing alone overcomes expected grazing needs, to be checked.")
           stop("Error related to bale grazing numbers. See log file..")
         }
         if (grazing_total_reported == 0){
-          yearly_grazing_per_ha <- (grazing_yearly_calc - fodder_eaten) / sum(parcel_inputs$area)
+          yearly_grazing_per_ha <- (grazing_calc - fodder_eaten) / sum(parcel_inputs$area)
           monthly_nonarables$grazing <- c(1/2 *yearly_grazing_per_ha, rep(0,5), 1/2 * yearly_grazing_per_ha, rep(0,5))
         } else {
           # grazing arbitrarily equally distributed over time weighted by parcel grazing yield relatively to farm level, if known
-          expected_grazing_on_pasture <- (grazing_yearly_calc_pastures - balegrazing_pastures_reported)
+          expected_grazing_on_pasture <- (grazing_calc_pastures - balegrazing_pastures_reported)
           if(expected_grazing_on_pasture == 0) {
             monthly_nonarables$grazing <- rep(0, 12)
           } else {

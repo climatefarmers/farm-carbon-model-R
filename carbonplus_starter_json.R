@@ -12,7 +12,7 @@ source("carbonplus_main.R")
 settings_testing <- list(
   n_runs = 2,
   se_field_carbon_in = 0.001,
-  get_grazing_estimates = TRUE,
+  use_calculated_grazing = TRUE,
   debug_mode = FALSE,
   save2mongoDB = FALSE,
   copy_yearX_to_following_years_landUse = TRUE,

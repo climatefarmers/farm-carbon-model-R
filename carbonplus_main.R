@@ -14,7 +14,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   # Settings should be a list with:
   # n_runs: Integer. The number of runs for getting uncertainties. Using 100 for production runs.
   # sd_field_carbon_in: Positive decimal. standard error of the carbon inputs. Using 0.1 as default.
-  # get_grazing_estimates: TRUE or FALSE. Calculate grazing estimates? Values from farmers are often missing or wrong. Default as TRUE
+  # use_calculated_grazing: TRUE or FALSE. Calculate grazing estimates? Values from farmers are often missing or wrong. Default as TRUE
   # debug_mode: Skip some steps. For now just skip fetching and use dummy climate data.
   # save2mongoDB: Set to TRUE for production runs to save to database
   # # To copy the practice of a single year to all others
@@ -214,16 +214,18 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   )
 
   # Extraction of inputs per parcel and scenario
+  browser()
   parcel_inputs <- get_parcel_inputs(landUseSummaryOrPractices)  # Parcel information
   landUseType <- get_land_use_type(landUseSummaryOrPractices, parcel_inputs)
-  grazing_tables <- get_total_grazing_table(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs)  # grazing data
-  total_grazing_table <- grazing_tables[[1]]; total_grazing_parcels <- grazing_tables[[2]]
+  livestock_table <- get_livestock_table(livestock)
+  grazing_tables <- get_grazing_amounts(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs, livestock_table, settings$use_calculated_grazing)  # grazing data
+  total_grazing_table <- grazing_tables[[1]]
+  grazing_yearly_parcels <- grazing_tables[[2]]
   orgamendments_inputs <- get_orgamendments_inputs(landUseSummaryOrPractices)  # Organic amendments: hay, compost, manure
   agroforestry_inputs <- get_agroforestry_inputs(landUseSummaryOrPractices)  # Tree biomass turnover
-  browser()
-  animal_inputs <- get_animal_inputs(landUseSummaryOrPractices, livestock, parcel_inputs)  # Animal manure
-  crop_inputs <- get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, settings$get_grazing_estimates, total_grazing_table)  # Crops and residues
-  pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, pasture_factors, farm_EnZ, total_grazing_table, my_logger, parcel_inputs, settings$get_grazing_estimates)
+  animal_inputs <- get_animal_inputs(grazing_yearly_parcels, livestock_table, parcel_inputs)  # Animal manure
+  crop_inputs <- get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, settings$use_calculated_grazing, grazing_yearly_parcels)  # Crops and residues
+  pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, pasture_factors, farm_EnZ, grazing_yearly_parcels, my_logger, parcel_inputs, settings$use_calculated_grazing)
   fertilizer_inputs <- get_fertilizer_inputs(landUseSummaryOrPractices)
   fuel_inputs <- get_fuel_inputs(farms_everything$energyUsage)
   tree_inputs <- get_agroforestry_inputs(landUseSummaryOrPractices)
@@ -342,7 +344,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
               list(yearly_results$CO2eq_soil_final),
               '.\nArea considered: ', round(sum(parcel_inputs$area), 2), ' ha.', 
               "\nNumber of runs: ", settings$n_runs,
-              ".\nGrazing estimations by CF (Y/N): ", settings$get_grazing_estimates,
+              ".\nGrazing estimations by CF (Y/N): ", settings$use_calculated_grazing,
               "\nStandard deviation used for extrinsic uncertainty of practices (Cinputs): ",
               settings$se_field_carbon_in,
               ifelse(settings$copy_yearX_to_following_years_landUse==TRUE,
