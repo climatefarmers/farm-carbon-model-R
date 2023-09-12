@@ -12,7 +12,7 @@ source("carbonplus_main.R")
 settings_testing <- list(
   n_runs = 2,
   se_field_carbon_in = 0.001,
-  get_grazing_estimates = TRUE,
+  use_calculated_grazing = TRUE,
   debug_mode = FALSE,
   save2mongoDB = FALSE,
   copy_yearX_to_following_years_landUse = TRUE,
@@ -24,6 +24,7 @@ settings_testing <- list(
   monitoring_run = TRUE, # (NOT YET IMPLEMENTED) TRUE/FALSE. If TRUE, not a prediction run and years after curr_monit_year will be excluded from the output
   curr_monit_year = 2  # Current monitoring year: what is the last project year for which monitoring data has been provided
 )
+settings <- settings_testing
 
 sensitive_data_loc <- "../sensitive-data"
 init_file <- fromJSON(file.path(sensitive_data_loc,"init_file.json"))
