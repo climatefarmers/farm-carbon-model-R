@@ -1,5 +1,6 @@
 #MongoDB parameters extraction functions
 
+
 ### TOOL FUNCTIONS
 ## Helper function to convert inputs to numeric
 missing_to_zero <- function(input){
@@ -16,6 +17,7 @@ missing_to_zero <- function(input){
   return(as.numeric(sub(",", ".", input, fixed = TRUE)))
 }
 
+
 missing_to_na <- function(input){
   if(length(input)==0) return(NA)
   for(i in c(1:length(input))){
@@ -29,6 +31,7 @@ missing_to_na <- function(input){
   }
   return(as.numeric(sub(",", ".", input, fixed = TRUE)))
 }
+
 
 missing_to_value <- function(input, value=NULL){
   if(length(input)==0) return(NA)
@@ -58,6 +61,7 @@ extract_latitude_landUseSummaryOrPractices <- function(landUseSummaryOrPractices
   return(mean(latitudes))
 }
 
+
 ## Helper function to extract longitude
 extract_longitude_landUseSummaryOrPractices <- function(landUseSummaryOrPractices, parcel_index = i){
   #takes a landUseSummaryOrPractices from farms collection and a parcel index
@@ -71,63 +75,6 @@ extract_longitude_landUseSummaryOrPractices <- function(landUseSummaryOrPractice
   return(mean(longitudes))
 }
 
-# ## Helper function to calculate animal_inputs: extracts total grazing amount
-# extract_total_grazing_amount <- function(landUseSummaryOrPractices, year, area){
-#   # Takes a landUseSummaryOrPractices from farms collection
-#   # Extracts the overall grazing yield and bale grazing yield from the whole farm
-#   
-#   year_str <- paste0('year', year)
-#   bale_grazing <- 0
-#   grazing <- 0
-#   year_chosen <- landUseSummaryOrPractices[[1]][[year_str]]
-#   
-#   for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
-#     
-#     isBaleGrazing <- year_chosen$baleGrazing[i]
-#     baleResidue <- missing_to_zero(year_chosen$residueLeftAfterBaleGrazing[i]) / 100
-#     hayStraw <- missing_to_zero(year_chosen$hayStrawApplication[i])
-#     
-#     if (is.na(isBaleGrazing) | !bale_grazing) {
-#       bale_grazing = bale_grazing + 0
-#     } else if (isBaleGrazing){
-#       # Add bale grazing of all parcels after subtracting residues left on field 
-#       bale_grazing <- bale_grazing + hayStraw * (1 - ifelse(is.na(baleResidue), 0.15, baleResidue))
-#     }
-#     
-#     for (k in c(1:12)){
-#       grazing_month <- missing_to_zero(year_chosen$grazingYield[i][[1]][[k]] )
-#       grazing = grazing + grazing_month
-#     }
-#     
-#   }
-#   
-#   return((bale_grazing + grazing) * area)
-# }
-
-# ## Helper function to calculate animal_inputs: extracts grazing amount per parcel 
-# extract_grazing_amount_parcel_i <- function(landUseSummaryOrPractices, parcel_index, year, area){
-#   #takes a landUseSummaryOrPractices from farms collection and a parcel index i
-#   #extracts grazing yield and bale grazing yield from parcel index
-#   
-#   year_str <- paste0('year', year)
-#   
-#   isBaleGrazing <- landUseSummaryOrPractices[[1]][[year_str]]$baleGrazing[parcel_index]
-#   baleResidue <- missing_to_zero(landUseSummaryOrPractices[[1]][[year_str]]$residueLeftAfterBaleGrazing[parcel_index])/100
-#   hayStraw <- missing_to_zero(landUseSummaryOrPractices[[1]][[year_str]]$hayStrawApplication[parcel_index])
-#   
-#   if (is.na(isBaleGrazing) | !isBaleGrazing){ # Fernando: If there is hay input can this be FALSE? 
-#     bale_grazing <- 0
-#   } else if (isBaleGrazing){
-#     bale_grazing = hayStraw * (1 - ifelse(is.na(baleResidue), 0.15, baleResidue))
-#   }
-#   
-#   grazing = 0
-#   for (k in c(1:12)){
-#     grazing_month <- missing_to_zero(landUseSummaryOrPractices[[1]][[year_str]]$grazingYield[parcel_index][[1]][[k]])
-#     grazing = grazing + grazing_month
-#   }
-#   return((bale_grazing + grazing) * area)
-# }
 
 get_livestock_table <- function(livestock) {
   
@@ -161,6 +108,7 @@ get_livestock_table <- function(livestock) {
   
   return(animals)
 }
+
 
 ## Helper function to extract total grazing and bale grazing yield from the whole farm over all years
 get_grazing_amounts <- function(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs, livestock_table, use_calculated_grazing){
@@ -307,6 +255,7 @@ get_grazing_amounts <- function(landUseSummaryOrPractices, livestock, animal_fac
   return(list(grazing_monthly=grazing_monthly, grazing_yearly=grazing_yearly))
 }
 
+
 # Helper function that extracts crop type per month per parcel:
 # In case of crop rotation there can be two different cash crops within one year (cash crop 1 & cash crop 2)
 get_monthly_cash_crop <- function(parcel_index = i, year_chosen){
@@ -329,6 +278,7 @@ get_monthly_cash_crop <- function(parcel_index = i, year_chosen){
   }
   return(crop)
 }
+
 
 # UNDER CONSTRUCTION:
 detect_crop_rotations <- function(landUseSummaryOrPractices, parcel_index = i){
@@ -357,6 +307,7 @@ detect_crop_rotations <- function(landUseSummaryOrPractices, parcel_index = i){
   }
 }
 
+
 ## Helper function to get clay content in %
 # if soil samples available: farmer's input (%)
 # else: soil maps
@@ -376,6 +327,7 @@ get_clay_content <- function(soilAnalysis, soilMapsData){
   }
 }
 
+
 ## Helper function to get silt content in %
 # if soil samples available: farmer's input (%)
 # else: soil maps
@@ -394,6 +346,7 @@ get_silt_content <- function(soilAnalysis, soilMapsData){
     }
   }
 }
+
 
 ## Helper function to get carbon content in kg/ha?
 get_SOC_content <- function(soilAnalysis, soilMapsData){
@@ -450,6 +403,7 @@ get_bulk_density <- function(soilAnalysis, soilMapsData){
     }
   }
 }
+
 
 ### GET INPUT FUNCTIONS
 get_orgamendments_inputs = function(landUseSummaryOrPractices){
@@ -530,6 +484,7 @@ get_orgamendments_inputs = function(landUseSummaryOrPractices){
   return(orgamendments_inputs)
 }
 
+
 get_agroforestry_inputs = function(landUseSummaryOrPractices){
   # takes landUseSummaryOrPractices from farms collection
   # extracts agroforestry inputs dataframe 
@@ -583,6 +538,7 @@ get_agroforestry_inputs = function(landUseSummaryOrPractices){
   return(na.omit(agroforestry_inputs))
 }
 
+
 get_animal_inputs = function(grazing_yearly, livestock_table, parcel_inputs){
   # takes landUseSummaryOrPractices & livestock from farms collection
   # extracts animal inputs dataframe
@@ -628,6 +584,7 @@ get_animal_inputs = function(grazing_yearly, livestock_table, parcel_inputs){
   animal_inputs <- rbind(animal_inputs, animal_inputs %>% filter(scenario=='year0') %>% mutate(scenario='baseline'))
   return(animal_inputs)
 }
+
 
 get_bareground_inputs = function(landUseSummaryOrPractices, soil_cover_data, farm_EnZ, bare_bl_type){
   # takes landUseSummaryOrPractices from farms collection
@@ -684,35 +641,6 @@ get_bareground_inputs = function(landUseSummaryOrPractices, soil_cover_data, far
   # write_csv(x = bareground_inputs[bareground_inputs$year < 3, ], file = "bareground_inputs.csv") # for debugging
   return(bareground_inputs)
 }
-
-# Old version
-# get_bareground_inputs = function(landUseSummaryOrPractices, soil_cover_data, farm_EnZ){
-#   # takes landUseSummaryOrPractices from farms collection
-#   # extracts bare soil inputs dataframe 
-# 
-#   bare_field_inputs = data.frame(parcel_ID = c(), scenario = c())
-#   # one column per month
-#   for (k in c(1:12)){
-#     bare_field_inputs[[paste("bare_profile_", k, sep="")]] = c()
-#   }
-#   for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
-#     bare_field_inputs_temp <- data.frame(parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
-#                                          scenario = c('baseline'))
-#     bare_field_inputs <- rbind(bare_field_inputs, cbind(bare_field_inputs_temp, soil_cover_data %>% filter(pedo_climatic_area == farm_EnZ) %>%
-#                                                           select(-country,-pedo_climatic_area)))
-#     for (j in c(0:10)){
-#       year_chosen = landUseSummaryOrPractices[[1]][[paste('year', j, sep="")]]
-#       bare_field_inputs_temp = data.frame(parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
-#                                           scenario = c(paste('year', j, sep="")))
-#       for (k in c(1:12)){
-#         bare_field_inputs_temp[[paste("bare_profile_", k, sep="")]] = ifelse(
-#           year_chosen$bareSoilFallow[[1]][[k]]==TRUE, TRUE, FALSE)
-#       }
-#       bare_field_inputs <- rbind(bare_field_inputs, bare_field_inputs_temp)
-#     }
-#   }
-#   return(bare_field_inputs)
-# }
 
 
 get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_factors, use_calculated_grazing, grazing_yearly){
@@ -959,6 +887,7 @@ get_fertilizer_inputs = function(landUseSummaryOrPractices){
   return(fertilizer_inputs)
 }
 
+
 get_fuel_inputs = function(fuel){
   # extracts fuel inputs dataframe 
   fuel_inputs = data.frame(scenario = c(), typeOfFuel = c(), amountInLiters = c())
@@ -987,6 +916,7 @@ get_fuel_inputs = function(fuel){
   }
   return(fuel_inputs)
 }
+
 
 ## Helper function to extract land use type (not used!)
 get_land_use_type <- function(landUseSummaryOrPractices, parcel_inputs){
@@ -1030,6 +960,7 @@ get_parcel_inputs <- function(landUseSummaryOrPractices){
   }
   return(parcel_inputs)
 }
+
 
 get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pasture_factors, farm_EnZ, grazing_yearly, my_logger, parcel_inputs, use_calculated_grazing){
   # Takes landUseSummaryOrPractices from farms collection
@@ -1213,6 +1144,7 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
   return(pasture_inputs)
 }
 
+
 get_soil_inputs = function(landUseSummaryOrPractices, soilAnalysis, soilMapsData){
   # takes landUseSummaryOrPractices from farms collection
   # extracts parcels input dataframe 
@@ -1247,6 +1179,7 @@ get_soil_inputs = function(landUseSummaryOrPractices, soilAnalysis, soilMapsData
   }
   return(soil_inputs)
 }
+
 
 get_tilling_inputs = function(landUseSummaryOrPractices, tilling_factors, farm_EnZ){ 
   # takes landUseSummaryOrPractices from farms collection, farm_country (from farmInfo) and tilling factors table
