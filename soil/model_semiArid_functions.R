@@ -20,19 +20,10 @@ get_monthly_dataframe <- function(time_horizon = 10,
 }
 
 prep_soil_moisture_factor <- function(
-  time_horizon, 
-  bare = TRUE,   # This can be a logical, or a string of 12 logicals
-  temp = temp,
-  precip = precip,
-  evap = evap,
-  soil_thick = soil_thick,
-  clay = clay,
-  silt=silt,
-  bulk_density=bulk_density,
-  SOC=SOC,
-  pE=pE,
-  tilling_factor=1,
-  version=version
+  time_horizon,  bare,   # This can be a logical, or a string of 12 logicals
+  temp, precip, evap,
+  soil_thick, clay, silt, bulk_density,
+  SOC, pE, tilling_factor, version
   ){
   
   # Monthly data frame
@@ -51,8 +42,8 @@ prep_soil_moisture_factor <- function(
   if(length(bare) == 1 & version=="Normal"){
     # Calculate monthly moisture effects
     fW <- fW.RothC(
-      P = (precip), 
-      E = (evap),
+      P = precip, 
+      E = evap,
       S.Thick = soil_thick, 
       pClay = clay,
       pE = pE, 
@@ -61,8 +52,8 @@ prep_soil_moisture_factor <- function(
   }else if(length(bare) == 12 & version=="Normal"){ 
     # Use the modified version if there is monthly variation in coverage
     fW <- fW.RothC.Modified(
-      P = (precip), 
-      E = (evap),
+      P = precip, 
+      E = evap,
       S.Thick = soil_thick, 
       pClay = clay,
       pE = pE, 
@@ -72,8 +63,8 @@ prep_soil_moisture_factor <- function(
   if(version=="Semi-arid"){ 
     # Use the modified version if there is monthly variation in coverage
     fW <- fW.RothC.Modified_semiArid(
-      P = (precip), 
-      E = (evap),
+      P = precip, 
+      E = evap,
       S.Thick = soil_thick, 
       pClay = clay,
       pSilt = silt,
@@ -92,7 +83,7 @@ prep_soil_moisture_factor <- function(
 calc_soil_carbon <- function(
   time_horizon = 10,
   xi_frame,
-  c_inputs = c_inputs,
+  c_inputs,
   dr_ratio = 1.44,
   fym_inputs = 0,
   pE = 1.0,
