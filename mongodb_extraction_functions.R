@@ -657,6 +657,8 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
     
     for (i in c(1:length(parcel_names))){
       
+      parcel <- parcel_names[i]
+      
       # Excluding non-arable parcels: no holistic grazing compatible land-uses (no pasture efficiency coef will be used in crop inputs)
       if (!year_chosen$landUseType[i]=="Arablecrops") { next }
 
@@ -668,7 +670,7 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
         harvest = rep(NA, 12),
         residue = rep(NA, 12)
       )
-      
+
       # Getting actual data
       monthly_harvest$crop = get_monthly_cash_crop(parcel_index = i, year_chosen)
       monthly_harvest$coverCrop = year_chosen$coverCropMonthlyData[[i]]
@@ -702,7 +704,7 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
         } else {
           crop_monthly <- monthly_harvest %>% filter(crop==crop_chosen)
         }
-        
+
         yield_sums <- crop_monthly$harvest + crop_monthly$grazing + crop_monthly$residue
         harvest <- sum(crop_monthly$harvest)
         grazing <- sum(missing_to_zero(crop_monthly$grazing))
@@ -724,7 +726,7 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
       }
     }
   }
-  
+
   # If arable parcels found, correct for dry weight
   if(length(crop_inputs) > 0) {
     crop_inputs <- merge(x = crop_inputs, y = crop_factors %>% select(crop, dw_fresh), by = "crop", all.x = TRUE)
@@ -982,6 +984,8 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
   
   for (i in c(1:length(parcel_names))){
     
+    parcel <- parcel_names[i]
+    
     year0_is_AMP <- landUseSummaryOrPractices[[1]][['year0']]$adaptiveMultiPaddockGrazing[i]
     if(is.na(year0_is_AMP)) {year0_is_AMP <- FALSE} # Workaround if value is missing. Should not be allowed. To be enforced at data collection.
     
@@ -1048,7 +1052,7 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
         monthly_nonarables$residue[k] <- missing_to_zero(year_chosen$estimationAfterResidueGrazingHarvest[i][[1]][[k]])
         monthly_nonarables$harvest[k] <- missing_to_zero(year_chosen$harvestYield[i][[1]][[k]])
       }
-      
+
       # If use_calculated_grazing is TRUE total grazing yield is calculated here, replacing reported values.
       if (use_calculated_grazing){
         
