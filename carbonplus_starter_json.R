@@ -12,7 +12,7 @@ source("carbonplus_main.R")
 settings_testing <- list(
   n_runs = 2,
   se_field_carbon_in = 0.001,
-  use_calculated_grazing = TRUE,
+  use_calculated_grazing = FALSE,
   debug_mode = FALSE,
   save2mongoDB = FALSE,
   copy_yearX_to_following_years_landUse = TRUE,
@@ -28,5 +28,19 @@ settings <- settings_testing
 
 sensitive_data_loc <- "../sensitive-data"
 init_file <- fromJSON(file.path(sensitive_data_loc,"init_file.json"))
-jsonfile <- "../../data/pioneer_farms/farm_data/FranciscoAlves_4_Dev20230707.json"
+
+jsonfile <- "../../data/pioneer_farms/farm_data/Alves1_3f916c12-3a2c-4904-91cb-bb64e6fb0832.json"
 out <- carbonplus_main(init_file=init_file, settings=settings, JSONfile = jsonfile)
+
+# json_files <- c(
+#   "../../data/pioneer_farms/farm_data/Alves1_3f916c12-3a2c-4904-91cb-bb64e6fb0832.json",
+#   "../../data/pioneer_farms/farm_data/Alves2_f67333e8-34a9-4030-93af-766f49d01310.json",
+#   "../../data/pioneer_farms/farm_data/Alves3_584b48dc-0e5d-4ecc-b7d4-9acf281faaba.json",
+#   "../../data/pioneer_farms/farm_data/Alves4_bb393d6d-f952-474e-a790-5486365d929b.json",
+#   "../../data/pioneer_farms/farm_data/Troya_edf5cce8-eee2-40a8-af32-520d2b93ab5c.json",
+#   "../../data/pioneer_farms/farm_data/Valente_7fe9ced2-73b8-45aa-b6a2-a9ede144ca1b.json"
+# )
+# 
+# for (jsonfile in json_files){
+#   carbonplus_main(init_file=init_file, settings=settings, JSONfile = jsonfile)
+# }
