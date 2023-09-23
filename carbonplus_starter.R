@@ -16,6 +16,7 @@ init_file <- fromJSON(file.path(sensitive_data_loc,"init_file.json"))
 settings_testing <- list(
   n_runs = 2,
   se_field_carbon_in = 0.1,
+  se_inputs_nonfarm = 0.025,
   use_calculated_grazing = FALSE,
   debug_mode = TRUE,
   save2mongoDB = FALSE,
