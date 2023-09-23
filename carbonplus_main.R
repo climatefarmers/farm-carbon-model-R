@@ -174,7 +174,6 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
                                  "was pasted to every following years", sep=" "))
   }    
 
-
   ## Reading in calculation factors from csv files
   animal_factors <- read_csv(file.path("data", "carbon_share_manure.csv"), show_col_types = FALSE) %>%
     filter(type=="manure") %>% mutate(species = source)
@@ -259,16 +258,14 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   ## Running the soil model and emissions calculations -------------------------
 
   lca_out <- call_lca(init_file=init_file,
-                      farms_everything=farms_everything,
                       farm_EnZ = farm_EnZ,
                       inputs = inputs,
                       factors = factors)
 
-  emissions <- lca_out[['emissions']]
-
-  emissions_detailed <- lca_out[['emissions_detailed']]
-
-  productivity <- lca_out[['productivity']]
+  emissions_yearly_total <- lca_out[['emissions_yearly_total']]
+  emissions_yearly_sources <- lca_out[['emissions_yearly_sources']]
+  emissions_parcels_yearly_animals <- lca_out[['emissions_parcels_yearly_animals']]
+  productivity_table <- lca_out[['productivity_table']]
 
   soil_results_out <- run_soil_model(init_file=init_file,
                                      farms_everything=farms_everything,
@@ -277,7 +274,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
                                      factors=factors,
                                      settings = settings
                                      )
-  
+
   soil_results_yearly <- soil_results_out[[1]]
   
   soil_results_monthly <- soil_results_out[[2]]
@@ -287,13 +284,27 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
            CO2eq_soil_mean=yearly_CO2diff_mean,
            CO2eq_soil_sd=yearly_CO2diff_sd) %>% 
     select(year, CO2eq_soil_final, CO2eq_soil_mean, CO2eq_soil_sd) %>%
-    mutate(CO2eq_emissions=emissions$emissions_diff_tCO2_eq[2:11],
-           CO2eq_leakage=emissions$leakage_tCO2_eq[2:11])
+    mutate(CO2eq_emissions=emissions_yearly_total$emissions_diff_tCO2_eq[2:11],
+           CO2eq_leakage=emissions_yearly_total$leakage_tCO2_eq[2:11])
   
   yearly_results <- yearly_results %>%
     mutate(CO2eq_total = CO2eq_soil_final - CO2eq_emissions - CO2eq_leakage)
   
   readLines(my_logfile)
+  
+  
+  ## Write output to files -----------------------------------------------------
+  
+  file_prefix <- paste0(farmId, "_", farms_everything$farmInfo$farmManagerLastName, '_') # farms_everything$farmInfo$farmManagerFirstName
+  
+  write_csv(landUseType, file.path("logs", paste0(file_prefix, "landUseType", ".csv")))
+  write_csv(soil_results_out$parcel_Cinputs, file.path("logs", paste0( file_prefix, "parcel_Cinputs", ".csv")))
+  write_csv(soil_results_out$step_in_table_final, file.path("logs", paste0( file_prefix, "SOC_baseline_and_project_totals", ".csv")))
+  write_csv(soil_results_out$all_results_final, file.path("logs", paste0( file_prefix, "SOC_baseline_and_project_parcels", ".csv")))
+  write_csv(yearly_results, file.path("logs", paste0(file_prefix, "yearly_results", ".csv")))
+  write_csv(productivity_table, file.path("logs", paste0(file_prefix,"productivity_table.csv")))
+  write_csv(emissions_yearly_sources, file.path("logs", paste0(file_prefix,"emissions_yearly_sources.csv")))
+  write_csv(emissions_parcels_yearly_animals, file.path("logs", paste0(file_prefix,"emissions_parcels_yearly_animals.csv")))
   
   
   ## Push results to mongoDB ---------------------------------------------------
@@ -324,7 +335,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
     farms_everything$modelResults$yearlyCO2eqSoil=list(c(yearly_results$CO2eq_soil_final))
     farms_everything$modelResults$yearlyCO2eqEmissions=list(c(yearly_results$CO2eq_emissions))
     farms_everything$modelResults$yearlyCO2eqLeakage=list(c(yearly_results$CO2eq_leakage))
-    farms_everything$modelResults$yearlyCO2eqEmissions_detailed=list(c(emissions_detailed))
+    farms_everything$modelResults$yearlyCO2eqEmissions_detailed=list(c(emissions_yearly_sources))
     farms_everything$modelResults$yearlyProductivity=list(c(productivity))
     
     farms_everything$modelSettings <- data.frame(settings) 
@@ -353,15 +364,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
                      paste("\nWARNING: Duplicated and applied livestock from 'year",
                            settings$yearX_livestock,"' to ALL following years.",sep=""),""),sep="")
   
-  ## Write output to files -----------------------------------------------------
-  
-  file_prefix <- paste0(farmId, "_", farms_everything$farmInfo$farmManagerLastName, '_') # farms_everything$farmInfo$farmManagerFirstName
 
-  write_csv(landUseType, file.path("logs", paste0(file_prefix, "landUseType", ".csv")))
-  write_csv(soil_results_out$parcel_Cinputs, file.path("logs", paste0( file_prefix, "parcel_Cinputs", ".csv")))
-  write_csv(yearly_results, file.path("logs", paste0(file_prefix, "yearly_results", ".csv")))
-  
-  
   ## Plotting ------------------------------------------------------------------
   
   name<-paste0("Results_farm_", farmId)
@@ -391,4 +394,5 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   ## End function --------------------------------------------------------------
   return(yearly_results)
   
+
 }
