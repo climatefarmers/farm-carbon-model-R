@@ -264,7 +264,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
 
   emissions_yearly_total <- lca_out[['emissions_yearly_total']]
   emissions_yearly_sources <- lca_out[['emissions_yearly_sources']]
-  parcel_emissions_yearly_animals <- lca_out[['parcel_emissions_yearly_animals']]
+  emissions_parcels_yearly_animals <- lca_out[['emissions_parcels_yearly_animals']]
   productivity_table <- lca_out[['productivity_table']]
 
   soil_results_out <- run_soil_model(init_file=init_file,
@@ -302,9 +302,9 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   write_csv(soil_results_out$step_in_table_final, file.path("logs", paste0( file_prefix, "SOC_baseline_and_project_totals", ".csv")))
   write_csv(soil_results_out$all_results_final, file.path("logs", paste0( file_prefix, "SOC_baseline_and_project_parcels", ".csv")))
   write_csv(yearly_results, file.path("logs", paste0(file_prefix, "yearly_results", ".csv")))
-  write_csv(productivity_table, file.path("logs", paste0(farmId,"_productivity_table.csv")))
-  write_csv(emissions_yearly_sources, file.path("logs", paste0(farmId,"_emissions_yearly_sources.csv")))
-  write_csv(parcel_emissions_yearly_animals, file.path("logs", paste0(farmId,"_parcel_emissions_yearly_animals.csv")))
+  write_csv(productivity_table, file.path("logs", paste0(file_prefix,"productivity_table.csv")))
+  write_csv(emissions_yearly_sources, file.path("logs", paste0(file_prefix,"emissions_yearly_sources.csv")))
+  write_csv(emissions_parcels_yearly_animals, file.path("logs", paste0(file_prefix,"emissions_parcels_yearly_animals.csv")))
   
   
   ## Push results to mongoDB ---------------------------------------------------

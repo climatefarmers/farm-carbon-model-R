@@ -26,7 +26,7 @@ call_lca <- function(init_file, farm_EnZ, inputs, factors){
   emissions_yearly_sources = data.frame(scenario_selected = c(), source = c(), value = c(), 
                                         gas = c(), co2eq_factor = c(), kgCO2_eq = c())
   
-  parcel_emissions_yearly_animals <- create_empty_dataframe(c('parcel_ID', 'year', 'ch4_manure', 'ch4_ent_ferm', 'n2o_manure'))
+  emissions_parcels_yearly_animals <- create_empty_dataframe(c('parcel_ID', 'year', 'ch4_manure', 'ch4_ent_ferm', 'n2o_manure'))
   
   productivity_table = data.frame(year = c(), crop = c(), productivity = c())
   
@@ -97,7 +97,7 @@ call_lca <- function(init_file, farm_EnZ, inputs, factors){
                 n2o_manure_indirect = sum(n2o_manure_indirect)
       )
     
-    parcel_emissions_yearly_animals <- rbind(parcel_emissions_yearly_animals, parcel_emissions_animals_sum)
+    emissions_parcels_yearly_animals <- rbind(emissions_parcels_yearly_animals, parcel_emissions_animals_sum)
     
     parcel_emissions_crop_sum <- parcel_emissions_crop %>% group_by(parcel_ID) %>% summarise(n2o_n_fixing = sum(n2o_n_fixing))
     
@@ -156,7 +156,7 @@ call_lca <- function(init_file, farm_EnZ, inputs, factors){
     list(emissions_yearly_total = emissions_yearly_total, 
          emissions_yearly_sources = emissions_yearly_sources,
          productivity_table = productivity_table,
-         parcel_emissions_yearly_animals= parcel_emissions_yearly_animals)
+         emissions_parcels_yearly_animals= emissions_parcels_yearly_animals)
   )
 }
 
