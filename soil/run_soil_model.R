@@ -153,21 +153,31 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   mean_input = data.frame(mean)
   colnames(mean_input) = colnames_ranges
   
-  ## Standard deviation for each input
+  ## Standard error for each input
   # Modelling perform several times with different inputs
   # Let's define standard deviation for each input representing extrinsic uncertainty of the model
-  se=data.frame(field_carbon_in=settings$se_field_carbon_in, 
-                dr_ratio = 0.025, 
-                temp = 0.025, 
-                precip = 0.025, 
-                evap = 0.025, 
-                soil_thick = 0.025, 
-                SOC = 0.025, #(soilMapsData$SOC_Q0.95-soilMapsData$SOC_Q0.05)/3, 
-                clay = 0.025, #(soilMapsData$clay_Q0.95-soilMapsData$clay_Q0.05)/5, # to be refined
-                silt = 0.025, #(soilMapsData$silt_Q0.95-soilMapsData$silt_Q0.05)/5, 
-                bulk_density = 0.025, #(soilMapsData$bdod_Q0.95-soilMapsData$bdod_Q0.05)/3, 
-                pE = 0.025, 
-                tilling_factor = 0.025)
+
+  # Remove uncertainty for testing
+  if(settings$debug_mode) {
+    settings$se_inputs_nonfarm <- 0.0
+    settings$se_field_carbon_in <- 0.0
+  }
+
+  se_inputs_nonfarm <- settings$se_inputs_nonfarm
+  se_field_carbon_in <- settings$se_field_carbon_in
+
+  se=data.frame(field_carbon_in=se_field_carbon_in, 
+                dr_ratio = se_inputs_nonfarm, 
+                temp = se_inputs_nonfarm, 
+                precip = se_inputs_nonfarm, 
+                evap = se_inputs_nonfarm, 
+                soil_thick = se_inputs_nonfarm, 
+                SOC = se_inputs_nonfarm, #(soilMapsData$SOC_Q0.95-soilMapsData$SOC_Q0.05)/3, 
+                clay = se_inputs_nonfarm, #(soilMapsData$clay_Q0.95-soilMapsData$clay_Q0.05)/5, # to be refined
+                silt = se_inputs_nonfarm, #(soilMapsData$silt_Q0.95-soilMapsData$silt_Q0.05)/5, 
+                bulk_density = se_inputs_nonfarm, #(soilMapsData$bdod_Q0.95-soilMapsData$bdod_Q0.05)/3, 
+                pE = se_inputs_nonfarm, 
+                tilling_factor = se_inputs_nonfarm)
   
   ## Initialising data structures
   # Data frame per year that includes soc per year, co2 per year and co2 difference per year
@@ -356,8 +366,8 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
                                                       year=year_temp, 
                                                       baseline_step_SOC_per_hectare=step_baseline, 
                                                       holistic_step_SOC_per_hectare=step_holistic, 
-                                                      baseline_step_total_CO2=step_baseline*sum(inputs$parcel_inputs$area) * 44 / 12, 
-                                                      holistic_step_total_CO2=step_holistic*sum(inputs$parcel_inputs$area) * 44 / 12) %>%
+                                                      baseline_step_total_CO2=step_baseline * sum(inputs$parcel_inputs$area) * 44 / 12, 
+                                                      holistic_step_total_CO2=step_holistic * sum(inputs$parcel_inputs$area) * 44 / 12) %>%
                                              mutate(yearly_CO2diff=holistic_step_total_CO2-baseline_step_total_CO2)))
     all_results <- rbind(all_results_batch, all_results)
     farm_results <- rbind(farm_results_batch, farm_results)
@@ -400,7 +410,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   } else {
     log4r::error(my_logger, 'NAs in results.')
   }
-  
+
   return(list(step_in_table_final=step_in_table_final, 
               farm_results_final=farm_results_final, 
               all_results_final=all_results_final,

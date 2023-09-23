@@ -10,9 +10,9 @@ plot_source_breakdown <- function(all_results, results_loc = results_loc){
     mutate(source = replace(source, source == "ent_ferm", "Enteric Fermentation"),
            source = replace(source, source == "fertilizer", "Fertilizer"),
            source = replace(source, source == "fuel", "Fuel"),
-           source = replace(source, source == "manure_dep", "Manure Deposition (CH4)"),
+           source = replace(source, source == "manure", "Manure Deposition (CH4)"),
            source = replace(source, source == "n_fixing", "N-fixing species"),
-           source = replace(source, source == "manure_deposition", "Urine and Dung (N20)"),
+           source = replace(source, source == "manure", "Urine and Dung (N20)"),
     ) %>%  arrange(co2eq) %>%    
     mutate(source=factor(source, levels=source))%>% 
     mutate(csum = rev(cumsum(rev(co2eq))), 
