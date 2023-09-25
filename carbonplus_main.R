@@ -293,20 +293,6 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   readLines(my_logfile)
   
   
-  ## Write output to files -----------------------------------------------------
-  
-  file_prefix <- paste0(farmId, "_", farms_everything$farmInfo$farmManagerLastName, '_') # farms_everything$farmInfo$farmManagerFirstName
-  
-  write_csv(landUseType, file.path("logs", paste0(file_prefix, "landUseType", ".csv")))
-  write_csv(soil_results_out$parcel_Cinputs, file.path("logs", paste0( file_prefix, "parcel_Cinputs", ".csv")))
-  write_csv(soil_results_out$step_in_table_final, file.path("logs", paste0( file_prefix, "SOC_baseline_and_project_totals", ".csv")))
-  write_csv(soil_results_out$all_results_final, file.path("logs", paste0( file_prefix, "SOC_baseline_and_project_parcels", ".csv")))
-  write_csv(yearly_results, file.path("logs", paste0(file_prefix, "yearly_results", ".csv")))
-  write_csv(productivity_table, file.path("logs", paste0(file_prefix,"productivity_table.csv")))
-  write_csv(emissions_yearly_sources, file.path("logs", paste0(file_prefix,"emissions_yearly_sources.csv")))
-  write_csv(emissions_parcels_yearly_animals, file.path("logs", paste0(file_prefix,"emissions_parcels_yearly_animals.csv")))
-  
-  
   ## Push results to mongoDB ---------------------------------------------------
   
   if(settings$save2mongoDB) {
@@ -364,7 +350,22 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
                      paste("\nWARNING: Duplicated and applied livestock from 'year",
                            settings$yearX_livestock,"' to ALL following years.",sep=""),""),sep="")
   
-
+  
+  ## Write output to files -----------------------------------------------------
+  
+  file_prefix <- paste0(farmId, "_", farms_everything$farmInfo$farmManagerLastName, '_') # farms_everything$farmInfo$farmManagerFirstName
+  
+  write_csv(landUseType, file.path("logs", paste0(file_prefix, "landUseType", ".csv")))
+  write_csv(soil_results_out$parcel_Cinputs, file.path("logs", paste0( file_prefix, "parcel_Cinputs", ".csv")))
+  write_csv(soil_results_out$step_in_table_final, file.path("logs", paste0( file_prefix, "SOC_baseline_and_project_totals", ".csv")))
+  write_csv(soil_results_out$all_results_final, file.path("logs", paste0( file_prefix, "SOC_baseline_and_project_parcels", ".csv")))
+  write_csv(yearly_results, file.path("logs", paste0(file_prefix, "yearly_results", ".csv")))
+  write_csv(productivity_table, file.path("logs", paste0(file_prefix,"productivity_table.csv")))
+  write_csv(emissions_yearly_sources, file.path("logs", paste0(file_prefix,"emissions_yearly_sources.csv")))
+  write_csv(emissions_parcels_yearly_animals, file.path("logs", paste0(file_prefix,"emissions_parcels_yearly_animals.csv")))
+  write.csv(data.frame(settings), file.path("logs", paste0(file_prefix,"model_settings.csv")))
+  
+  
   ## Plotting ------------------------------------------------------------------
   
   name<-paste0("Results_farm_", farmId)
@@ -379,7 +380,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
     ylab("SOC (in tonnes per hectare)")
   print(graph)
 
-  png(filename = file.path('logs', paste0(farmId, '.png')))
+  png(filename = file.path('logs', paste0(file_prefix, 'barplot', '.png')))
   histogram <- ggplot(yearly_results, aes(x=year, group = 1)) +
     geom_bar(aes(y=CO2eq_soil_mean), stat="identity", fill="#5CB85C", alpha=0.7) +
     geom_errorbar(aes(ymin = CO2eq_soil_mean-1.96*CO2eq_soil_sd,

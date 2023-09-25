@@ -18,7 +18,7 @@ settings_testing <- list(
   se_field_carbon_in = 0.1,
   se_inputs_nonfarm = 0.025,
   use_calculated_grazing = FALSE,
-  debug_mode = TRUE,
+  debug_mode = FALSE,
   save2mongoDB = FALSE,
   copy_yearX_to_following_years_landUse = TRUE,
   copy_yearX_to_following_years_livestock = TRUE,
