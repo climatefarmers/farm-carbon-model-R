@@ -11,7 +11,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   
   landUseSummaryOrPractices <- farms_everything$landUse$landUseSummaryOrPractices
 
-  ## Get weather data ---
+  ## Get weather data --- To be moved to ouside function
   # Mean coordinates
   latlon_farm <- c(latitude = mean(inputs$parcel_inputs$latitude), longitude = mean(inputs$parcel_inputs$longitude))
 
@@ -26,14 +26,16 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
     #                    get_future_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], scenario="rcp8.5"))
   }
   
-  # Extrating climate for diffent uses
+  ## Extracting climate from different periods
+  
+  # Average of all past climate data since start
   mean_past_climate <- climate_data %>% group_by(month) %>% 
     summarise(temperature=mean(temperature),
               precipitation=mean(precipitation),
               evap=mean(evap),
               pevap=mean(pevap))
 
-  
+  # Averaged recent climate (10 last years of data)
   nr_cd <- nrow(climate_data) 
   i_cd <- nr_cd - (10*12)  # index for last 10 years of data
   
@@ -43,6 +45,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
               evap=mean(evap),
               pevap=mean(pevap))
   
+  # Climate for the project period (future years use the averaged recent climate)
   climate_proj <- data.frame()
   proj_start_year <- farms_everything$farmInfo$startYear
   for(i in 1:10) {
