@@ -137,11 +137,11 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
          list(c(dr_ratio_non_irrigated, rep(NA, 11))), 
          list(as.factor(c(logical(12)))), 
          list(weather_data$past_temperature), 
-         list(weather_data$future_temperature_rcp4.5), 
+         list(weather_data$past_temperature), 
          list(weather_data$past_precipitation), 
-         list(weather_data$future_precipitation_rcp4.5), 
+         list(weather_data$past_precipitation), 
          list(weather_data$past_evap), 
-         list(weather_data$future_evap_rcp4.5), 
+         list(weather_data$past_evap), 
          list(c(30, rep(NA, 11))), # modelled for 30 cm depth as recommended in IPCC Guidelines 2006
          list(c(soilMapsData$SOC, rep(NA, 11))), 
          list(c(soilMapsData$clay, rep(NA, 11))), 
@@ -221,19 +221,21 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
                           silt = rnorm(1, 1, se$silt), 
                           bulk_density = rnorm(1, 1, se$bulk_density))
     
-    #Choose randomly one of the two climate scenario
-    climate_scenario = ifelse(sample(0:1, 1)==0, 'rcp4.5', 'rcp8.5')
-    if(settings$debug_mode) climate_scenario <- 'rcp4.5'
-    if (climate_scenario=='rcp4.5'){
-      mean_input$future_temp = weather_data$future_temperature_rcp4.5
-      mean_input$future_precip = weather_data$future_precipitation_rcp4.5
-      mean_input$future_evap = weather_data$future_evap_rcp4.5
-    }
-    if (climate_scenario=='rcp8.5'){
-      mean_input$future_temp = weather_data$future_temperature_rcp8.5
-      mean_input$future_precip = weather_data$future_precipitation_rcp8.5
-      mean_input$future_evap = weather_data$future_evap_rcp8.5
-    }
+    # Commented out to use past climate in all cases
+    # #Choose randomly one of the two climate scenario
+    # climate_scenario = ifelse(sample(0:1, 1)==0, 'rcp4.5', 'rcp8.5')
+    # if(settings$debug_mode) climate_scenario <- 'rcp4.5'
+    # if (climate_scenario=='rcp4.5'){
+    #   mean_input$future_temp = weather_data$future_temperature_rcp4.5
+    #   mean_input$future_precip = weather_data$future_precipitation_rcp4.5
+    #   mean_input$future_evap = weather_data$future_evap_rcp4.5
+    # }
+    # if (climate_scenario=='rcp8.5'){
+    #   mean_input$future_temp = weather_data$future_temperature_rcp8.5
+    #   mean_input$future_precip = weather_data$future_precipitation_rcp8.5
+    #   mean_input$future_evap = weather_data$future_evap_rcp8.5
+    # }
+    
     #Apply factors to inputs average
     batch=data.frame(run=run_ID, 
                      bare = mean_input$bare, 
