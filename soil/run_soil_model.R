@@ -15,7 +15,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   # Mean coordinates
   latlon_farm <- c(latitude = mean(inputs$parcel_inputs$latitude), longitude = mean(inputs$parcel_inputs$longitude))
 
-  if(settings$debug_mode){  # will skip fetching climate data and use dummy data if debug_mode is set
+  if(settings$debug_mode | settings$use_test_climate){  # will skip fetching climate data and use dummy data if debug_mode is set
     weather_data <- read_csv(file.path("data", "test_weather_data.csv"), show_col_types = FALSE) # For testing only
   } else {
     weather_data=cbind(get_past_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"]), 
@@ -237,7 +237,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
     # }
     
     #Apply factors to inputs average
-    batch=data.frame(run=run_ID, 
+    batch <- data.frame(run=run_ID, 
                      bare = mean_input$bare, 
                      past_temp = mean_input$past_temp*batch_coef$temp, 
                      past_precip = mean_input$past_precip*batch_coef$precip, 
@@ -252,27 +252,31 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
                      bulk_density = mean_input$bulk_density*batch_coef$bulk_density, 
                      pE = mean_input$pE*batch_coef$pE, 
                      tilling_factor = mean_input$tilling_factor*batch_coef$tilling_factor)
-    batch = data.frame(batch)
+    batch <- data.frame(batch)
     
     for(i in c(1:nrow(inputs$parcel_inputs))){
+      
+      # Define parcel fixed values
       parcel = inputs$parcel_inputs$parcel_ID[i]
       farm_frac = inputs$parcel_inputs$area[i]/sum(inputs$parcel_inputs$area)
-      #Select parcel's fixed values
       batch_parcel_Cinputs = parcel_Cinputs %>% mutate(tot_Cinputs=tot_Cinputs*batch_coef$field_carbon_in)
       batch$dr_ratio = ifelse((soil_inputs %>% filter(parcel_ID==parcel))$irrigation==TRUE, dr_ratio_irrigated, dr_ratio_non_irrigated) * batch_coef$dr_ratio
-      # choice of scenario = baseline
+
+      # Select values for the baseline scenario
       batch$field_carbon_in <- (batch_parcel_Cinputs %>% filter (scenario==baseline_chosen & parcel_ID==parcel))$tot_Cinputs
       batch$bare = (inputs$bare_field_inputs %>% filter(scenario == baseline_chosen & parcel_ID == parcel))$bareground
       batch$tilling_factor = (inputs$tilling_inputs %>% filter(scenario==baseline_chosen & parcel_ID==parcel))$tilling_factor
-      starting_soil_content = estimate_starting_soil_content(SOC=batch$SOC[1], clay=batch$clay[1]) 
-      time_horizon = 1
-      C0_df <- calc_carbon_over_time(time_horizon, 
+      starting_soil_content = estimate_starting_soil_content(SOC=batch$SOC[1], clay=batch$clay[1])
+      
+      # Run spinup to equilibrium using baseline data
+      time_horizon = 100
+      C0_df_spinup <- calc_carbon_over_time(time_horizon, 
                                      field_carbon_in = rep(batch$field_carbon_in[1], time_horizon), 
                                      dr_ratio = rep(batch$dr_ratio[1], time_horizon), 
                                      bare = batch$bare,
-                                     temp = batch$future_temp, 
-                                     precip = batch$future_precip, 
-                                     evap = batch$future_evap, 
+                                     temp = batch$past_temp, 
+                                     precip = batch$past_precip, 
+                                     evap = batch$past_evap, 
                                      soil_thick = batch$soil_thick[1], 
                                      clay = batch$clay[1], 
                                      pE = batch$pE[1], 
@@ -281,52 +285,55 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
                                      version=model_version, 
                                      silt = batch$silt[1], 
                                      bulk_density = batch$bulk_density[1])
-      starting_soil_content <- as.numeric(tail(C0_df, 1))[c(1:5)]
+      spinup_soil_content <- as.numeric(tail(C0_df_spinup, 1))[c(1:5)]
+      
+      # Run a single year for historical baseline
+      time_horizon = 1
+      C0_df_baseline <- calc_carbon_over_time(time_horizon, 
+                                              field_carbon_in = rep(batch$field_carbon_in[1], time_horizon), 
+                                              dr_ratio = rep(batch$dr_ratio[1], time_horizon), 
+                                              bare = batch$bare,
+                                              temp = batch$past_temp, 
+                                              precip = batch$past_precip, 
+                                              evap = batch$past_evap, 
+                                              soil_thick = batch$soil_thick[1], 
+                                              clay = batch$clay[1], 
+                                              pE = batch$pE[1], 
+                                              PS = spinup_soil_content, 
+                                              tilling_factor = batch$tilling_factor[1], 
+                                              version=model_version, 
+                                              silt = batch$silt[1], 
+                                              bulk_density = batch$bulk_density[1])
+      baseline_soil_content <- as.numeric(tail(C0_df_baseline, 1))[c(1:5)]
+      
+      
+      # Run the projected baseline scenario
       time_horizon = 10
-      C0_df_mdf <- calc_carbon_over_time(time_horizon, 
+      C0_df_baseline_proj <- calc_carbon_over_time(time_horizon, 
                                          field_carbon_in = rep(batch$field_carbon_in[1], time_horizon), 
                                          dr_ratio = rep(batch$dr_ratio[1], time_horizon), 
                                          bare = batch$bare,
-                                         temp = batch$future_temp, 
-                                         precip = batch$future_precip, 
-                                         evap = batch$future_evap, 
+                                         temp = batch$past_temp, 
+                                         precip = batch$past_precip, 
+                                         evap = batch$past_evap, 
                                          soil_thick = batch$soil_thick[1], 
                                          clay = batch$clay[1], 
                                          pE = batch$pE[1], 
-                                         PS = starting_soil_content, 
+                                         PS = baseline_soil_content, 
                                          tilling_factor = batch$tilling_factor[1], 
                                          version=model_version, 
                                          silt = batch$silt[1], 
                                          bulk_density = batch$bulk_density[1])
-      
-      N_1 = 1 #first year of future modelling
-      batch_parcel_Cinputs = parcel_Cinputs %>% mutate(tot_Cinputs=tot_Cinputs*batch_coef$field_carbon_in)
-      batch$field_carbon_in <- (batch_parcel_Cinputs %>% filter (scenario==paste("year", N_1, sep="") & parcel_ID==parcel))$tot_Cinputs
-      batch$bare = (inputs$bare_field_inputs %>% filter(scenario == paste("year", N_1, sep="") & parcel_ID == parcel))$bareground
-      batch$tilling_factor = (inputs$tilling_inputs %>% filter(scenario==paste("year", N_1, sep="") & parcel_ID==parcel))$tilling_factor
-      time_horizon = 1
-      C0_df_holistic_yearly <- calc_carbon_over_time(time_horizon, 
-                                                     field_carbon_in = rep(batch$field_carbon_in[1], time_horizon), 
-                                                     dr_ratio = rep(batch$dr_ratio[1], time_horizon), 
-                                                     bare = batch$bare,
-                                                     temp = batch$future_temp, 
-                                                     precip = batch$future_precip, 
-                                                     evap = batch$future_evap, 
-                                                     soil_thick = batch$soil_thick[1], 
-                                                     clay = batch$clay[1], 
-                                                     pE = batch$pE[1], 
-                                                     PS = starting_soil_content, 
-                                                     tilling_factor = batch$tilling_factor[1], 
-                                                     version=model_version, 
-                                                     silt = batch$silt[1], 
-                                                     bulk_density = batch$bulk_density[1])
-      starting_holistic_soil_content <- as.numeric(tail(C0_df_holistic_yearly , 1))[c(1:5)]
-      C0_df_holistic = C0_df_holistic_yearly
-      # next years
-      for (N in c((N_1+1):10)){
+      C0_df_baseline_proj <- rbind(C0_df_baseline, C0_df_baseline_proj)
+
+
+      # Project scenario run
+      C0_df_holistic <- C0_df_baseline # Year 0 is shared with baseline
+      starting_holistic_soil_content <- baseline_soil_content
+      for (N in 1:10){
         batch_parcel_Cinputs = parcel_Cinputs %>% mutate(tot_Cinputs=tot_Cinputs*batch_coef$field_carbon_in)
         batch$field_carbon_in <- (batch_parcel_Cinputs %>% filter (scenario==paste("year", N, sep="") & parcel_ID==parcel))$tot_Cinputs
-        batch$bare = (inputs$bare_field_inputs %>% filter(scenario == paste("year", N_1, sep="") & parcel_ID == parcel))$bareground
+        batch$bare = (inputs$bare_field_inputs %>% filter(scenario == paste("year", N, sep="") & parcel_ID == parcel))$bareground
         batch$tilling_factor = (inputs$tilling_inputs %>% filter(scenario==paste("year", N, sep="") & parcel_ID==parcel))$tilling_factor
         time_horizon = 1
         C0_df_holistic_yearly <- calc_carbon_over_time(time_horizon, 
@@ -345,15 +352,16 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
                                                        silt = batch$silt[1], 
                                                        bulk_density = batch$bulk_density[1])
         starting_holistic_soil_content <- as.numeric(tail(C0_df_holistic_yearly , 1))[c(1:5)]
-        C0_df_holistic= rbind(C0_df_holistic, C0_df_holistic_yearly)
+        C0_df_holistic <- rbind(C0_df_holistic, C0_df_holistic_yearly)
       }
-      
+      # browser()
+
       all_results_batch <- rbind(all_results_batch, data.frame(run=run_ID, 
                                                                parcel_ID=rep(parcel, 264), 
                                                                time=rep(seq(as.Date("2020-1-1"), as.Date("2030-12-31"), by = "month"), 2), 
-                                                               SOC=c(C0_df$TOT, C0_df_mdf$TOT, C0_df$TOT, C0_df_holistic$TOT), 
+                                                               SOC=c(C0_df_baseline_proj$TOT, C0_df_holistic$TOT), 
                                                                scenario=c(rep("baseline", 132), rep("holistic", 132)), 
-                                                               farm_frac=rep(farm_frac, 264))) #, C0_df_baseline$TOT#, rep("current", 120)
+                                                               farm_frac=rep(farm_frac, 264))) #, C0_df_baseline_proj$TOT#, rep("current", 120)
     }
 
     farm_results_batch <- data.frame(unique(all_results_batch %>% group_by(time, scenario) %>% mutate(SOC_farm=sum(SOC * farm_frac)) %>% select(run, time, scenario, SOC_farm)))
@@ -362,8 +370,8 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
     step_in_results <- step_in_results %>% mutate(year = format(time, format="%Y"))
     step_baseline <- diff(step_in_results$SOC_farm[step_in_results$scenario=="baseline"])
     step_holistic <- diff(step_in_results$SOC_farm[step_in_results$scenario=="holistic"])
-    year_temp <- step_in_results$year[step_in_results$scenario=="holistic"][2:11]
-    
+    year_temp <- step_in_results$year[step_in_results$scenario=="holistic"]
+    browser()
     step_in_table <- rbind(step_in_table, (data.frame(run=run_ID, 
                                                       year=year_temp, 
                                                       baseline_step_SOC_per_hectare=step_baseline, 
