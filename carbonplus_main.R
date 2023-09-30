@@ -272,13 +272,12 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
                                      farm_EnZ=farm_EnZ,
                                      inputs=inputs,
                                      factors=factors,
-                                     settings = settings
+                                     settings=settings
                                      )
 
-  soil_results_yearly <- soil_results_out[[1]]
-  
-  soil_results_monthly <- soil_results_out[[2]]
-  
+  soil_results_yearly <- soil_results_out$step_in_table_final
+  soil_results_monthly <- soil_results_out$farm_results_final
+
   yearly_results <- soil_results_yearly %>%
     mutate(CO2eq_soil_final=yearly_CO2diff_final,
            CO2eq_soil_mean=yearly_CO2diff_mean,
@@ -370,6 +369,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   
   name<-paste0("Results_farm_", farmId)
   
+  png(filename = file.path('logs', paste0(file_prefix, 'timeseries', '.png')))
   graph <- ggplot(data = soil_results_monthly, aes(x = time, y = SOC_farm_mean, colour=scenario)) +
     geom_line()+
     #geom_errorbar(aes(ymin=SOC_farm_mean-SOC_farm_sd, ymax=SOC_farm_mean+SOC_farm_sd), width=.1) +
@@ -379,6 +379,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
     xlab("Time")+
     ylab("SOC (in tonnes per hectare)")
   print(graph)
+  dev.off()
 
   png(filename = file.path('logs', paste0(file_prefix, 'barplot', '.png')))
   histogram <- ggplot(yearly_results, aes(x=year, group = 1)) +
