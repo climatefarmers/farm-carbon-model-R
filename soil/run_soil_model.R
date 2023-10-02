@@ -213,9 +213,9 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
                 precip = se_inputs_nonfarm, 
                 evap = se_inputs_nonfarm, 
                 soil_thick = se_inputs_nonfarm, 
-                SOC = 0, # conservative choice of values replaces uncertainty
-                clay = 0, # conservative choice of values replaces uncertainty
-                silt = 0,  # conservative choice of values replaces uncertainty
+                SOC = se_inputs_nonfarm,
+                clay = se_inputs_nonfarm,
+                silt = se_inputs_nonfarm,
                 bulk_density = se_inputs_nonfarm,
                 pE = se_inputs_nonfarm, 
                 tilling_factor = se_inputs_nonfarm)
