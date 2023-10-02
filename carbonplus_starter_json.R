@@ -11,7 +11,7 @@ library(jsonlite)
 source("carbonplus_main.R")
 
 settings_testing <- list(
-  n_runs = 5,
+  n_runs = 2,
   se_field_carbon_in = 0.1,
   se_inputs_nonfarm = 0.025,
   use_calculated_grazing = FALSE,
@@ -32,7 +32,7 @@ settings <- settings_testing
 
 sensitive_data_loc <- "../sensitive-data"
 init_file <- fromJSON(file.path(sensitive_data_loc,"init_file.json"))
-jsonfile <- "../../data/pioneer_farms/farm_data/Alves4_bb393d6d-f952-474e-a790-5486365d929b.json"
+jsonfile <- "../../data/pioneer_farms/farm_data/2023-09-14_corrected_before_animal_numbers_update/Alves4_bb393d6d-f952-474e-a790-5486365d929b.json"
 out <- carbonplus_main(init_file=init_file, settings=settings, JSONfile = jsonfile)
 
 # json_files <- c(

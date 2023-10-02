@@ -477,9 +477,10 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   graph <- ggplot(data = C0_df_spinup, aes(x=1:nrow(C0_df_spinup), y=TOT)) +
     geom_line() +
     theme(legend.position = "bottom") +
-    labs(title = "Soil C Spinup") +
-    xlab("Years") +
-    ylab("SOC (in tonnes per hectare)")
+    # labs(title = "Model spinup for an example farm plot") +
+    xlab("Months") +
+    ylab("SOC (in tonnes per hectare)") +
+    ylim(0, 30)
   print(graph)
   
   return(list(step_in_table_final=step_in_table_final, 
