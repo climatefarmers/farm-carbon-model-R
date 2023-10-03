@@ -700,7 +700,7 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
         
         if(is.na(crop_chosen)) {
           crop_monthly <- monthly_harvest %>% filter(is.na(crop))
-          crop_chosen <- "Non-N-fixing dry forages"
+          crop_chosen <- "Generic Plant Mixture"
         } else {
           crop_monthly <- monthly_harvest %>% filter(crop==crop_chosen)
         }
@@ -745,7 +745,7 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
     crop_inputs <- expand_grid(
         scenario = year_strings,
         parcel_ID = parcel_names,
-        crop = "Non-N-fixing dry forages",
+        crop = "Generic Plant Mixture",
         harvest = 0, 
         grazing = 0, 
         residue = 0,  
