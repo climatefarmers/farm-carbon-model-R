@@ -485,11 +485,11 @@ get_orgamendments_inputs = function(landUseSummaryOrPractices){
 }
 
 
-get_agroforestry_inputs = function(landUseSummaryOrPractices){
+get_tree_inputs = function(landUseSummaryOrPractices){
   # takes landUseSummaryOrPractices from farms collection
   # extracts agroforestry inputs dataframe 
   parcel_names <- landUseSummaryOrPractices[[1]]$parcelName
-  agroforestry_inputs = data.frame(parcel_ID = c(), scenario = c(), tree_species = c(), other_name = c(), dbh = c(),
+  tree_inputs = data.frame(parcel_ID = c(), scenario = c(), tree_species = c(), other_name = c(), dbh = c(),
                                    tree_density = c(), area = c())
   for (i in c(1:length(parcel_names))){
     for (j in c(0:10)){
@@ -507,7 +507,7 @@ get_agroforestry_inputs = function(landUseSummaryOrPractices){
       typeOfTrees = landUseSummaryOrPractices[[1]][[year_str]]$typeOfTrees[i][[1]][c,]
       if(nrow(typeOfTrees)>0){
         for (k in c(1:nrow(typeOfTrees))){
-          agroforestry_inputs <- rbind(agroforestry_inputs,data.frame(
+          tree_inputs <- rbind(tree_inputs,data.frame(
             parcel_ID = c(parcel_names[i]), 
             scenario = c(year_str), 
             tree_species = c(typeOfTrees$treeName[[k]]),
@@ -518,7 +518,7 @@ get_agroforestry_inputs = function(landUseSummaryOrPractices){
         }
         if (j==0){ #baseline based on pre-project trees
           for (k in c(1:nrow(typeOfTrees))){
-            agroforestry_inputs <- rbind(agroforestry_inputs,data.frame(
+            tree_inputs <- rbind(tree_inputs,data.frame(
               parcel_ID = c(parcel_names[i]), 
               scenario = c("baseline"), 
               tree_species = c(typeOfTrees$treeName[[k]]),
@@ -531,11 +531,11 @@ get_agroforestry_inputs = function(landUseSummaryOrPractices){
       }
     }
   }
-  NA_rows = nrow(agroforestry_inputs)-nrow(na.omit(agroforestry_inputs))
+  NA_rows = nrow(tree_inputs)-nrow(na.omit(tree_inputs))
   if(NA_rows>0){
-    log4r::error(my_logger, paste('WARNING: ',NA_rows,' rows contained NAs in agroforestry_inputs.', paste=''))
+    log4r::error(my_logger, paste('WARNING: ',NA_rows,' rows contained NAs in tree_inputs.', paste=''))
   }
-  return(na.omit(agroforestry_inputs))
+  return(na.omit(tree_inputs))
 }
 
 
@@ -657,6 +657,8 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
     
     for (i in c(1:length(parcel_names))){
       
+      parcel <- parcel_names[i]
+      
       # Excluding non-arable parcels: no holistic grazing compatible land-uses (no pasture efficiency coef will be used in crop inputs)
       if (!year_chosen$landUseType[i]=="Arablecrops") { next }
 
@@ -668,7 +670,7 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
         harvest = rep(NA, 12),
         residue = rep(NA, 12)
       )
-      
+
       # Getting actual data
       monthly_harvest$crop = get_monthly_cash_crop(parcel_index = i, year_chosen)
       monthly_harvest$coverCrop = year_chosen$coverCropMonthlyData[[i]]
@@ -698,11 +700,11 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
         
         if(is.na(crop_chosen)) {
           crop_monthly <- monthly_harvest %>% filter(is.na(crop))
-          crop_chosen <- "Non-N-fixing dry forages"
+          crop_chosen <- "Generic Plant Mixture"
         } else {
           crop_monthly <- monthly_harvest %>% filter(crop==crop_chosen)
         }
-        
+
         yield_sums <- crop_monthly$harvest + crop_monthly$grazing + crop_monthly$residue
         harvest <- sum(crop_monthly$harvest)
         grazing <- sum(missing_to_zero(crop_monthly$grazing))
@@ -724,7 +726,7 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
       }
     }
   }
-  
+
   # If arable parcels found, correct for dry weight
   if(length(crop_inputs) > 0) {
     crop_inputs <- merge(x = crop_inputs, y = crop_factors %>% select(crop, dw_fresh), by = "crop", all.x = TRUE)
@@ -743,7 +745,7 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
     crop_inputs <- expand_grid(
         scenario = year_strings,
         parcel_ID = parcel_names,
-        crop = "Non-N-fixing dry forages",
+        crop = "Generic Plant Mixture",
         harvest = 0, 
         grazing = 0, 
         residue = 0,  
@@ -944,19 +946,26 @@ get_parcel_inputs <- function(landUseSummaryOrPractices){
   # takes landUseSummaryOrPractices from farms collection
   # extracts parcels input dataframe 
   
-  parcel_inputs = data.frame(parcel_ID = c(), area = c(), longitude = c(),latitude=c())
-  for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
-    parcel_inputs <- rbind(parcel_inputs,data.frame(
-      parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
-      area = ifelse(is.null(landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea[i]),
-                    c(missing_to_zero(landUseSummaryOrPractices[[1]]$area[i])/10000),
-                    ifelse(is.na(landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea[i]) |
-                             landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea[i] == FALSE, # means that no corrected value was provided by the farmer
-                           c(missing_to_zero(landUseSummaryOrPractices[[1]]$area[i])/10000),
-                           c(missing_to_zero(landUseSummaryOrPractices[[1]]$manuallyEnteredArea[i])/10000))), # add a verification of consistence here
-      longitude = c(missing_to_zero(extract_longitude_landUseSummaryOrPractices(landUseSummaryOrPractices,i))),
-      latitude=c(missing_to_zero(extract_latitude_landUseSummaryOrPractices(landUseSummaryOrPractices,i)))))
-    
+  # area <- ifelse(is.null(landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea),
+  #                missing_to_zero(landUseSummaryOrPractices[[1]]$area)/10000,
+  #                ifelse(is.na(landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea) |
+  #                         landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea == FALSE, # means that no corrected value was provided by the farmer
+  #                       missing_to_zero(landUseSummaryOrPractices[[1]]$area)/10000,
+  #                       missing_to_zero(landUseSummaryOrPractices[[1]]$manuallyEnteredArea)/10000)
+  # ) # add a verification of consistence here? How?
+  
+  # Using area from map for consistency - to be revised
+  area <- missing_to_zero(landUseSummaryOrPractices[[1]]$area)/10000
+  
+  parcel_inputs = data.frame(parcel_ID = landUseSummaryOrPractices[[1]]$parcelName,
+                             area = area,
+                             longitude = NA,
+                             latitude = NA
+                             )
+
+  for (i in 1:nrow(parcel_inputs)){
+      parcel_inputs$longitude[i] = missing_to_zero(extract_longitude_landUseSummaryOrPractices(landUseSummaryOrPractices,i))
+      parcel_inputs$latitude[i] = missing_to_zero(extract_latitude_landUseSummaryOrPractices(landUseSummaryOrPractices,i))
   }
   return(parcel_inputs)
 }
@@ -981,6 +990,8 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
   year_strings <- paste0('year', 0:10)
   
   for (i in c(1:length(parcel_names))){
+    
+    parcel <- parcel_names[i]
     
     year0_is_AMP <- landUseSummaryOrPractices[[1]][['year0']]$adaptiveMultiPaddockGrazing[i]
     if(is.na(year0_is_AMP)) {year0_is_AMP <- FALSE} # Workaround if value is missing. Should not be allowed. To be enforced at data collection.
@@ -1048,7 +1059,7 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
         monthly_nonarables$residue[k] <- missing_to_zero(year_chosen$estimationAfterResidueGrazingHarvest[i][[1]][[k]])
         monthly_nonarables$harvest[k] <- missing_to_zero(year_chosen$harvestYield[i][[1]][[k]])
       }
-      
+
       # If use_calculated_grazing is TRUE total grazing yield is calculated here, replacing reported values.
       if (use_calculated_grazing){
         
@@ -1187,25 +1198,49 @@ get_tilling_inputs = function(landUseSummaryOrPractices, tilling_factors, farm_E
   parcel_names <- landUseSummaryOrPractices[[1]]$parcelName
   tilling_factor = (tilling_factors %>% filter(pedo_climatic_area == farm_EnZ))$tilling_factor
   minimum_tillage_factor = (tilling_factors %>% filter(pedo_climatic_area == farm_EnZ))$minimum_tillage_factor
-  tilling_inputs = data.frame(parcel_ID = c(), scenario = c(), tilling_factor = c())
+  tilling_inputs = data.frame(parcel_ID = c(), scenario = c(), tillage = c(), tilling_factor = c())
   for (i in c(1:length(parcel_names))){
-    tilling_inputs <- rbind(tilling_inputs, data.frame(
-      parcel_ID = c(parcel_names[i]), 
-      scenario = c('baseline'),
-      tilling_factor = c(tilling_factor))) # assumption
     for (j in c(0:10)){
       year_str <- paste0('year', j)
       year_chosen = landUseSummaryOrPractices[[1]][[year_str]]
-      for (k in c(1:12)){
-        tilling_inputs <- rbind(tilling_inputs, data.frame(
-          parcel_ID = c(parcel_names[i]), 
-          scenario = c(year_str),
-          tilling_factor = c(ifelse(year_chosen$tillingEvent[i][[1]][[k]]==TRUE, tilling_factor, 
-                                    ifelse(year_chosen$minimumTillingEvent[i][[1]][[k]]==TRUE, minimum_tillage_factor, 1)))))
+      if(any(year_chosen$tillingEvent[i][[1]])==TRUE){
+        tf <- tilling_factor
+        t <- "full tillage"
+      } else if(any(year_chosen$minimumTillingEvent[i][[1]])==TRUE) {
+        tf <- minimum_tillage_factor
+        t <- "minimal tillage"
+      } else {
+        tf <- 1
+        t <- "no tillage"
       }
+      tilling_inputs <- rbind(tilling_inputs, data.frame(
+        parcel_ID = c(parcel_names[i]), 
+        scenario = c(year_str),
+        tillage = t,
+        tilling_factor = tf
+      ))
+      # for (k in c(1:12)){
+      #   if(year_chosen$tillingEvent[i][[1]][[k]]==TRUE){
+      #     tf <- tilling_factor
+      #     t <- "full tillage"
+      #   } else if(year_chosen$minimumTillingEvent[i][[1]][[k]]==TRUE) {
+      #     tf <- minimum_tillage_factor
+      #     t <- "minimal tillage"
+      #   } else {
+      #     tf <- 1
+      #     t <- "no tillage"
+      #   }
+      #   tilling_inputs <- rbind(tilling_inputs, data.frame(
+      #     parcel_ID = c(parcel_names[i]), 
+      #     scenario = c(year_str),
+      #     tillage = t,
+      #     tilling_factor = tf
+      #     ))
+      # }
     }
   }
-  tilling_inputs = tilling_inputs %>% group_by(parcel_ID, scenario) %>%
-    summarise(tilling_factor = max(tilling_factor)) # ATM JUST TAKE THE MAX IMPACT EVENT
+  # tilling_inputs = tilling_inputs %>% group_by(parcel_ID, scenario) %>%
+  #   summarise(tilling_factor = max(tilling_factor)) # ATM JUST TAKE THE MAX IMPACT EVENT
+  tilling_inputs <- rbind(tilling_inputs, tilling_inputs %>% filter(scenario=='year0') %>% mutate(scenario='baseline'))
   return(tilling_inputs)
 }

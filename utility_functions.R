@@ -48,7 +48,7 @@ get_manure_data <- function(orgamendments_inputs, parcel_inputs) {
 #Project activity: Cover crops
 get_cc_data <- function(crop_inputs, parcel_inputs) {
   total_cc_input <- left_join(crop_inputs, parcel_inputs, by = "parcel_ID")
-  total_cc_input <- total_cc_input %>% filter(crop == "Non-N-fixing dry forages") %>% mutate(cc_parcel = dry_yield*area) %>% group_by(scenario) %>% summarise(total_cc = sum(cc_parcel))
+  total_cc_input <- total_cc_input %>% filter(crop == "Generic Plant Mixture") %>% mutate(cc_parcel = dry_yield*area) %>% group_by(scenario) %>% summarise(total_cc = sum(cc_parcel))
 }
 
 
