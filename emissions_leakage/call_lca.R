@@ -54,7 +54,8 @@ call_lca <- function(init_file, farm_EnZ, inputs, factors){
     animals<- n2o_manure_direct(animals, climate_wet_or_dry=climate_wet_or_dry)
     animals<- n2o_manure_indirect(animals, climate_wet_or_dry=climate_wet_or_dry)
     animals<- ch4_manure(animals)
-    n_fixing_species_crop <- n2o_n_fixing_species_crop(n_fixing_species_crop, field_area = field_area)
+    browser()
+    n_fixing_species_crop <- n2o_n_fixing_species_crop(n_fixing_species_crop = n_fixing_species_crop, ef_n = 0.0125, field_area = field_area)
     # not using pasture n fixation 
     # n_fixing_species_pasture <- n2o_n_fixing_species_pasture(n_fixing_species_pasture, field_area = field_area)
     fuel <- co2_fuel_consumption(fuel)
