@@ -286,7 +286,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
     mutate(CO2eq_soil_final=yearly_CO2diff_final,
            CO2eq_soil_mean=yearly_CO2diff_mean,
            CO2eq_soil_sd=yearly_CO2diff_sd) %>% 
-    select(year, CO2eq_soil_final, CO2eq_soil_mean, CO2eq_soil_sd) %>%
+    select(scenario, CO2eq_soil_final, CO2eq_soil_mean, CO2eq_soil_sd) %>%
     mutate(CO2eq_emissions=emissions_yearly_total$emissions_diff_tCO2_eq[2:11],
            CO2eq_leakage=emissions_yearly_total$leakage_tCO2_eq[2:11])
   
@@ -373,7 +373,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
       write_csv(out, file.path(path, paste0(file_prefix, name, ".csv")))
     }
   }
-  browser()
+
   # Inputs
   write_out(inputs, file.path("logs", "inputs"))
   

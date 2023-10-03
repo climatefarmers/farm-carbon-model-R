@@ -223,7 +223,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   ## Initialising data structures
   # Data frame per year that includes soc per year, co2 per year and co2 difference per year
   step_in_table <- data.frame(run=c(), 
-                              year=c(), 
+                              scenario=c(), 
                               baseline_step_SOC_per_hectare=c(), 
                               holistic_step_SOC_per_hectare=c(), 
                               baseline_step_total_CO2=c(), 
@@ -421,9 +421,9 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
     step_baseline <- diff(step_in_results$SOC_farm[step_in_results$scenario=="baseline"])
     step_holistic <- diff(step_in_results$SOC_farm[step_in_results$scenario=="holistic"])
     year_temp <- step_in_results$year[step_in_results$scenario=="holistic"][-1]
-    
+
     step_in_table_temp <- data.frame(run=run_ID, 
-                                     year=year_temp, 
+                                     scenario=paste0("year", 1:10), 
                                      baseline_step_SOC_per_hectare=step_baseline, 
                                      holistic_step_SOC_per_hectare=step_holistic, 
                                      baseline_step_total_CO2=step_baseline * sum(inputs$parcel_inputs$area) * 44 / 12, 
@@ -439,7 +439,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   
   ## Final data frames by taking the average over the runs
   # Results of soc and co2 per year
-  step_in_table_final <- step_in_table %>% group_by(year) %>% 
+  step_in_table_final <- step_in_table %>% group_by(scenario) %>% 
     summarise(yearly_CO2diff_mean=mean(yearly_CO2diff), 
               yearly_CO2diff_sd=sd(yearly_CO2diff), 
               baseline_step_total_CO2_mean=mean(baseline_step_total_CO2), 
@@ -450,7 +450,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
               sd_diff=sqrt(baseline_step_total_CO2_var+holistic_step_total_CO2_var-2*cov_step_total_CO2) #this equal yearly_CO2diff_sd
     )%>%
     mutate(yearly_CO2diff_final=round(yearly_CO2diff_mean-1.96*yearly_CO2diff_sd)) %>%
-    select(year, yearly_CO2diff_final, yearly_CO2diff_mean, 
+    select(scenario, yearly_CO2diff_final, yearly_CO2diff_mean, 
            yearly_CO2diff_sd, baseline_step_total_CO2_mean, 
            baseline_step_total_CO2_var, holistic_step_total_CO2_mean, 
            holistic_step_total_CO2_var, cov_step_total_CO2, sd_diff)
