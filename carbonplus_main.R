@@ -14,7 +14,6 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   # Settings should be a list with:
   # n_runs: Integer. The number of runs for getting uncertainties. Using 100 for production runs.
   # sd_field_carbon_in: Positive decimal. standard error of the carbon inputs. Using 0.1 as default.
-  # use_calculated_grazing: TRUE or FALSE. Calculate grazing estimates? Values from farmers are often missing or wrong. Default as TRUE
   # debug_mode: Skip some steps. For now just skip fetching and use dummy climate data.
   # save2mongoDB: Set to TRUE for production runs to save to database
   # # To copy the practice of a single year to all others
@@ -222,13 +221,13 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   parcel_inputs <- get_parcel_inputs(landUseSummaryOrPractices)  # Parcel information
   landUseType <- get_land_use_type(landUseSummaryOrPractices, parcel_inputs)
   livestock_table <- get_livestock_table(livestock)
-  grazing_tables <- get_grazing_amounts(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs, livestock_table, settings$use_calculated_grazing)  # grazing data
+  grazing_tables <- get_grazing_amounts(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs, livestock_table)  # grazing data
   grazing_monthly <- grazing_tables[[1]]
   grazing_yearly <- grazing_tables[[2]]
   orgamendments_inputs <- get_orgamendments_inputs(landUseSummaryOrPractices)  # Organic amendments: hay, compost, manure
   animal_inputs <- get_animal_inputs(grazing_yearly, livestock_table, parcel_inputs)  # Animal manure
-  crop_inputs <- get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, settings$use_calculated_grazing, grazing_yearly)  # Crops and residues
-  pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, pasture_factors, farm_EnZ, grazing_yearly, my_logger, parcel_inputs, settings$use_calculated_grazing)
+  crop_inputs <- get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, grazing_yearly, grazing_monthly)  # Crops and residues
+  pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, pasture_factors, farm_EnZ, grazing_yearly, grazing_monthly, my_logger, parcel_inputs)
   fertilizer_inputs <- get_fertilizer_inputs(landUseSummaryOrPractices)
   fuel_inputs <- get_fuel_inputs(farms_everything$energyUsage)
   tree_inputs <- get_tree_inputs(landUseSummaryOrPractices)
