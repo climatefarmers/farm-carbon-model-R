@@ -192,6 +192,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   tree_factors <- read_csv(file.path("data", "agroforestry_factors.csv"), show_col_types = FALSE)
   methane_factors <- read_csv(file.path("data", "methane_emission_factors.csv"), show_col_types = FALSE) %>%
     filter(climate == natural_area_factors$climate_zone) %>% select(-climate)
+  n2o_emission_factors <- read_csv(file.path("data", "n2o_emission_factors.csv"), show_col_types = FALSE)
   
   print("Finished reading factors.")
   
@@ -209,7 +210,8 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
     fertilizer_factors = fertilizer_factors,
     fuel_factors = fuel_factors,
     tree_factors = tree_factors,
-    methane_factors = methane_factors
+    methane_factors = methane_factors,
+    n2o_emission_factors = n2o_emission_factors
   )
 
   # Extraction of inputs per parcel and scenario

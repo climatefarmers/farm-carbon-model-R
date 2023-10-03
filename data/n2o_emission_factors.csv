@@ -1,0 +1,11 @@
+Name,Value,Definition
+n_n2o,1.57,N to N2O  conversion factor
+ef_3_n2o_wet,0.006,Emission factor in direct N2O from manure calculation (n2o_manure_deposition_direct)
+ef_3_n2o_dry,0.002,Emission factor in direct N2O from manure calculation (n2o_manure_deposition_direct)
+ef_3_deep_bedding,0.01,Emission factor in direct N2O from manure calculation (n2o_manure_deposition_direct)
+ef_4_n2o_wet,0.014,Emission factor in indirect N2O from manure calculation (n2o_manure_deposition_indirect)
+ef_4_n2o_dry,0.005,Emission factor in indirect N2O from manure calculation (n2o_manure_deposition_indirect)
+n2o_frac_gasm,0.21,Term in indirect N2O from manure calculation (n2o_manure_deposition_indirect)
+n2o_frac_leach,0.24,Term in indirect N2O from manure calculation (n2o_manure_deposition_indirect)
+ef_5_n2o,0.011,Emission factor in indirect N2O from manure calculation (n2o_manure_deposition_indirect)
+ef_n_fixing,0.0125,Emission factor in nitrogen fixing crops calculations (n2o_n_fixing_species_crop)
