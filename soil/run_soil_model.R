@@ -486,5 +486,6 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   return(list(step_in_table_final=step_in_table_final, 
               farm_results_final=farm_results_final, 
               all_results_final=all_results_final,
-              parcel_Cinputs=parcel_Cinputs))
+              parcel_Cinputs=parcel_Cinputs,
+              soil_inputs=soil_inputs))
 }

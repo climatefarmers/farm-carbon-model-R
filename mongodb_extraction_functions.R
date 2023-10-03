@@ -1198,21 +1198,34 @@ get_tilling_inputs = function(landUseSummaryOrPractices, tilling_factors, farm_E
   parcel_names <- landUseSummaryOrPractices[[1]]$parcelName
   tilling_factor = (tilling_factors %>% filter(pedo_climatic_area == farm_EnZ))$tilling_factor
   minimum_tillage_factor = (tilling_factors %>% filter(pedo_climatic_area == farm_EnZ))$minimum_tillage_factor
-  tilling_inputs = data.frame(parcel_ID = c(), scenario = c(), tilling_factor = c())
+  tilling_inputs = data.frame(parcel_ID = c(), scenario = c(), tillage = c(), tilling_factor = c())
   for (i in c(1:length(parcel_names))){
     tilling_inputs <- rbind(tilling_inputs, data.frame(
       parcel_ID = c(parcel_names[i]), 
       scenario = c('baseline'),
+      tillage = 
       tilling_factor = c(tilling_factor))) # assumption
     for (j in c(0:10)){
       year_str <- paste0('year', j)
       year_chosen = landUseSummaryOrPractices[[1]][[year_str]]
       for (k in c(1:12)){
+        if(year_chosen$tillingEvent[i][[1]][[k]]==TRUE){
+          tf <- tilling_factor
+          t <- "full tillage"
+        } else if(year_chosen$minimumTillingEvent[i][[1]][[k]]==TRUE) {
+          tf <- minimum_tillage_factor
+          t <- "minimal tillage"
+        } else {
+          tf <- 1
+          t <- "no tillage"
+        }
         tilling_inputs <- rbind(tilling_inputs, data.frame(
           parcel_ID = c(parcel_names[i]), 
           scenario = c(year_str),
-          tilling_factor = c(ifelse(year_chosen$tillingEvent[i][[1]][[k]]==TRUE, tilling_factor, 
-                                    ifelse(year_chosen$minimumTillingEvent[i][[1]][[k]]==TRUE, minimum_tillage_factor, 1)))))
+          tillage = t,
+          tilling_factor = tf
+          )
+          )
       }
     }
   }

@@ -386,7 +386,8 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
     productivity_table = productivity_table,
     emissions_yearly_sources = emissions_yearly_sources,
     emissions_parcels_yearly_animals = emissions_parcels_yearly_animals,
-    model_settings = data.frame(settings)
+    model_settings = data.frame(settings),
+    soil_inputs = soil_results_out$soil_inputs
   )
   write_out(outputs, file.path("logs", "outputs"))
   
