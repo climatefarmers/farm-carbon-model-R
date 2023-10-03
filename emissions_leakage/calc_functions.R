@@ -49,7 +49,7 @@ n2o_n_fixing_species_crop <- function(
   if(nrow(n_fixing_species_crop) > 0){ # add pastures and update the crop residue calc function
     n_fixing_species_crop <- n_fixing_species_crop %>% 
       mutate(agr = dry_residue, 
-             bgr = (dry_harvest + dry_residue) * r_s_ratio,
+             bgr = dry_agb_peak * r_s_ratio,
              n2o_n_fixing = (area * n_fixing_frac * (agr * n_ag + bgr * n_bg)) * ef_n * (44/28) * 1000 # 1000 converts t to kg
              )
   } else {
