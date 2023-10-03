@@ -418,7 +418,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   dev.off()
 
   png(filename = file.path('logs', paste0(file_prefix, 'barplot', '.png')))
-  histogram <- ggplot(yearly_results, aes(x=year, group = 1)) +
+  histogram <- ggplot(yearly_results, aes(x=scenario, group = 1)) +
     geom_bar(aes(y=CO2eq_soil_mean), stat="identity", fill="#5CB85C", alpha=0.7) +
     geom_errorbar(aes(ymin = CO2eq_soil_mean-1.96*CO2eq_soil_sd,
                       ymax = CO2eq_soil_mean+1.96*CO2eq_soil_sd, color = "95% CI"), colour="black", width=.5, show.legend = T) +
