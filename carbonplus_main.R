@@ -281,14 +281,14 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
 
   soil_results_yearly <- soil_results_out$step_in_table_final
   soil_results_monthly <- soil_results_out$farm_results_final
-
+browser()
   yearly_results <- soil_results_yearly %>%
     mutate(CO2eq_soil_final=yearly_CO2diff_final,
            CO2eq_soil_mean=yearly_CO2diff_mean,
            CO2eq_soil_sd=yearly_CO2diff_sd) %>% 
-    select(scenario, CO2eq_soil_final, CO2eq_soil_mean, CO2eq_soil_sd) %>%
-    mutate(CO2eq_emissions=emissions_yearly_total$emissions_diff_tCO2_eq[2:11],
-           CO2eq_leakage=emissions_yearly_total$leakage_tCO2_eq[2:11])
+    select(cal_year, scenario, CO2eq_soil_final, CO2eq_soil_mean, CO2eq_soil_sd)
+  yearly_results$CO2eq_emissions <- emissions_yearly_total$emissions_diff_tCO2_eq[2:11]
+  yearly_results$CO2eq_leakage <- emissions_yearly_total$leakage_tCO2_eq[2:11]
   
   yearly_results <- yearly_results %>%
     mutate(CO2eq_total = CO2eq_soil_final - CO2eq_emissions - CO2eq_leakage)
@@ -418,7 +418,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   dev.off()
 
   png(filename = file.path('logs', paste0(file_prefix, 'barplot', '.png')))
-  histogram <- ggplot(yearly_results, aes(x=scenario, group = 1)) +
+  histogram <- ggplot(yearly_results, aes(x=cal_year, group = 1)) +
     geom_bar(aes(y=CO2eq_soil_mean), stat="identity", fill="#5CB85C", alpha=0.7) +
     geom_errorbar(aes(ymin = CO2eq_soil_mean-1.96*CO2eq_soil_sd,
                       ymax = CO2eq_soil_mean+1.96*CO2eq_soil_sd, color = "95% CI"), colour="black", width=.5, show.legend = T) +
