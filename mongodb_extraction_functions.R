@@ -946,19 +946,26 @@ get_parcel_inputs <- function(landUseSummaryOrPractices){
   # takes landUseSummaryOrPractices from farms collection
   # extracts parcels input dataframe 
   
-  parcel_inputs = data.frame(parcel_ID = c(), area = c(), longitude = c(),latitude=c())
-  for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
-    parcel_inputs <- rbind(parcel_inputs,data.frame(
-      parcel_ID = c(landUseSummaryOrPractices[[1]]$parcelName[i]), 
-      area = ifelse(is.null(landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea[i]),
-                    c(missing_to_zero(landUseSummaryOrPractices[[1]]$area[i])/10000),
-                    ifelse(is.na(landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea[i]) |
-                             landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea[i] == FALSE, # means that no corrected value was provided by the farmer
-                           c(missing_to_zero(landUseSummaryOrPractices[[1]]$area[i])/10000),
-                           c(missing_to_zero(landUseSummaryOrPractices[[1]]$manuallyEnteredArea[i])/10000))), # add a verification of consistence here
-      longitude = c(missing_to_zero(extract_longitude_landUseSummaryOrPractices(landUseSummaryOrPractices,i))),
-      latitude=c(missing_to_zero(extract_latitude_landUseSummaryOrPractices(landUseSummaryOrPractices,i)))))
-    
+  # area <- ifelse(is.null(landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea),
+  #                missing_to_zero(landUseSummaryOrPractices[[1]]$area)/10000,
+  #                ifelse(is.na(landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea) |
+  #                         landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea == FALSE, # means that no corrected value was provided by the farmer
+  #                       missing_to_zero(landUseSummaryOrPractices[[1]]$area)/10000,
+  #                       missing_to_zero(landUseSummaryOrPractices[[1]]$manuallyEnteredArea)/10000)
+  # ) # add a verification of consistence here? How?
+  
+  # Using area from map for consistency - to be revised
+  area <- missing_to_zero(landUseSummaryOrPractices[[1]]$area)/10000
+  
+  parcel_inputs = data.frame(parcel_ID = landUseSummaryOrPractices[[1]]$parcelName,
+                             area = area,
+                             longitude = NA,
+                             latitude = NA
+                             )
+
+  for (i in 1:nrow(parcel_inputs)){
+      parcel_inputs$longitude[i] = missing_to_zero(extract_longitude_landUseSummaryOrPractices(landUseSummaryOrPractices,i))
+      parcel_inputs$latitude[i] = missing_to_zero(extract_latitude_landUseSummaryOrPractices(landUseSummaryOrPractices,i))
   }
   return(parcel_inputs)
 }
