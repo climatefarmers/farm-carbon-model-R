@@ -36,8 +36,12 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   
   
   ## Prepare log files ---------------------------------------------------------
-  
+  # clear and prepare log directory
   if(!dir.exists('logs')) {dir.create('logs')}
+  unlink(file.path("logs", "*"), recursive = TRUE)
+  dir.create(file.path("logs", "inputs"))
+  dir.create(file.path("logs", "outputs"))
+  
   my_logfile = file.path('logs', paste(farmId,'__',str_replace_all(Sys.time(), c(" "="__", ":"="_")),'.log',sep=""))
   my_console_appender = console_appender(layout = default_log_layout())
   my_file_appender = file_appender(my_logfile, append = TRUE, 
@@ -222,13 +226,12 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   grazing_monthly <- grazing_tables[[1]]
   grazing_yearly <- grazing_tables[[2]]
   orgamendments_inputs <- get_orgamendments_inputs(landUseSummaryOrPractices)  # Organic amendments: hay, compost, manure
-  agroforestry_inputs <- get_agroforestry_inputs(landUseSummaryOrPractices)  # Tree biomass turnover
   animal_inputs <- get_animal_inputs(grazing_yearly, livestock_table, parcel_inputs)  # Animal manure
   crop_inputs <- get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, settings$use_calculated_grazing, grazing_yearly)  # Crops and residues
   pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, pasture_factors, farm_EnZ, grazing_yearly, my_logger, parcel_inputs, settings$use_calculated_grazing)
   fertilizer_inputs <- get_fertilizer_inputs(landUseSummaryOrPractices)
   fuel_inputs <- get_fuel_inputs(farms_everything$energyUsage)
-  tree_inputs <- get_agroforestry_inputs(landUseSummaryOrPractices)
+  tree_inputs <- get_tree_inputs(landUseSummaryOrPractices)
   bare_field_inputs <- get_bareground_inputs(landUseSummaryOrPractices, soil_cover_factors, farm_EnZ, settings$bare_bl_type)
   tilling_inputs <- get_tilling_inputs(landUseSummaryOrPractices, tilling_factors, farm_EnZ)
 
@@ -244,7 +247,6 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
     landUseType = landUseType, 
     parcel_inputs = parcel_inputs,
     orgamendments_inputs = orgamendments_inputs, 
-    agroforestry_inputs = agroforestry_inputs,
     animal_inputs = animal_inputs, 
     crop_inputs = crop_inputs,
     pasture_inputs = pasture_inputs,
@@ -352,19 +354,33 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
                            settings$yearX_livestock,"' to ALL following years.",sep=""),""),sep="")
   
   
-  ## Write output to files -----------------------------------------------------
+  ## Write data to files -----------------------------------------------------
   
   file_prefix <- paste0(farmId, "_", farms_everything$farmInfo$farmManagerLastName, '_') # farms_everything$farmInfo$farmManagerFirstName
-  
-  write_csv(landUseType, file.path("logs", paste0(file_prefix, "landUseType", ".csv")))
-  write_csv(soil_results_out$parcel_Cinputs, file.path("logs", paste0( file_prefix, "parcel_Cinputs", ".csv")))
-  write_csv(soil_results_out$step_in_table_final, file.path("logs", paste0( file_prefix, "SOC_baseline_and_project_totals", ".csv")))
-  write_csv(soil_results_out$all_results_final, file.path("logs", paste0( file_prefix, "SOC_baseline_and_project_parcels", ".csv")))
-  write_csv(yearly_results, file.path("logs", paste0(file_prefix, "yearly_results", ".csv")))
-  write_csv(productivity_table, file.path("logs", paste0(file_prefix,"productivity_table.csv")))
-  write_csv(emissions_yearly_sources, file.path("logs", paste0(file_prefix,"emissions_yearly_sources.csv")))
-  write_csv(emissions_parcels_yearly_animals, file.path("logs", paste0(file_prefix,"emissions_parcels_yearly_animals.csv")))
-  write.csv(data.frame(settings), file.path("logs", paste0(file_prefix,"model_settings.csv")))
+
+  # Inputs: wrote to file and exclude future years if doing monitoring run
+  for(input in names(inputs)) {
+    out <- inputs[[input]]
+    if(settings$monitoring_run) {
+      if("scenario" %in% colnames(out)) {
+        out <- out %>% filter(scenario %in% c('year0', 'year1', 'year2'))
+      }
+      if("year" %in% colnames(out)) {
+        out <- out %>% filter(year %in% c(0, 1, 2))
+      }
+    }
+    write_csv(out, file.path("logs", "inputs", paste0(file_prefix, input, ".csv")))
+  }
+
+  # Outputs
+  write_csv(soil_results_out$parcel_Cinputs, file.path("logs", "outputs", paste0( file_prefix, "parcel_Cinputs", ".csv")))
+  write_csv(soil_results_out$step_in_table_final, file.path("logs", "outputs", paste0( file_prefix, "SOC_baseline_and_project_totals", ".csv")))
+  write_csv(soil_results_out$all_results_final, file.path("logs", "outputs", paste0( file_prefix, "SOC_baseline_and_project_parcels", ".csv")))
+  write_csv(yearly_results, file.path("logs", "outputs", paste0(file_prefix, "yearly_results", ".csv")))
+  write_csv(productivity_table, file.path("logs", "outputs", paste0(file_prefix,"productivity_table.csv")))
+  write_csv(emissions_yearly_sources, file.path("logs", "outputs", paste0(file_prefix,"emissions_yearly_sources.csv")))
+  write_csv(emissions_parcels_yearly_animals, file.path("logs", "outputs", paste0(file_prefix,"emissions_parcels_yearly_animals.csv")))
+  write.csv(data.frame(settings), file.path("logs", "outputs", paste0(file_prefix,"model_settings.csv")))
   
   
   ## Plotting ------------------------------------------------------------------

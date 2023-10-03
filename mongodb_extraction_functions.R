@@ -485,11 +485,11 @@ get_orgamendments_inputs = function(landUseSummaryOrPractices){
 }
 
 
-get_agroforestry_inputs = function(landUseSummaryOrPractices){
+get_tree_inputs = function(landUseSummaryOrPractices){
   # takes landUseSummaryOrPractices from farms collection
   # extracts agroforestry inputs dataframe 
   parcel_names <- landUseSummaryOrPractices[[1]]$parcelName
-  agroforestry_inputs = data.frame(parcel_ID = c(), scenario = c(), tree_species = c(), other_name = c(), dbh = c(),
+  tree_inputs = data.frame(parcel_ID = c(), scenario = c(), tree_species = c(), other_name = c(), dbh = c(),
                                    tree_density = c(), area = c())
   for (i in c(1:length(parcel_names))){
     for (j in c(0:10)){
@@ -507,7 +507,7 @@ get_agroforestry_inputs = function(landUseSummaryOrPractices){
       typeOfTrees = landUseSummaryOrPractices[[1]][[year_str]]$typeOfTrees[i][[1]][c,]
       if(nrow(typeOfTrees)>0){
         for (k in c(1:nrow(typeOfTrees))){
-          agroforestry_inputs <- rbind(agroforestry_inputs,data.frame(
+          tree_inputs <- rbind(tree_inputs,data.frame(
             parcel_ID = c(parcel_names[i]), 
             scenario = c(year_str), 
             tree_species = c(typeOfTrees$treeName[[k]]),
@@ -518,7 +518,7 @@ get_agroforestry_inputs = function(landUseSummaryOrPractices){
         }
         if (j==0){ #baseline based on pre-project trees
           for (k in c(1:nrow(typeOfTrees))){
-            agroforestry_inputs <- rbind(agroforestry_inputs,data.frame(
+            tree_inputs <- rbind(tree_inputs,data.frame(
               parcel_ID = c(parcel_names[i]), 
               scenario = c("baseline"), 
               tree_species = c(typeOfTrees$treeName[[k]]),
@@ -531,11 +531,11 @@ get_agroforestry_inputs = function(landUseSummaryOrPractices){
       }
     }
   }
-  NA_rows = nrow(agroforestry_inputs)-nrow(na.omit(agroforestry_inputs))
+  NA_rows = nrow(tree_inputs)-nrow(na.omit(tree_inputs))
   if(NA_rows>0){
-    log4r::error(my_logger, paste('WARNING: ',NA_rows,' rows contained NAs in agroforestry_inputs.', paste=''))
+    log4r::error(my_logger, paste('WARNING: ',NA_rows,' rows contained NAs in tree_inputs.', paste=''))
   }
-  return(na.omit(agroforestry_inputs))
+  return(na.omit(tree_inputs))
 }
 
 
