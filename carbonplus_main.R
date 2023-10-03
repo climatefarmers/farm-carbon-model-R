@@ -358,29 +358,46 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   
   file_prefix <- paste0(farmId, "_", farms_everything$farmInfo$farmManagerLastName, '_') # farms_everything$farmInfo$farmManagerFirstName
 
-  # Inputs: wrote to file and exclude future years if doing monitoring run
-  for(input in names(inputs)) {
-    out <- inputs[[input]]
-    if(settings$monitoring_run) {
-      if("scenario" %in% colnames(out)) {
-        out <- out %>% filter(scenario %in% c('year0', 'year1', 'year2'))
+  # Function to write out and exclude future years if doing monitoring run
+  write_out <- function(data, path) {
+    for(name in names(data)) {
+      out <- data[[name]]
+      if(settings$monitoring_run) {
+        if("scenario" %in% colnames(out)) {
+          out <- out %>% filter(scenario %in% c('year0', 'year1', 'year2'))
+        }
+        if("year" %in% colnames(out)) {
+          out <- out %>% filter(year %in% c(0, 1, 2))
+        }
       }
-      if("year" %in% colnames(out)) {
-        out <- out %>% filter(year %in% c(0, 1, 2))
-      }
+      write_csv(out, file.path(path, paste0(file_prefix, name, ".csv")))
     }
-    write_csv(out, file.path("logs", "inputs", paste0(file_prefix, input, ".csv")))
   }
-
+  browser()
+  # Inputs
+  write_out(inputs, file.path("logs", "inputs"))
+  
   # Outputs
-  write_csv(soil_results_out$parcel_Cinputs, file.path("logs", "outputs", paste0( file_prefix, "parcel_Cinputs", ".csv")))
-  write_csv(soil_results_out$step_in_table_final, file.path("logs", "outputs", paste0( file_prefix, "SOC_baseline_and_project_totals", ".csv")))
-  write_csv(soil_results_out$all_results_final, file.path("logs", "outputs", paste0( file_prefix, "SOC_baseline_and_project_parcels", ".csv")))
-  write_csv(yearly_results, file.path("logs", "outputs", paste0(file_prefix, "yearly_results", ".csv")))
-  write_csv(productivity_table, file.path("logs", "outputs", paste0(file_prefix,"productivity_table.csv")))
-  write_csv(emissions_yearly_sources, file.path("logs", "outputs", paste0(file_prefix,"emissions_yearly_sources.csv")))
-  write_csv(emissions_parcels_yearly_animals, file.path("logs", "outputs", paste0(file_prefix,"emissions_parcels_yearly_animals.csv")))
-  write.csv(data.frame(settings), file.path("logs", "outputs", paste0(file_prefix,"model_settings.csv")))
+  outputs <- list(
+    parcel_Cinputs = soil_results_out$parcel_Cinputs,
+    SOC_baseline_and_project_totals = soil_results_out$step_in_table_final,
+    SOC_baseline_and_project_parcels = soil_results_out$all_results_final,
+    yearly_results = yearly_results,
+    productivity_table = productivity_table,
+    emissions_yearly_sources = emissions_yearly_sources,
+    emissions_parcels_yearly_animals = emissions_parcels_yearly_animals,
+    model_settings = data.frame(settings)
+  )
+  write_out(outputs, file.path("logs", "outputs"))
+  
+  # write_csv(soil_results_out$parcel_Cinputs, file.path("logs", "outputs", paste0( file_prefix, "parcel_Cinputs", ".csv")))
+  # write_csv(soil_results_out$step_in_table_final, file.path("logs", "outputs", paste0( file_prefix, "SOC_baseline_and_project_totals", ".csv")))
+  # write_csv(soil_results_out$all_results_final, file.path("logs", "outputs", paste0( file_prefix, "SOC_baseline_and_project_parcels", ".csv")))
+  # write_csv(yearly_results, file.path("logs", "outputs", paste0(file_prefix, "yearly_results", ".csv")))
+  # write_csv(productivity_table, file.path("logs", "outputs", paste0(file_prefix,"productivity_table", ".csv")))
+  # write_csv(emissions_yearly_sources, file.path("logs", "outputs", paste0(file_prefix,"emissions_yearly_sources", ".csv")))
+  # write_csv(emissions_parcels_yearly_animals, file.path("logs", "outputs", paste0(file_prefix,"emissions_parcels_yearly_animals.csv")))
+  # write.csv(data.frame(settings), file.path("logs", "outputs", paste0(file_prefix,"model_settings.csv")))
   
   
   ## Plotting ------------------------------------------------------------------
