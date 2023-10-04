@@ -111,7 +111,7 @@ get_livestock_table <- function(livestock) {
 
 
 ## Helper function to extract total grazing and bale grazing yield from the whole farm over all years
-get_grazing_amounts <- function(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs, livestock_table){
+get_grazing_amounts <- function(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs, livestock_inputs){
   # Extracts the overall grazing and fodder (bale) grazing from the whole farm
 
   year_strings = paste0("year", 0:10)
@@ -195,7 +195,7 @@ get_grazing_amounts <- function(landUseSummaryOrPractices, livestock, animal_fac
   ## Get dry weight grazing calculated from animal data ----
   
   # Merge with factors and calculate the grazing per animal type
-  animals <- merge(x = livestock_table, y = animal_factors, by = "species", all.x = TRUE)
+  animals <- merge(x = livestock_inputs, y = animal_factors, by = "species", all.x = TRUE)
   animals <- animals %>%
     mutate(yearly_grazing_needs_tDM = n_animals * mass_kg_per_animal / 1000 * 0.025 * grazing_days) # 0.025 is the 2.5% of animal mass required as feed every day
   # Sum up the calculated grazing of all animal types for each year
@@ -536,7 +536,7 @@ get_tree_inputs = function(landUseSummaryOrPractices){
 }
 
 
-get_animal_inputs = function(grazing_yearly, livestock_table, parcel_inputs){
+get_animal_inputs = function(grazing_yearly, livestock_inputs, parcel_inputs){
   # takes landUseSummaryOrPractices & livestock from farms collection
   # extracts animal inputs dataframe
   
@@ -553,7 +553,7 @@ get_animal_inputs = function(grazing_yearly, livestock_table, parcel_inputs){
       grazing_year_total <- sum(grazing_year$grazing)
       grazing_year_parcel <- grazing_year$grazing[grazing_year$parcel == parcel_names[i]]
       
-      livestock_temp <- livestock_table %>% filter(scenario == year_str)
+      livestock_temp <- livestock_inputs %>% filter(scenario == year_str)
 
       for (k in 1:nrow(livestock_temp)){
 
