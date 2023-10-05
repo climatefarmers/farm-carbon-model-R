@@ -246,7 +246,8 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
     parcel_inputs = parcel_inputs,
     # landUseType = landUseType, # Not required and needs fixing as output info
     livestock_inputs = livestock_inputs,
-    grazing_tables = grazing_tables,
+    grazing_monthly = grazing_monthly,
+    grazing_yearly = grazing_yearly,
     orgamendments_inputs = orgamendments_inputs, 
     animal_inputs = animal_inputs, 
     crop_inputs = crop_inputs,
@@ -356,16 +357,20 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   
   
   ## Write data to files -----------------------------------------------------
-  
+
   file_prefix <- paste0(farmId, "_", farms_everything$farmInfo$farmManagerLastName, '_') # farms_everything$farmInfo$farmManagerFirstName
 
+  # Prepare some tables
+  soil_results_out$all_results_final <- soil_results_out$all_results_final %>%
+    rename(scen = scenario)
+  
   # Function to write out and exclude future years if doing monitoring run
   write_out <- function(data, path) {
     for(name in names(data)) {
       out <- data[[name]]
       if(settings$monitoring_run) {
         if("scenario" %in% colnames(out)) {
-          out <- out %>% filter(scenario %in% c('year0', 'year1', 'year2'))
+          out <- out %>% filter(scenario %in% c('baseline', 'year0', 'year1', 'year2'))
         }
         if("year" %in% colnames(out)) {
           out <- out %>% filter(year %in% c(0, 1, 2))
@@ -423,8 +428,9 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   
   ## Rename output dir ---------------------------------------------------------
   # newsystime <- format(Sys.time(),"%Y-%m-%d-%H-%M-%S")
-  new_dir <- paste0("outputs_", farmId)
-  file.rename("logs", new_dir)
+  out_dir <- paste0("outputs_", farmId)
+  unlink(out_dir, recursive = TRUE)
+  file.rename("logs", out_dir)
   
   ## End function --------------------------------------------------------------
   return(yearly_results)
