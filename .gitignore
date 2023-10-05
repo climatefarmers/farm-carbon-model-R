@@ -41,3 +41,4 @@ __pycache__/
 init_file.json
 init_file_docker.json
 .DS_Store
+outputs*
