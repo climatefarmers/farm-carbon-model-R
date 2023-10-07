@@ -221,7 +221,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   parcel_inputs <- get_parcel_inputs(landUseSummaryOrPractices)  # Parcel information
   landUseType <- get_land_use_type(landUseSummaryOrPractices, parcel_inputs)
   livestock_inputs <- get_livestock_table(livestock)
-  grazing_tables <- get_grazing_amounts(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs, livestock_inputs)  # grazing data
+  grazing_tables <- get_grazing_amounts(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs, livestock_inputs, settings$grazing_used)  # grazing data
   grazing_monthly <- grazing_tables[[1]]
   grazing_yearly <- grazing_tables[[2]]
   orgamendments_inputs <- get_orgamendments_inputs(landUseSummaryOrPractices)  # Organic amendments: hay, compost, manure
