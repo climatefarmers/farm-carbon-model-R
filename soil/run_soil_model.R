@@ -15,51 +15,48 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   # Mean coordinates
   latlon_farm <- c(latitude = mean(inputs$parcel_inputs$latitude), longitude = mean(inputs$parcel_inputs$longitude))
   
+  # Just for testing
+  # weather_data <- read_csv(file.path("data", "test_weather_data.csv"), show_col_types = FALSE) # debug line
+  # 
+  # ## Extracting climate from different periods
+  # past_weather <- data.frame(
+  #   month = weather_data$month,
+  #   evap = weather_data$past_evap,
+  #   pevap = weather_data$past_pevap,
+  #   precipitation = weather_data$past_precipitation,
+  #   temperature = weather_data$past_temperature
+  # )
+  # climate_rcp4.5 <- data.frame(
+  #   month = weather_data$month,
+  #   evap = weather_data$future_evap_rcp4.5,
+  #   pevap = weather_data$future_pevap_rcp4.5,
+  #   precipitation = weather_data$future_precipitation_rcp4.5,
+  #   temperature = weather_data$future_temperature_rcp4.5
+  # )
+  
   if(settings$debug_mode | settings$use_test_climate){  # will skip fetching climate data and use dummy data if debug_mode is set
-    climate_data <- read_csv(file.path("data", "climate_data_1950_2022.csv"), show_col_types = FALSE) # For testing only
+    climate_data <- read_csv(file.path("data", "climate_data_1950_2022_Alves4.csv"), show_col_types = FALSE) # For testing only
   } else {
     climate_data <- get_past_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], "1950_2022", averaged=FALSE)
-    # climate_data=rbind(get_past_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], "1950_2022"), 
-    #                    # get_past_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], "2021"), 
-    #                    # get_past_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], "2022"), 
-    #                    get_future_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], scenario="rcp4.5"), 
+    # weather_data <- rbind(get_past_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], "1950_2022"),
+    #                    # get_past_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], "2021"),
+    #                    # get_past_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], "2022"),
+    #                    get_future_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], scenario="rcp4.5"),
     #                    get_future_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], scenario="rcp8.5"))
   }
   
-  ## Extracting climate from different periods
+  climate_periods <- get_climate_periods(climate_data = climate_data, proj_start_year = as.numeric(farms_everything$farmInfo$startYear))
+  mean_past_climate <- climate_periods$mean_past_climate
+  mean_recent_climate <- climate_periods$mean_recent_climate
   
-  # Average of all past climate data since start
-  mean_past_climate <- climate_data %>% group_by(month) %>% 
-    summarise(temperature=mean(temperature),
-              precipitation=mean(precipitation),
-              evap=mean(evap),
-              pevap=mean(pevap))
+  # Set climate for different runs:
+  spinup_climate <- climate_periods$mean_past_climate
+  present_climate <- climate_periods$mean_past_climate
   
-  # Averaged recent climate (10 last years of data)
-  nr_cd <- nrow(climate_data) 
-  i_cd <- nr_cd - (10*12)  # index for last 10 years of data
-  
-  mean_recent_climate <- climate_data[i_cd:nr_cd, ] %>% group_by(month) %>% 
-    summarise(temperature=mean(temperature),
-              precipitation=mean(precipitation),
-              evap=mean(evap),
-              pevap=mean(pevap))
-  
-  # Climate for the project period (future years use the averaged recent climate)
-  climate_proj <- data.frame()
-  proj_start_year <- as.numeric(farms_everything$farmInfo$startYear)
+  ## Choosing model version based on climate
+  model_version <- ifelse(sum(present_climate$precipitation) / sum(present_climate$pevap) < 0.65 &
+                            sum(present_climate$precipitation) < 600, "Semi-arid", "Normal")
 
-  for(i in 1:10) {
-    if(i <= settings$curr_monit_year) {
-      curr_year <- proj_start_year + (i-1)
-      climate_proj_temp <- climate_data[format(climate_data$date, "%Y") == curr_year, ]
-      climate_proj_temp <- climate_proj_temp %>% mutate(year = i) %>% select(-c(date, days_in_a_month, scenario))
-    } else {
-      climate_proj_temp <- mean_recent_climate %>% mutate(year = i)
-    }
-    climate_proj <- rbind(climate_proj, climate_proj_temp)
-  }
-  
   ## Soil data ---
   # Gets soil data from https://maps.isric.org/ (AWS)
   SOC_df = s3read_using(FUN = read_csv, object = paste("s3://soil-modelling/soil_variables/", farmId, "/ocs.csv", sep=""))
@@ -80,10 +77,16 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
     clay = quantile(clay_df$`clay_5-15cm_mean`/10, 0.95),
     silt = mean(silt_df$`silt_5-15cm_mean`)/10, 
     bulk_density = mean(bdod_df$`bdod_5-15cm_mean`)/100
-    )
+  )
   
   # Final soil inputs
   soil_inputs <- get_soil_inputs(landUseSummaryOrPractices, farms_everything$soilAnalysis, soilMapsData)
+  
+  # ## Calculating the average soil parameters among parcels
+  # mean_SOC = mean(soil_inputs$SOC)
+  # mean_clay = mean(soil_inputs$clay)
+  # mean_silt = mean(soil_inputs$silt)
+  # mean_bulk_density = mean(soil_inputs$bulk_density)
   
   ################# Calculations of C inputs per parcel and scenario
   
@@ -105,7 +108,6 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   for(parcel in unique(inputs$parcel_inputs$parcel_ID)){
     
     for(year in years){
-      
       scenario <- paste0("year", year)
       if(year == 0) scenario <- baseline_chosen
       orgamendments_Cinputs <- get_monthly_Cinputs_orgamendments(inputs$orgamendments_inputs, factors$manure_factors, scenario, parcel)
@@ -134,45 +136,39 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
     log4r::error(my_logger, paste(length(apply(is.na(parcel_Cinputs), 2, which)), 'NAs were found in parcel C inputs calculation results.'))
   }
   
-  ################# Calculations of additional C inputs compared to baseline per parcel and scenario -- Fernando: NOT USED FURTHER IN CODE!
-  
-  parcel_Cinputs_addition = merge(x= parcel_Cinputs, 
-                                  y= inputs$parcel_inputs %>% 
-                                    select(parcel_ID, area) %>%
-                                    mutate(farm_frac= paste(round(area/sum(area)*100), '%')), by="parcel_ID") %>% 
-    group_by(parcel_ID, farm_frac) %>% 
-    mutate(Cinput_per_ha_project = sum(tot_Cinputs[scenario!=baseline_chosen & scenario!="year0"])/10) %>%
-    filter(scenario==baseline_chosen) %>%
-    mutate(additional_Cinput_per_ha = round(Cinput_per_ha_project - tot_Cinputs, 2), 
-           relative_increase=paste(as.character(ifelse(tot_Cinputs==0, NA, as.integer((Cinput_per_ha_project - tot_Cinputs) / tot_Cinputs*100))), '%'), 
-           additional_Cinput_total = round(unique(area)*(Cinput_per_ha_project - tot_Cinputs), 1)) 
-  additional_Cinput_total_farm = sum(parcel_Cinputs_addition$additional_Cinput_total)
-  parcel_Cinputs_addition = parcel_Cinputs_addition %>%
-    mutate(absolute_contribution_perc = round(100*additional_Cinput_total / additional_Cinput_total_farm)) %>%
-    select(parcel_ID, farm_frac, additional_Cinput_per_ha, relative_increase, additional_Cinput_total, absolute_contribution_perc)
-  
-  ## Calculation of total c inputs for the whole farm -- Fernando: NOT BEING USED FURTHER IN CODE!
-  # Sum over all parcels
-  yearly_Cinputs_farm = merge(x= parcel_Cinputs, 
-                              y= inputs$parcel_inputs, 
-                              by="parcel_ID") %>%
-    group_by(scenario) %>%
-    summarise(tot_Cinputs=sum(tot_Cinputs*area), 
-              orgamendments_Cinputs=sum(area*orgamendments_Cinputs), 
-              animal_Cinputs=sum(area*animal_Cinputs), 
-              crop_Cinputs=sum(area*crop_Cinputs), 
-              pasture_Cinputs=sum(area*pasture_Cinputs), 
-              agroforestry_Cinputs=sum(area*agroforestry_Cinputs))
-  
+  # ################# Calculations of additional C inputs compared to baseline per parcel and scenario -- Fernando: NOT USED FURTHER IN CODE!
+  # 
+  # parcel_Cinputs_addition = merge(x= parcel_Cinputs, 
+  #                                 y= inputs$parcel_inputs %>% 
+  #                                   select(parcel_ID, area) %>%
+  #                                   mutate(farm_frac= paste(round(area/sum(area)*100), '%')), by="parcel_ID") %>% 
+  #   group_by(parcel_ID, farm_frac) %>% 
+  #   mutate(Cinput_per_ha_project = sum(tot_Cinputs[scenario!=baseline_chosen & scenario!="year0"])/10) %>%
+  #   filter(scenario==baseline_chosen) %>%
+  #   mutate(additional_Cinput_per_ha = round(Cinput_per_ha_project - tot_Cinputs, 2), 
+  #          relative_increase=paste(as.character(ifelse(tot_Cinputs==0, NA, as.integer((Cinput_per_ha_project - tot_Cinputs) / tot_Cinputs*100))), '%'), 
+  #          additional_Cinput_total = round(unique(area)*(Cinput_per_ha_project - tot_Cinputs), 1)) 
+  # additional_Cinput_total_farm = sum(parcel_Cinputs_addition$additional_Cinput_total)
+  # parcel_Cinputs_addition = parcel_Cinputs_addition %>%
+  #   mutate(absolute_contribution_perc = round(100*additional_Cinput_total / additional_Cinput_total_farm)) %>%
+  #   select(parcel_ID, farm_frac, additional_Cinput_per_ha, relative_increase, additional_Cinput_total, absolute_contribution_perc)
+  # 
+  # ## Calculation of total c inputs for the whole farm -- Fernando: NOT BEING USED FURTHER IN CODE!
+  # # Sum over all parcels
+  # yearly_Cinputs_farm = merge(x= parcel_Cinputs, 
+  #                             y= inputs$parcel_inputs, 
+  #                             by="parcel_ID") %>%
+  #   group_by(scenario) %>%
+  #   summarise(tot_Cinputs=sum(tot_Cinputs*area), 
+  #             orgamendments_Cinputs=sum(area*orgamendments_Cinputs), 
+  #             animal_Cinputs=sum(area*animal_Cinputs), 
+  #             crop_Cinputs=sum(area*crop_Cinputs), 
+  #             pasture_Cinputs=sum(area*pasture_Cinputs), 
+  #             agroforestry_Cinputs=sum(area*agroforestry_Cinputs))
+  # 
   
   
   ################# Initialisation by making the model reach SOC of natural areas of the pedo-climatic area
-  
-  ## Calculating the average soil parameters among parcels
-  mean_SOC = mean(soil_inputs$SOC)
-  mean_clay = mean(soil_inputs$clay)
-  mean_silt = mean(soil_inputs$silt)
-  mean_bulk_density = mean(soil_inputs$bulk_density)
   
   ## Pulling DMP/RPM ratios from different kind of land use in corresponding pedoclimatic area 
   dr_ratio_agroforestry = unique(factors$natural_area_factors$dr_ratio_agroforestry)
@@ -237,10 +233,6 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   # Data frame that includes total soc per farm
   farm_results <- data.frame(run=c(), time=c(), scenario=c(), SOC_farm=c())
   
-  ## Choosing model version
-  model_version <- ifelse(sum(mean_recent_climate$precipitation) / sum(mean_recent_climate$pevap) < 0.65 &
-                            sum(mean_recent_climate$precipitation) < 600, "Semi-arid", "Normal")
-  
   ## Initialization of model runs
   # Initializing run counter
   run_ID <- 0
@@ -280,21 +272,14 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
                         tilling_factor = mean_input$tilling_factor * batch_coef$tilling_factor
     )
     
-    mean_past_climate_batch <- mean_past_climate %>% mutate(
+    spinup_climate_batch <- spinup_climate %>% mutate(
       year = year, 
       temp = temperature * batch_coef$temp,
       precip = precipitation * batch_coef$precip,
       evap = evap * batch_coef$evap
     )
     
-    mean_recent_climate_batch <- mean_recent_climate %>% mutate(
-      year = year, 
-      temp = temperature * batch_coef$temp,
-      precip = precipitation * batch_coef$precip,
-      evap = evap * batch_coef$evap
-    )
-    
-    climate_proj_batch <- climate_proj %>% mutate(
+    present_climate_batch <- present_climate %>% mutate(
       year = year, 
       temp = temperature * batch_coef$temp,
       precip = precipitation * batch_coef$precip,
@@ -320,13 +305,14 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
       
       # Run spinup to equilibrium using baseline data
       time_horizon = 300
+      # browser()
       C0_df_spinup <- calc_carbon_over_time(time_horizon, 
                                             field_carbon_in = rep(batch$field_carbon_in[1], time_horizon), 
                                             dr_ratio = rep(batch$dr_ratio[1], time_horizon), 
                                             bare = batch$bare,
-                                            temp = mean_recent_climate_batch$temp, 
-                                            precip = mean_recent_climate_batch$precip, 
-                                            evap = mean_recent_climate_batch$evap, 
+                                            temp = spinup_climate_batch$temp, 
+                                            precip = spinup_climate_batch$precip, 
+                                            evap = spinup_climate_batch$evap, 
                                             soil_thick = batch$soil_thick[1], 
                                             clay = batch$clay[1], 
                                             pE = batch$pE[1], 
@@ -343,9 +329,9 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
                                               field_carbon_in = rep(batch$field_carbon_in[1], time_horizon), 
                                               dr_ratio = rep(batch$dr_ratio[1], time_horizon), 
                                               bare = batch$bare,
-                                              temp = mean_recent_climate_batch$temp, 
-                                              precip = mean_recent_climate_batch$precip, 
-                                              evap = mean_recent_climate_batch$evap, 
+                                              temp = present_climate_batch$temp, 
+                                              precip = present_climate_batch$precip, 
+                                              evap = present_climate_batch$evap, 
                                               soil_thick = batch$soil_thick[1], 
                                               clay = batch$clay[1], 
                                               pE = batch$pE[1], 
@@ -363,9 +349,9 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
                                                    field_carbon_in = rep(batch$field_carbon_in[1], time_horizon), 
                                                    dr_ratio = rep(batch$dr_ratio[1], time_horizon), 
                                                    bare = batch$bare,
-                                                   temp = mean_recent_climate_batch$temp, 
-                                                   precip = mean_recent_climate_batch$precip, 
-                                                   evap = mean_recent_climate_batch$evap, 
+                                                   temp = present_climate_batch$temp, 
+                                                   precip = present_climate_batch$precip, 
+                                                   evap = present_climate_batch$evap, 
                                                    soil_thick = batch$soil_thick[1], 
                                                    clay = batch$clay[1], 
                                                    pE = batch$pE[1], 
@@ -381,18 +367,20 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
       starting_holistic_soil_content <- baseline_soil_content
       C0_df_holistic <- C0_df_baseline
       for (N in 1:10){
+        # print(paste(run_ID, parcel, N)) # debugging line
         batch_parcel_Cinputs = parcel_Cinputs %>% mutate(tot_Cinputs=tot_Cinputs*batch_coef$field_carbon_in)
         batch$field_carbon_in <- (batch_parcel_Cinputs %>% filter (scenario==paste("year", N, sep="") & parcel_ID==parcel))$tot_Cinputs
         batch$bare = (inputs$bare_field_inputs %>% filter(scenario == paste("year", N, sep="") & parcel_ID == parcel))$bareground
         batch$tilling_factor = (inputs$tilling_inputs %>% filter(scenario==paste("year", N, sep="") & parcel_ID==parcel))$tilling_factor
         time_horizon = 1
+        
         C0_df_holistic_yearly <- calc_carbon_over_time(time_horizon, 
                                                        field_carbon_in = rep(batch$field_carbon_in[1], time_horizon), 
                                                        dr_ratio = rep(batch$dr_ratio[1], time_horizon), 
                                                        bare = batch$bare,
-                                                       temp = mean_recent_climate_batch$temp, 
-                                                       precip = mean_recent_climate_batch$precip, 
-                                                       evap = mean_recent_climate_batch$evap, 
+                                                       temp = present_climate_batch$temp, 
+                                                       precip = present_climate_batch$precip, 
+                                                       evap = present_climate_batch$evap, 
                                                        soil_thick = batch$soil_thick[1], 
                                                        clay = batch$clay[1], 
                                                        pE = batch$pE[1], 
@@ -422,7 +410,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
     step_baseline <- diff(step_in_results$SOC_farm[step_in_results$scenario=="baseline"])
     step_holistic <- diff(step_in_results$SOC_farm[step_in_results$scenario=="holistic"])
     year_temp <- step_in_results$year[step_in_results$scenario=="holistic"][-1]
-
+    
     step_in_table_temp <- data.frame(run=run_ID, 
                                      scenario=paste0("year", 1:10),
                                      cal_year=year_temp,
