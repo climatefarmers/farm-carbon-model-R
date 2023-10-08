@@ -154,7 +154,6 @@ get_grazing_amounts <- function(landUseSummaryOrPractices, livestock, animal_fac
     for (i in 1:length(parcel_names)){
       
       parcel <- parcel_names[i]
-      # if(parcel=="Cabeço dos Sobreiros") browser()
       baleResidue <- missing_to_na(year_chosen$residueLeftAfterBaleGrazing[i])/100
       if(is.na(baleResidue)) {baleResidue <- 0.15}  # 15% assumed residue left of fodder on field
       fodder_parcel <- missing_to_zero(year_chosen$hayStrawApplication[i]) * parcel_inputs$area[i]
@@ -174,7 +173,7 @@ get_grazing_amounts <- function(landUseSummaryOrPractices, livestock, animal_fac
         # getting sum for parcel
         grazing_parcel <- grazing_parcel + grazing_month * parcel_inputs$area[i]
       }
-      
+
       # Correct for moisture content
       dryOrFresh <- year_chosen$yieldsResiduesDryOrFresh[i]
       if(is.null(dryOrFresh)) dryOrFresh <- NA
@@ -191,7 +190,7 @@ get_grazing_amounts <- function(landUseSummaryOrPractices, livestock, animal_fac
       
     }
   }
-  
+
   ## Get dry weight grazing calculated from animal data ----
   
   # Merge with factors and calculate the grazing per animal type
@@ -244,8 +243,8 @@ get_grazing_amounts <- function(landUseSummaryOrPractices, livestock, animal_fac
   grazing_yearly$grazing_final_ha <- grazing_yearly$grazing_final / grazing_yearly$area
   grazing_yearly$forage_ha <- grazing_yearly$forage / grazing_yearly$area
   grazing_yearly$fodder_residue_ha <- grazing_yearly$fodder_residue / grazing_yearly$area
-  
-  # Scale the monthly grazing reported according to calculated grazing_final
+
+  # Obtain monthly grazing by scaling the reported monthly grazing according to the grazing_final
   grazing_monthly <- merge(
     grazing_monthly, 
     grazing_yearly %>% select(parcel, year, grazing_final_yearly = grazing_final_ha, grazing_rep_yearly = grazing_rep_ha),
@@ -254,6 +253,7 @@ get_grazing_amounts <- function(landUseSummaryOrPractices, livestock, animal_fac
   grazing_monthly <- grazing_monthly %>% mutate(
     grazing_final = grazing_rep / grazing_rep_yearly * grazing_final_yearly
   )
+  grazing_monthly$grazing_final[is.nan(grazing_monthly$grazing_final)] <- 0 # Correct NaN from 0 divisions to 0 
 
   return(list(grazing_monthly=grazing_monthly, grazing_yearly=grazing_yearly))
 }
