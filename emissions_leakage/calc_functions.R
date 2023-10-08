@@ -33,7 +33,7 @@ ch4_manure <- function(
 ){
   if(nrow(animal_data) > 0){
     animal_data <- animal_data %>% 
-      mutate(ch4_manure = n_animals * grazing_days/365 * ef_methane_kg_head) # add non-grazing days
+      mutate(ch4_manure = n_animals * vs_kg_per_tonne_per_day * 365 * (mass_kg_per_animal/1000) * ef_methane_manure / 1000)
   }else{
     warning("No animal data provided - or included in project")
   }

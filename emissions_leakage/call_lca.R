@@ -37,7 +37,8 @@ call_lca <- function(init_file, farm_EnZ, inputs, factors){
   for (i in years){
     scenario_selected <- scenarios[i+1]
     animals <- merge(filter(inputs$animal_inputs, scenario==scenario_selected), factors$animal_factors, by = "species", all.x = TRUE)
-    animals <- merge(animals, factors$methane_factors, by = c("species", "grazing_management", "productivity"), all.x = TRUE)
+    # animals <- merge(animals, factors$methane_factors, by = c("species", "grazing_management", "productivity"), all.x = TRUE)
+    animals <- merge(animals, factors$methane_factors, by = c("species"), all.x = TRUE)
     n_fixing_species_crop <- merge(filter(inputs$crop_inputs, scenario==scenario_selected), factors$crop_factors, by = "crop", all.x = TRUE)
     n_fixing_species_crop <- merge(n_fixing_species_crop, inputs$parcel_inputs, by = "parcel_ID", all.x = TRUE)
     #n_fixing_species_pasture <- merge(filter(inputs$pasture_inputs, scenario==scenario_selected), factors$pasture_factors, by = "grass", all.x = TRUE)
