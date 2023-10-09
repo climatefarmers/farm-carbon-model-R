@@ -20,7 +20,7 @@ ch4_enteric_fermentation <- function(
 ){
   if(nrow(animal_data) > 0){
     animal_data <- animal_data %>% 
-      mutate(ch4_ent_ferm = n_animals * (grazing_days / 365) * ef_enteric_fermentation_kg_head) # add non-grazing days
+      mutate(ch4_ent_ferm = n_animals * ef_enteric_fermentation_kg_head) # add non-grazing days
   }else{
     warning("No animal data provided - or included in project")
   }
