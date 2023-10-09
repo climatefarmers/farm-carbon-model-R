@@ -9,7 +9,7 @@ get_monthly_Cinputs_orgamendments <- function (orgamendments_inputs, orgamendmen
   if(nrow(orgamendments_inputs)==0){return(0)}
   
   orgamendments = merge(x = orgamendments_inputs, y = orgamendments, by = "source", all.x = TRUE) %>% 
-    mutate (tC_inputs_orgamendments = quantity_t_ha * remaining_frac * carbon_content)
+    mutate (tC_inputs_orgamendments = quantity_t_ha * carbon_content)
   
   tC_inputs_orgamendments = sum(orgamendments$tC_inputs_orgamendments)
   
