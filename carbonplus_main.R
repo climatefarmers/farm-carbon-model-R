@@ -220,12 +220,12 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   # Extraction of inputs per parcel and scenario
   parcel_inputs <- get_parcel_inputs(landUseSummaryOrPractices)  # Parcel information
   landUseType <- get_land_use_type(landUseSummaryOrPractices, parcel_inputs)
-  livestock_table <- get_livestock_table(livestock)
-  grazing_tables <- get_grazing_amounts(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs, livestock_table)  # grazing data
+  livestock_inputs <- get_livestock_table(livestock)
+  grazing_tables <- get_grazing_amounts(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs, livestock_inputs, settings$grazing_used)  # grazing data
   grazing_monthly <- grazing_tables[[1]]
   grazing_yearly <- grazing_tables[[2]]
   orgamendments_inputs <- get_orgamendments_inputs(landUseSummaryOrPractices)  # Organic amendments: hay, compost, manure
-  animal_inputs <- get_animal_inputs(grazing_yearly, livestock_table, parcel_inputs)  # Animal manure
+  animal_inputs <- get_animal_inputs(grazing_yearly, livestock_inputs, parcel_inputs)  # Animal manure
   crop_inputs <- get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, grazing_yearly, grazing_monthly)  # Crops and residues
   pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, pasture_factors, farm_EnZ, grazing_yearly, grazing_monthly, my_logger, parcel_inputs)
   fertilizer_inputs <- get_fertilizer_inputs(landUseSummaryOrPractices)
@@ -243,8 +243,11 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   
   # Collect inputs as list
   inputs <- list(
-    landUseType = landUseType, 
     parcel_inputs = parcel_inputs,
+    # landUseType = landUseType, # Not required and needs fixing as output info
+    livestock_inputs = livestock_inputs,
+    grazing_monthly = grazing_monthly,
+    grazing_yearly = grazing_yearly,
     orgamendments_inputs = orgamendments_inputs, 
     animal_inputs = animal_inputs, 
     crop_inputs = crop_inputs,
@@ -280,7 +283,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
 
   soil_results_yearly <- soil_results_out$step_in_table_final
   soil_results_monthly <- soil_results_out$farm_results_final
-browser()
+
   yearly_results <- soil_results_yearly %>%
     mutate(CO2eq_soil_final=yearly_CO2diff_final,
            CO2eq_soil_mean=yearly_CO2diff_mean,
@@ -354,16 +357,20 @@ browser()
   
   
   ## Write data to files -----------------------------------------------------
-  
+
   file_prefix <- paste0(farmId, "_", farms_everything$farmInfo$farmManagerLastName, '_') # farms_everything$farmInfo$farmManagerFirstName
 
+  # Prepare some tables
+  soil_results_out$all_results_final <- soil_results_out$all_results_final %>%
+    rename(scen = scenario)
+  
   # Function to write out and exclude future years if doing monitoring run
   write_out <- function(data, path) {
     for(name in names(data)) {
       out <- data[[name]]
       if(settings$monitoring_run) {
         if("scenario" %in% colnames(out)) {
-          out <- out %>% filter(scenario %in% c('year0', 'year1', 'year2'))
+          out <- out %>% filter(scenario %in% c('baseline', 'year0', 'year1', 'year2'))
         }
         if("year" %in% colnames(out)) {
           out <- out %>% filter(year %in% c(0, 1, 2))
@@ -389,15 +396,6 @@ browser()
     soil_inputs = soil_results_out$soil_inputs
   )
   write_out(outputs, file.path("logs", "outputs"))
-  
-  # write_csv(soil_results_out$parcel_Cinputs, file.path("logs", "outputs", paste0( file_prefix, "parcel_Cinputs", ".csv")))
-  # write_csv(soil_results_out$step_in_table_final, file.path("logs", "outputs", paste0( file_prefix, "SOC_baseline_and_project_totals", ".csv")))
-  # write_csv(soil_results_out$all_results_final, file.path("logs", "outputs", paste0( file_prefix, "SOC_baseline_and_project_parcels", ".csv")))
-  # write_csv(yearly_results, file.path("logs", "outputs", paste0(file_prefix, "yearly_results", ".csv")))
-  # write_csv(productivity_table, file.path("logs", "outputs", paste0(file_prefix,"productivity_table", ".csv")))
-  # write_csv(emissions_yearly_sources, file.path("logs", "outputs", paste0(file_prefix,"emissions_yearly_sources", ".csv")))
-  # write_csv(emissions_parcels_yearly_animals, file.path("logs", "outputs", paste0(file_prefix,"emissions_parcels_yearly_animals.csv")))
-  # write.csv(data.frame(settings), file.path("logs", "outputs", paste0(file_prefix,"model_settings.csv")))
   
   
   ## Plotting ------------------------------------------------------------------
@@ -427,6 +425,12 @@ browser()
     ylab("Number of certificates issuable (per year)")
   print(histogram)
   dev.off()
+  
+  ## Rename output dir ---------------------------------------------------------
+  # newsystime <- format(Sys.time(),"%Y-%m-%d-%H-%M-%S")
+  out_dir <- paste0("outputs_", farmId)
+  unlink(out_dir, recursive = TRUE)
+  file.rename("logs", out_dir)
   
   ## End function --------------------------------------------------------------
   return(yearly_results)

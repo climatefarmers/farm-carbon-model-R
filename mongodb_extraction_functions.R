@@ -111,7 +111,7 @@ get_livestock_table <- function(livestock) {
 
 
 ## Helper function to extract total grazing and bale grazing yield from the whole farm over all years
-get_grazing_amounts <- function(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs, livestock_table){
+get_grazing_amounts <- function(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs, livestock_inputs, grazing_used){
   # Extracts the overall grazing and fodder (bale) grazing from the whole farm
 
   year_strings = paste0("year", 0:10)
@@ -154,7 +154,6 @@ get_grazing_amounts <- function(landUseSummaryOrPractices, livestock, animal_fac
     for (i in 1:length(parcel_names)){
       
       parcel <- parcel_names[i]
-      # if(parcel=="Cabeço dos Sobreiros") browser()
       baleResidue <- missing_to_na(year_chosen$residueLeftAfterBaleGrazing[i])/100
       if(is.na(baleResidue)) {baleResidue <- 0.15}  # 15% assumed residue left of fodder on field
       fodder_parcel <- missing_to_zero(year_chosen$hayStrawApplication[i]) * parcel_inputs$area[i]
@@ -174,7 +173,7 @@ get_grazing_amounts <- function(landUseSummaryOrPractices, livestock, animal_fac
         # getting sum for parcel
         grazing_parcel <- grazing_parcel + grazing_month * parcel_inputs$area[i]
       }
-      
+
       # Correct for moisture content
       dryOrFresh <- year_chosen$yieldsResiduesDryOrFresh[i]
       if(is.null(dryOrFresh)) dryOrFresh <- NA
@@ -191,11 +190,11 @@ get_grazing_amounts <- function(landUseSummaryOrPractices, livestock, animal_fac
       
     }
   }
-  
+
   ## Get dry weight grazing calculated from animal data ----
   
   # Merge with factors and calculate the grazing per animal type
-  animals <- merge(x = livestock_table, y = animal_factors, by = "species", all.x = TRUE)
+  animals <- merge(x = livestock_inputs, y = animal_factors, by = "species", all.x = TRUE)
   animals <- animals %>%
     mutate(yearly_grazing_needs_tDM = n_animals * mass_kg_per_animal / 1000 * 0.025 * grazing_days) # 0.025 is the 2.5% of animal mass required as feed every day
   # Sum up the calculated grazing of all animal types for each year
@@ -225,29 +224,36 @@ get_grazing_amounts <- function(landUseSummaryOrPractices, livestock, animal_fac
   
   grazing_yearly$scenario <- paste0("year",grazing_yearly$year)
 
-  # A conservative value is ensured by taking the minimum of reported or calculated values
-  grazing_yearly$grazing_min <- pmin(grazing_yearly$grazing_calc, grazing_yearly$grazing_rep)
+  # Choose what grazing estimates are used.
+  if(grazing_used == 'rep') {
+    grazing_yearly$grazing_final <- grazing_yearly$grazing_rep
+  } else if (grazing_used == 'calc') {
+    grazing_yearly$grazing_final <- grazing_yearly$grazing_calc
+  } else if(grazing_used == 'min') {
+    grazing_yearly$grazing_final <- pmin(grazing_yearly$grazing_calc, grazing_yearly$grazing_rep) 
+  } else {stop("Wrong grazing_used value provided.")}
   
   grazing_yearly <- grazing_yearly %>% 
-    mutate(forage = grazing_min - fodder_eaten)
+    mutate(forage = grazing_final - fodder_eaten)
   
   # Calculate the values per hectare
   grazing_yearly <- merge(grazing_yearly, parcel_inputs %>% select(parcel_ID, area), by.x = "parcel", by.y = "parcel_ID")
   # grazing_yearly$grazing_calc_ha <- grazing_yearly$grazing_calc / grazing_yearly$area
   grazing_yearly$grazing_rep_ha <- grazing_yearly$grazing_rep / grazing_yearly$area
-  grazing_yearly$grazing_min_ha <- grazing_yearly$grazing_min / grazing_yearly$area
+  grazing_yearly$grazing_final_ha <- grazing_yearly$grazing_final / grazing_yearly$area
   grazing_yearly$forage_ha <- grazing_yearly$forage / grazing_yearly$area
   grazing_yearly$fodder_residue_ha <- grazing_yearly$fodder_residue / grazing_yearly$area
-  
-  # Scale the monthly grazing reported according to calculated grazing_min
+
+  # Obtain monthly grazing by scaling the reported monthly grazing according to the grazing_final
   grazing_monthly <- merge(
     grazing_monthly, 
-    grazing_yearly %>% select(parcel, year, grazing_min_yearly = grazing_min_ha, grazing_rep_yearly = grazing_rep_ha),
+    grazing_yearly %>% select(parcel, year, grazing_final_yearly = grazing_final_ha, grazing_rep_yearly = grazing_rep_ha),
     by = c("parcel", "year")
     )
   grazing_monthly <- grazing_monthly %>% mutate(
-    grazing_min = grazing_rep / grazing_rep_yearly * grazing_min_yearly
+    grazing_final = grazing_rep / grazing_rep_yearly * grazing_final_yearly
   )
+  grazing_monthly$grazing_final[is.nan(grazing_monthly$grazing_final)] <- 0 # Correct NaN from 0 divisions to 0 
 
   return(list(grazing_monthly=grazing_monthly, grazing_yearly=grazing_yearly))
 }
@@ -536,7 +542,7 @@ get_tree_inputs = function(landUseSummaryOrPractices){
 }
 
 
-get_animal_inputs = function(grazing_yearly, livestock_table, parcel_inputs){
+get_animal_inputs = function(grazing_yearly, livestock_inputs, parcel_inputs){
   # takes landUseSummaryOrPractices & livestock from farms collection
   # extracts animal inputs dataframe
   
@@ -549,11 +555,11 @@ get_animal_inputs = function(grazing_yearly, livestock_table, parcel_inputs){
       
       year_str <- paste0('year', y)
 
-      grazing_year <- grazing_yearly %>% filter(scenario == year_str) %>% select(grazing_min, parcel)
+      grazing_year <- grazing_yearly %>% filter(scenario == year_str) %>% select(grazing_final, parcel)
       grazing_year_total <- sum(grazing_year$grazing)
       grazing_year_parcel <- grazing_year$grazing[grazing_year$parcel == parcel_names[i]]
       
-      livestock_temp <- livestock_table %>% filter(scenario == year_str)
+      livestock_temp <- livestock_inputs %>% filter(scenario == year_str)
 
       for (k in 1:nrow(livestock_temp)){
 
@@ -672,7 +678,7 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
       monthly_harvest$crop <- get_monthly_cash_crop(parcel_index = i, year_chosen)
       monthly_harvest$coverCrop <- year_chosen$coverCropMonthlyData[[i]]
       monthly_harvest$productiveFallow <- year_chosen$productiveFallow[[i]]
-      monthly_harvest$grazing <- grazing_monthly$grazing_min[grazing_monthly$parcel == parcel & grazing_monthly$year == j]
+      monthly_harvest$grazing <- grazing_monthly$grazing_final[grazing_monthly$parcel == parcel & grazing_monthly$year == j]
       monthly_harvest$harvest <- missing_to_zero(year_chosen$harvestYield[[i]])
       monthly_harvest$residue <- missing_to_zero(year_chosen$estimationAfterResidueGrazingHarvest[[i]])
       
@@ -1045,7 +1051,7 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
 
       # monthly yield and residue
       monthly_nonarables <- data.frame(grazing=rep(NA,12), residue=NA, harvest=NA)
-      monthly_nonarables$grazing <- grazing_monthly$grazing_min[grazing_monthly$parcel == parcel & grazing_monthly$year == j]
+      monthly_nonarables$grazing <- grazing_monthly$grazing_final[grazing_monthly$parcel == parcel & grazing_monthly$year == j]
       monthly_nonarables$residue <- missing_to_zero(year_chosen$estimationAfterResidueGrazingHarvest[i][[1]])
       monthly_nonarables$harvest <- missing_to_zero(year_chosen$harvestYield[i][[1]])
       

@@ -14,10 +14,10 @@ sensitive_data_loc <- "../sensitive-data"
 init_file <- fromJSON(file.path(sensitive_data_loc,"init_file.json"))
 
 settings_testing <- list(
-  n_runs = 30,
+  n_runs = 2,
   se_field_carbon_in = 0.1,
   se_inputs_nonfarm = 0.025,
-  use_calculated_grazing = FALSE,
+  grazing_used = 'min', # One of 'min' (minimum), 'rep' (reported) or 'calc' (calculated). 
   debug_mode = FALSE,
   save2mongoDB = FALSE,
   copy_yearX_to_following_years_landUse = TRUE,
@@ -26,23 +26,29 @@ settings_testing <- list(
   yearX_livestock = 2,
   server = "dev",  # One of: "prod", "dev", "test"
   bare_bl_type = "reported", # One of: "envzone", "reported", "none". USE REPORTED, NOT ENVZONE!
-  monitoring_run = TRUE, # (NOT YET IMPLEMENTED) TRUE/FALSE. If TRUE, not a prediction run and years after curr_monit_year will be excluded from the output
-  curr_monit_year = 2  # Current monitoring year: what is the last project year for which monitoring data has been provided
+  monitoring_run = TRUE, # TRUE/FALSE. If TRUE, not a prediction run and years after curr_monit_year will be excluded from the output
+  curr_monit_year = 2,  # Current monitoring year: what is the last project year for which monitoring data has been provided
+  use_test_climate = TRUE
 )
 settings <- settings_testing
 
-## Uncomment block below for prediction production runs ------
+# ## Uncomment block below for prediction runs ------
 # settings_predictions <- list(
-#   n_runs = 100,
-#   se_field_carbon_in = 0.1,
-#.  se_inputs_nonfarm = 0.025,
-#   use_calculated_grazing = TRUE,
-#   debug_mode = FALSE,
-#   save2mongoDB = TRUE,
-#   server = "dev",  # One of: "prod", "dev", "test"
-#   bare_bl_type = "reported", # One of: "envzone", "reported", "none". USE REPORTED, NOT ENVZONE!
-#   monitoring_run = FALSE, # (NOT YET IMPLEMENTED) TRUE/FALSE. If TRUE, not a prediction run and years after curr_monit_year will be excluded from the output
-#   curr_monit_year = 0  # Current monitoring year: what is the last project year for which monitoring data has been provided
+# n_runs = 100,
+# se_field_carbon_in = 0.1,
+# se_inputs_nonfarm = 0.025,
+# grazing_used = 'min', # One of 'min' (minimum), 'rep' (reported) or 'calc' (calculated). 
+# debug_mode = FALSE,
+# save2mongoDB = FALSE,
+# copy_yearX_to_following_years_landUse = FALSE,
+# copy_yearX_to_following_years_livestock = FALSE,
+# yearX_landuse = 2,
+# yearX_livestock = 2,
+# server = "dev",  # One of: "prod", "dev", "test"
+# bare_bl_type = "reported", # One of: "envzone", "reported", "none". USE REPORTED, NOT ENVZONE!
+# monitoring_run = FALSE, # TRUE/FALSE. If TRUE, not a prediction run and years after curr_monit_year will be excluded from the output
+# curr_monit_year = 2,  # Current monitoring year: what is the last project year for which monitoring data has been provided
+# use_test_climate = FALSE
 # )
 # settings <- settings_predictions
 
@@ -51,18 +57,24 @@ settings <- settings_testing
 #   n_runs = 100,
 #   se_field_carbon_in = 0.1,
 #   se_inputs_nonfarm = 0.025,
-#   use_calculated_grazing = TRUE,
+#   grazing_used = 'min', # One of 'min' (minimum), 'rep' (reported) or 'calc' (calculated). 
 #   debug_mode = FALSE,
 #   save2mongoDB = TRUE,
+#   copy_yearX_to_following_years_landUse = FALSE,
+#   copy_yearX_to_following_years_livestock = FALSE,
+#   yearX_landuse = 2,
+#   yearX_livestock = 2,
 #   server = "dev",  # One of: "prod", "dev", "test"
 #   bare_bl_type = "reported", # One of: "envzone", "reported", "none". USE REPORTED, NOT ENVZONE!
-#   monitoring_run = TRUE, # (NOT YET IMPLEMENTED) TRUE/FALSE. If TRUE, not a prediction run and years after curr_monit_year will be excluded from the output
-#   curr_monit_year = 2  # Current monitoring year: what is the last project year for which monitoring data has been provided
+#   monitoring_run = TRUE, # TRUE/FALSE. If TRUE, not a prediction run and years after curr_monit_year will be excluded from the output
+#   curr_monit_year = 2,  # Current monitoring year: what is the last project year for which monitoring data has been provided
+#   use_test_climate = FALSE
 # )
 # settings <- settings_monitoring
 
 
-## --------------------------------------------------
+## Run with mongoDB data -------------------------------------------------------
+
 # farmIds <- read_csv(file.path(sensitive_data_loc,"farmIds.csv"), show_col_types = FALSE)
 # farmId <- farmIds$farmId[2]
 # farmId <- "a9f9b719-b301-4a7d-a89c-824f73e2c966" # This is a test Id from user Suhas
@@ -76,16 +88,36 @@ settings <- settings_testing
 # out <- carbonplus_main(init_file=init_file, settings=settings, farmId=farmId)
 # 
 
-farmIds <- c(
-  'edf5cce8-eee2-40a8-af32-520d2b93ab5c',
-  '7fe9ced2-73b8-45aa-b6a2-a9ede144ca1b',
-  '3f916c12-3a2c-4904-91cb-bb64e6fb0832',
-  'f67333e8-34a9-4030-93af-766f49d01310',
-  '584b48dc-0e5d-4ecc-b7d4-9acf281faaba',
-  'bb393d6d-f952-474e-a790-5486365d929b'
-)
+# farmIds <- c(
+#   'edf5cce8-eee2-40a8-af32-520d2b93ab5c',
+#   '7fe9ced2-73b8-45aa-b6a2-a9ede144ca1b',
+#   '3f916c12-3a2c-4904-91cb-bb64e6fb0832',
+#   'f67333e8-34a9-4030-93af-766f49d01310',
+#   '584b48dc-0e5d-4ecc-b7d4-9acf281faaba',
+#   'bb393d6d-f952-474e-a790-5486365d929b'
+# )
+# 
+# for (farmId in farmIds){
+#   carbonplus_main(init_file=init_file, settings=settings, farmId=farmId)
+# }
 
-for (farmId in farmIds){
-  carbonplus_main(init_file=init_file, settings=settings, farmId=farmId)
-}
 
+## Run with json file ----------------------------------------------------------
+
+# jsonfile <- "../../data/pioneer_farms/farm_data/2023-09-14_corrected_before_animal_numbers_update/Alves4_bb393d6d-f952-474e-a790-5486365d929b.json"
+# jsonfile <- "../../data/pioneer_farms/farm_data/2023-10-04_animal_numbers_corrected/Troya_edf5cce8-eee2-40a8-af32-520d2b93ab5c.json"
+jsonfile <- "../../data/pioneer_farms/farm_data/2023-10-04_animal_numbers_corrected/Valente_7fe9ced2-73b8-45aa-b6a2-a9ede144ca1b.json"
+out <- carbonplus_main(init_file=init_file, settings=settings, JSONfile = jsonfile)
+
+# json_files <- c(
+#   # "../../data/pioneer_farms/farm_data/2023-09-14_corrected_before_animal_numbers_update/Alves1_3f916c12-3a2c-4904-91cb-bb64e6fb0832.json",
+#   # "../../data/pioneer_farms/farm_data/2023-09-14_corrected_before_animal_numbers_update/Alves2_f67333e8-34a9-4030-93af-766f49d01310.json",
+#   # "../../data/pioneer_farms/farm_data/2023-09-14_corrected_before_animal_numbers_update/Alves3_584b48dc-0e5d-4ecc-b7d4-9acf281faaba.json",
+#   # "../../data/pioneer_farms/farm_data/2023-09-14_corrected_before_animal_numbers_update/Alves4_bb393d6d-f952-474e-a790-5486365d929b.json",
+#   # "../../data/pioneer_farms/farm_data/2023-09-14_corrected_before_animal_numbers_update/Troya_edf5cce8-eee2-40a8-af32-520d2b93ab5c.json",
+#   # "../../data/pioneer_farms/farm_data/2023-09-14_corrected_before_animal_numbers_update/Valente_7fe9ced2-73b8-45aa-b6a2-a9ede144ca1b.json"
+# )
+# 
+# for (jsonfile in json_files){
+#   carbonplus_main(init_file=init_file, settings=settings, JSONfile = jsonfile)
+# }

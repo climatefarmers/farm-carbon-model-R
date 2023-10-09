@@ -1,25 +1,26 @@
-type,source,mass_kg_per_animal,daily_vs_excretion,ef_enteric_fermentation_kg_head,n_excretion_rate_kg_1000am,carbon_content,om_kg_per_ton,hummification_coefficient,effective_organic_matter_kg_per_ton,manure_kg_per_kg_animal,manure_kg_per_day_per_animal,manure_kg_per_year_per_animal,manure_ton_per_day_per_animal,om_kg_per_day_per_animal,om_kg_per_year_per_animal,c_kg_per_year_per_animal
-manure,Dairy Cattle,600,4.5,117,0.54,0.17,,,,36.8072872,48.68774652,17332.83776,0.048687747,7.400537471,2701.196177,860.9
-manure,Beef Cattle,405,2.3085,57,0.42,0.17,152,0.7,106,26.8072872,23.9355,8521.038,0.0239355,3.638196,1327.94154,581.1
-manure,Other Cattle,405,2.3085,57,0.42,0.17,152,0.7,106,26.8072872,23.9355,8521.038,0.0239355,3.638196,1327.94154,581.1
-manure,Calves (less than 1year),230,1.15,57,0.42,0.17,152,0.7,53,,12,4260,0.012,1.8,650,291.3
-manure,Sows/boars,120,0.6,1.5,0.65,,153,0.33,70,,10,2100,0.01,1.8,600,172.2
-manure,Pigs,76,0.342,1.5,0.65,,153,0.33,50,28.6216552,4.7956,1707.2336,0.0047956,0.7337268,267.810282,109
-manure,Pigglets (less than 1 year),40,0.2,1.5,0.65,,153,0.33,25,28.6216552,2.4,900,0.0025,0.4,140,57.4
-manure,Poultry (Hens layers),1.4,0.01722,0,0.99,,416,0.33,137,27.442316,0.0847,30.1532,0.0000847,0.0352352,12.860848,3.3
-manure,Poultry,1.4,0.01722,0,0.99,,419,0.36,151,36.28736,0.112,39.872,0.000112,0.046928,17.12872,3.3
-manure,Turkey,6.8,0.07004,0,0.74,,427,0.36,154,19.7766112,0.29648,105.54688,0.00029648,0.12659696,46.2078904,16.3
-manure,Sheep,40,0.328,9,0.36,,195,0.7,137,,,,,,,57.4
-manure,Lambs (less than 1 year),20,0.16,9,0.36,,100,0.35,70,,,,,,,28.7
-manure,Goats,40,0.36,9,0.46,,174,0.7,122,,,,,,,57.4
-manure,Goat Kids(less than 1 year),20,0.18,9,0.46,,174,0.7,60,,,,,,,28.7
-manure,Horses,377,2.13005,18,0.3,,,,,,,,,,,
-manure,Mules/Asses,120,0.864,10,0.3,,,,,,,,,,,
-manure,Camels,217,2.4955,46,0.38,,,,,,,,,,,
-manure,Buffalo,509,3.9193,,0.45,,,,,,,,,,,
-manure,Ducks,2.7,0.01998,0,0.83,,,,,,,,,,,
-manure,Deer,,,20,,,,,,,,,,,,
-compost,Mushroom compost,,,,,,211,0.5,106,,,,,,,
-compost,Houshold compost,,,,,,242,0.75,181,,,,,,,
-compost,Green compost,,,,,0.25,179,0.75,134,,,,,,,
-compost,Hay,,,,,0.22,,,,,,,,,,
+type,source,mass_kg_per_animal,vs_kg_per_tonne_per_day,ef_enteric_fermentation_kg_head,n_excretion_rate_kg_1000am,carbon_content,c_kg_per_year_per_animal
+manure,Dairy Cattle,600,8.4,126,0.54,0.175,975.5
+manure,Beef Cattle,405,5.7,52,0.42,0.175,509.5
+manure,Other Cattle,405,5.7,52,0.42,0.175,509.5
+manure,Calves (less than 1year),230,5.7,52,0.42,0.175,204.3
+manure,Sows/boars,190,2.4,1.5,0.38,,104.5
+manure,Pigs,76,4.5,1.5,0.65,,66.2
+manure,Pigglets (less than 1 year),61,5.3,1.5,0.76,,34.8
+manure,Poultry (Hens layers),1.4,12.3,0,0.99,,2.3
+manure,Poultry,1.4,12.3,0,0.99,,3.3
+manure,Turkey,6.8,10.3,0,0.74,,13.6
+manure,Sheep,40,8.2,9,0.36,,63.5
+manure,Lambs (less than 1 year),20,8.2,9,0.36,,31.7
+manure,Goats,40,9,9,0.46,,69.7
+manure,Goat Kids(less than 1 year),20,9,9,0.46,,34.8
+manure,Horses,377,,18,0.3,,
+manure,Mules/Asses,120,,10,0.3,,
+manure,Camels,217,,46,0.38,,
+manure,Buffalo,509,,,0.45,,
+manure,Ducks,2.7,,0,0.83,,
+manure,Deer,,,20,,,
+compost,Mushroom compost,,,,,,
+compost,Houshold compost,,,,,,
+compost,Green compost,,,,,0.222,
+compost,Hay,,,,,0.352,
+manure,Volatile solids,,,,,0.53,
