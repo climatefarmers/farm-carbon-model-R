@@ -20,7 +20,7 @@ ch4_enteric_fermentation <- function(
 ){
   if(nrow(animal_data) > 0){
     animal_data <- animal_data %>% 
-      mutate(ch4_ent_ferm = n_animals * (grazing_days / 365) * ef_enteric_fermentation_kg_head) # add non-grazing days
+      mutate(ch4_ent_ferm = n_animals * ef_enteric_fermentation_kg_head) # add non-grazing days
   }else{
     warning("No animal data provided - or included in project")
   }
@@ -109,8 +109,8 @@ n2o_manure_indirect <- function( # add non-grazing days
   ef_5 <- n2o_emission_factors$Value[n2o_emission_factors$Name == 'ef_5_n2o']
   if(nrow(animal_data) > 0){
     animal_data <- animal_data %>% 
-      mutate(n2o_manure_indirect = n_animals * n_excretion_rate_kg_1000am * 365 * mass_kg_per_animal / 1000 *
-               (frac_gasm * ef_4 + frac_leach * ef_5))
+      mutate(n2o_manure_indirect = n_animals * n_excretion_rate_kg_1000am * grazing_days * mass_kg_per_animal / 1000 *
+               (frac_gasm * ef_4 + frac_leach * ef_5) * (44/28))
   }else{
     warning("No Animal data provided - or included in project")
   }
@@ -132,7 +132,7 @@ n2o_manure_direct <- function(
   if(nrow(animal_data) > 0){
     animal_data <- animal_data %>% 
       mutate(n2o_manure_direct = n_animals * n_excretion_rate_kg_1000am * mass_kg_per_animal / 1000 * 
-               (grazing_days * ef_3_pasture + (365 - grazing_days) * ef_3_deep_bedding))
+               (grazing_days * ef_3_pasture + (365 - grazing_days) * ef_3_deep_bedding) * (44/28)) 
   }else{
     warning("No Animal data provided - or included in project")
   }
