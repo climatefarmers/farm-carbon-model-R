@@ -2,9 +2,10 @@ crop,pedo_climatic_area,n_fixing_frac,n_ag,n_bg,r_ag_t,rs_t,dw_fresh,cf,r_s_rati
 Other,,0,0.008,0.009,1,0.22,0.85,1,0.22,0.44,,1,1
 Other Vegetables,,0,0.008,0.009,1,0.22,0.85,1,0.22,0.44,,1,1
 Generic Grains,,0,0.006,0.009,1.3,0.22,0.88,1,0.2,0.46,6,1,1
-Wheat,Continental,0,0.006,0.009,1.3,0.25,0.89,0.9,0.23,0.485,7.4,1,1
-Wheat,Mediterranean north,0,0.006,0.009,1.3,0.25,0.89,0.9,0.23,0.485,3.5,1,1
-Wheat,Mediterranean south,0,0.006,0.009,1.3,0.25,0.89,0.9,0.23,0.485,3,1,1
+Wheat_continental,Continental,0,0.006,0.009,1.3,0.25,0.89,0.9,0.23,0.485,7.4,1,1
+Wheat_mediterranean_north,Mediterranean north,0,0.006,0.009,1.3,0.25,0.89,0.9,0.23,0.485,3.5,1,1
+Wheat_mediterranean_south,Mediterranean south,0,0.006,0.009,1.3,0.25,0.89,0.9,0.23,0.485,3,1,1
+Wheat,,0,0.006,0.009,1.3,0.25,0.89,0.9,0.23,0.485,6,1,1
 Winter Wheat,,0,0.006,0.009,1.3,0.23,0.89,0.9,0.23,0.485,6,1,1
 Spring Wheat,,0,0.006,0.009,1.3,0.28,0.89,0.9,0.28,0.485,6,1,1
 Barley,,0,0.007,0.014,1.2,0.22,0.89,1,0.22,0.456,,1,1
