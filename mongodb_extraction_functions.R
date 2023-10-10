@@ -1060,10 +1060,9 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
       yield_sums <- monthly_nonarables$grazing+monthly_nonarables$residue+monthly_nonarables$harvest
       
       if (farm_EnZ == "Mediterranean north" | farm_EnZ == "Mediterranean south"){ # env zones with 2 grass growing seasons
-        endWinterSeason = 5 # month index
-        endSummerSeason = 10 # month index
-        agb_peak <- max((yield_sums)[c(1:endWinterSeason,endSummerSeason:12)]) +
-          max((yield_sums)[c(endWinterSeason:endSummerSeason)])
+        winter_months = c(1,2,3,4,5,11,12) # month index
+        summer_months = c(6,7,8,9,10) # month index
+        agb_peak <- max(yield_sums[winter_months]) + max(yield_sums[summer_months])
       } else { # assuming a single growing season
         agb_peak <- max(yield_sums)
       }
@@ -1092,7 +1091,6 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
                                     )
       
       pasture_inputs <- rbind(pasture_inputs, pasture_temp)
-      
     }
   }
   

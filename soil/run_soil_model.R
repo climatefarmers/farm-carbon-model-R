@@ -52,7 +52,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   # Set climate for different runs:
   spinup_climate <- climate_periods$mean_past_climate
   present_climate <- climate_periods$mean_past_climate
-  
+
   ## Choosing model version based on climate
   model_version <- ifelse(sum(present_climate$precipitation) / sum(present_climate$pevap) < 0.65 &
                             sum(present_climate$precipitation) < 600, "Semi-arid", "Normal")
@@ -305,7 +305,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
       
       # Run spinup to equilibrium using baseline data
       time_horizon = 300
-      # browser()
+
       C0_df_spinup <- calc_carbon_over_time(time_horizon, 
                                             field_carbon_in = rep(batch$field_carbon_in[1], time_horizon), 
                                             dr_ratio = rep(batch$dr_ratio[1], time_horizon), 
@@ -473,9 +473,10 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
     ylim(0, 30)
   print(graph)
   
-  return(list(step_in_table_final=step_in_table_final, 
-              farm_results_final=farm_results_final, 
+  return(list(step_in_table_final=step_in_table_final,
+              farm_results_final=farm_results_final,
               all_results_final=all_results_final,
               parcel_Cinputs=parcel_Cinputs,
-              soil_inputs=soil_inputs))
+              soil_inputs=soil_inputs,
+              climate_inputs=present_climate))
 }
