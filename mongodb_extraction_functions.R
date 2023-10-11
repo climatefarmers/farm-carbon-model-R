@@ -560,23 +560,25 @@ get_animal_inputs = function(grazing_yearly, livestock_inputs, parcel_inputs){
       grazing_year_parcel <- grazing_year$grazing[grazing_year$parcel == parcel_names[i]]
       
       livestock_temp <- livestock_inputs %>% filter(scenario == year_str)
-
-      for (k in 1:nrow(livestock_temp)){
-
-        n_animals <- livestock_temp$n_animals[k]
-        n_animals_parcel <- ifelse(grazing_year_total == 0, 0, n_animals * grazing_year_parcel / grazing_year_total)
-        
-        animal_inputs_temp <- data.frame(
-          parcel_ID = parcel_names[i], 
-          scenario = year_str, 
-          species = livestock_temp$species[[k]],
-          n_animals = n_animals_parcel,  # n_animal is the total number of animal from a farm weighted by grazing fraction of the parcel
-          grazing_days = livestock_temp$grazing_days[k], 
-          area = parcel_inputs$area[i],
-          grazing_management = "Daily Spread", 
-          productivity = "Low Productivity"
-        )
-        
+      
+      if(nrow(livestock_temp) > 0) {
+        for (k in 1:nrow(livestock_temp)){
+          
+          n_animals <- livestock_temp$n_animals[k]
+          n_animals_parcel <- ifelse(grazing_year_total == 0, 0, n_animals * grazing_year_parcel / grazing_year_total)
+          
+          animal_inputs_temp <- data.frame(
+            parcel_ID = parcel_names[i], 
+            scenario = year_str, 
+            species = livestock_temp$species[[k]],
+            n_animals = n_animals_parcel,  # n_animal is the total number of animal from a farm weighted by grazing fraction of the parcel
+            grazing_days = livestock_temp$grazing_days[k], 
+            area = parcel_inputs$area[i],
+            grazing_management = "Daily Spread", 
+            productivity = "Low Productivity"
+          )
+          
+      }
         animal_inputs <- rbind(animal_inputs, animal_inputs_temp)
         
       }
