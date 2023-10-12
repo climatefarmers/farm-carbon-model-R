@@ -71,10 +71,10 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   #                           silt=mean(silt_df$`silt_5-15cm_mean`)/10, silt_Q0.05=mean(silt_df$`silt_5-15cm_Q0.05`)/10, silt_Q0.95=mean(silt_df$`silt_5-15cm_Q0.95`)/10, 
   #                           bulk_density=mean(bdod_df$`bdod_5-15cm_mean`)/100, bdod_Q0.05=mean(bdod_df$`bdod_5-15cm_Q0.05`)/100, bdod_Q0.95=mean(bdod_df$`bdod_5-15cm_Q0.95`)/100)# waiting for values from soil maps
   
-  # Lower clay correlates with higher credits, so we take the 95th percentile of all values in the farm area as a conservative approach.
+  # Lower clay correlates with higher credits, so we take the 75th percentile of all values in the farm area as a conservative approach.
   soilMapsData = data.frame(
     SOC = quantile(SOC_df$`ocs_0-30cm_mean`, 0.05),
-    clay = quantile(clay_df$`clay_5-15cm_mean`/10, 0.95),
+    clay = quantile(clay_df$`clay_5-15cm_mean`/10, 0.75),
     silt = mean(silt_df$`silt_5-15cm_mean`)/10, 
     bulk_density = mean(bdod_df$`bdod_5-15cm_mean`)/100
   )

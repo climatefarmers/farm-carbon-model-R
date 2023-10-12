@@ -28,7 +28,7 @@ settings_testing <- list(
   bare_bl_type = "reported", # One of: "envzone", "reported", "none". USE REPORTED, NOT ENVZONE!
   monitoring_run = TRUE, # TRUE/FALSE. If TRUE, not a prediction run and years after curr_monit_year will be excluded from the output
   curr_monit_year = 2,  # Current monitoring year: what is the last project year for which monitoring data has been provided
-  use_test_climate = FALSE
+  use_test_climate = TRUE
 )
 settings <- settings_testing
 
@@ -59,7 +59,7 @@ settings <- settings_testing
 #   se_inputs_nonfarm = 0.025,
 #   grazing_used = 'min', # One of 'min' (minimum), 'rep' (reported) or 'calc' (calculated). 
 #   debug_mode = FALSE,
-#   save2mongoDB = TRUE,
+#   save2mongoDB = FALSE,
 #   copy_yearX_to_following_years_landUse = FALSE,
 #   copy_yearX_to_following_years_livestock = FALSE,
 #   yearX_landuse = 2,
@@ -83,14 +83,14 @@ settings <- settings_testing
 # farmId <- '3f916c12-3a2c-4904-91cb-bb64e6fb0832' # Alves 1
 # farmId <- 'f67333e8-34a9-4030-93af-766f49d01310' # Alves 2
 # farmId <- '584b48dc-0e5d-4ecc-b7d4-9acf281faaba' # Alves 3
-# farmId <- 'bb393d6d-f952-474e-a790-5486365d929b' # Alves 4
-# 
-# out <- carbonplus_main(init_file=init_file, settings=settings, farmId=farmId)
-# 
+farmId <- 'bb393d6d-f952-474e-a790-5486365d929b' # Alves 4
+
+out <- carbonplus_main(init_file=init_file, settings=settings, farmId=farmId)
+
 
 # farmIds <- c(
-#   'edf5cce8-eee2-40a8-af32-520d2b93ab5c',
-#   '7fe9ced2-73b8-45aa-b6a2-a9ede144ca1b',
+  # 'edf5cce8-eee2-40a8-af32-520d2b93ab5c',
+  # '7fe9ced2-73b8-45aa-b6a2-a9ede144ca1b',
 #   '3f916c12-3a2c-4904-91cb-bb64e6fb0832',
 #   'f67333e8-34a9-4030-93af-766f49d01310',
 #   '584b48dc-0e5d-4ecc-b7d4-9acf281faaba',
@@ -105,9 +105,9 @@ settings <- settings_testing
 ## Run with json file ----------------------------------------------------------
 
 # jsonfile <- "../../data/pioneer_farms/farm_data/2023-09-14_corrected_before_animal_numbers_update/Alves4_bb393d6d-f952-474e-a790-5486365d929b.json"
-jsonfile <- "../../data/pioneer_farms/farm_data/2023-10-04_animal_numbers_corrected/Troya_edf5cce8-eee2-40a8-af32-520d2b93ab5c.json"
-# jsonfile <- "../../data/pioneer_farms/farm_data/2023-10-04_animal_numbers_corrected/Valente_7fe9ced2-73b8-45aa-b6a2-a9ede144ca1b.json"
-out <- carbonplus_main(init_file=init_file, settings=settings, JSONfile = jsonfile)
+# jsonfile <- "../../data/pioneer_farms/inputs/2023-10-10_minor_corrections/Troya_edf5cce8-eee2-40a8-af32-520d2b93ab5c.json"
+# jsonfile <- "../../data/pioneer_farms/inputs/2023-10-10_minor_corrections/Valente_7fe9ced2-73b8-45aa-b6a2-a9ede144ca1b.json"
+# out <- carbonplus_main(init_file=init_file, settings=settings, JSONfile = jsonfile)
 
 # json_files <- c(
 #   # "../../data/pioneer_farms/farm_data/2023-09-14_corrected_before_animal_numbers_update/Alves1_3f916c12-3a2c-4904-91cb-bb64e6fb0832.json",

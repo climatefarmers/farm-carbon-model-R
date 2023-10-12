@@ -49,7 +49,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
                              appenders= list(my_console_appender,my_file_appender))
   log4r::info(my_logger, paste("farmId = ",farmId,sep=""))
   
-  ## Extract model settings -------------------------------------------------------
+  ## Checking model settings -------------------------------------------------------
   
   if(settings$debug_mode & settings$save2mongoDB) {stop("Need to set debug_mode to FALSE when setting save2mongoDB to TRUE.")}
   
