@@ -945,16 +945,17 @@ get_parcel_inputs <- function(landUseSummaryOrPractices){
   # takes landUseSummaryOrPractices from farms collection
   # extracts parcels input dataframe 
   
-  # area <- ifelse(is.null(landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea),
-  #                missing_to_zero(landUseSummaryOrPractices[[1]]$area)/10000,
-  #                ifelse(is.na(landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea) |
-  #                         landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea == FALSE, # means that no corrected value was provided by the farmer
-  #                       missing_to_zero(landUseSummaryOrPractices[[1]]$area)/10000,
-  #                       missing_to_zero(landUseSummaryOrPractices[[1]]$manuallyEnteredArea)/10000)
-  # ) # add a verification of consistence here? How?
+  # Check data
+  use_manual_areas <- landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea
+  if(is.null(use_manual_areas)) { use_manual_areas <- FALSE }
+  if(!is.logical(use_manual_areas)) { use_manual_areas <- FALSE }
   
-  # Using area from map for consistency - to be revised
-  area <- missing_to_zero(landUseSummaryOrPractices[[1]]$area)/10000
+  # Get parcel areas
+  if(use_manual_areas) {
+    area <- missing_to_zero(landUseSummaryOrPractices[[1]]$manuallyEnteredArea)/10000
+  } else {
+    area <- missing_to_zero(landUseSummaryOrPractices[[1]]$area)/10000
+  }
   
   parcel_inputs = data.frame(parcel_ID = landUseSummaryOrPractices[[1]]$parcelName,
                              area = area,
