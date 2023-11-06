@@ -944,7 +944,6 @@ get_land_use_type <- function(landUseSummaryOrPractices, parcel_inputs){
 get_parcel_inputs <- function(landUseSummaryOrPractices){
   # takes landUseSummaryOrPractices from farms collection
   # extracts parcels input dataframe 
-  browser()
   
   parcel_inputs = data.frame(
     parcel_ID = landUseSummaryOrPractices[[1]]$parcelName,
