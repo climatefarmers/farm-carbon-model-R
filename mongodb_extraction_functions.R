@@ -562,7 +562,7 @@ get_animal_inputs = function(grazing_yearly, livestock_inputs, parcel_inputs){
       grazing_year_parcel <- grazing_year$grazing[grazing_year$parcel == parcel_names[i]]
       
       livestock_temp <- livestock_inputs %>% filter(scenario == year_str)
-
+      
       if(nrow(livestock_temp) > 0) {
         for (k in 1:nrow(livestock_temp)){
           
@@ -945,27 +945,27 @@ get_parcel_inputs <- function(landUseSummaryOrPractices){
   # takes landUseSummaryOrPractices from farms collection
   # extracts parcels input dataframe 
   
-  # Check data
-  use_manual_areas <- landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea
-  if(is.null(use_manual_areas)) { use_manual_areas <- FALSE }
-  if(!is.logical(use_manual_areas)) { use_manual_areas <- FALSE }
-  
-  # Get parcel areas
-  if(use_manual_areas) {
-    area <- missing_to_zero(landUseSummaryOrPractices[[1]]$manuallyEnteredArea)/10000
-  } else {
-    area <- missing_to_zero(landUseSummaryOrPractices[[1]]$area)/10000
-  }
-  
-  parcel_inputs = data.frame(parcel_ID = landUseSummaryOrPractices[[1]]$parcelName,
-                             area = area,
-                             longitude = NA,
-                             latitude = NA
+  parcel_inputs = data.frame(
+    parcel_ID = landUseSummaryOrPractices[[1]]$parcelName,
+    area_maps = missing_to_zero(landUseSummaryOrPractices[[1]]$area)/10000,
+    area_manual = missing_to_zero(landUseSummaryOrPractices[[1]]$manuallyEnteredArea)/10000,
+    use_manual_area = landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea,
+    area = NA,
+    longitude = NA,
+    latitude = NA
   )
   
+  # Data checks
+  if(any(!is.logical(parcel_inputs$use_manual_area))) stop("Expecting logical values. Check inputs.")
+  
+  # Select areas according to options
+  parcel_inputs$area <- parcel_inputs$area_maps
+  parcel_inputs$area[parcel_inputs$use_manual_area] <- parcel_inputs$area_manual[parcel_inputs$use_manual_area]
+  
+  # Get lat lon data
   for (i in 1:nrow(parcel_inputs)){
-    parcel_inputs$longitude[i] = missing_to_zero(extract_longitude_landUseSummaryOrPractices(landUseSummaryOrPractices,i))
-    parcel_inputs$latitude[i] = missing_to_zero(extract_latitude_landUseSummaryOrPractices(landUseSummaryOrPractices,i))
+    parcel_inputs$longitude[i] <- missing_to_zero(extract_longitude_landUseSummaryOrPractices(landUseSummaryOrPractices,i))
+    parcel_inputs$latitude[i] <- missing_to_zero(extract_latitude_landUseSummaryOrPractices(landUseSummaryOrPractices,i))
   }
   return(parcel_inputs)
 }
