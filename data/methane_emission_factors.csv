@@ -1,12 +1,13 @@
-species,productivity,grazing_management,climate,ef_methane_manure,ef_methane_kg_head
-Dairy Cattle,Low Productivity,Daily Spread,Warm Temp Dry,0.4,0.4
-Other Cattle,Low Productivity,Daily Spread,Warm Temp Dry,0.4,0.4
-Beef Cattle,Low Productivity,Daily Spread,Warm Temp Dry,0.4,0.4
-Calves (less than 1year),Low Productivity,Daily Spread,Warm Temp Dry,0.4,0.3
-Pigs,Low Productivity,Daily Spread,Warm Temp Dry,1,1
-Pigglets (less than 1 year),Low Productivity,Daily Spread,Warm Temp Dry,1,0.5
-Sheep,Low Productivity,Dry lot,Warm Temp Dry,1.3,0.2
-Lambs (less than 1 year),Low Productivity,Dry lot,Warm Temp Dry,1.3,0.2
-Goats,Low Productivity,Dry lot,Warm Temp Dry,1.3,0.2
-Goat Kids(less than 1 year),Low Productivity,Dry lot,Warm Temp Dry,1.3,0.2
-Poultry,Low Productivity,All Systems,Warm Temp Dry,2.4,0.2
+species,productivity,grazing_management,climate,ef_methane_manure
+Dairy Cattle,Low Productivity,Daily Spread,Warm Temp Dry,0.4
+Other Cattle,Low Productivity,Daily Spread,Warm Temp Dry,0.4
+Beef Cattle,Low Productivity,Daily Spread,Warm Temp Dry,0.4
+Calves (less than 1year),Low Productivity,Daily Spread,Warm Temp Dry,0.4
+Pigs,Low Productivity,Daily Spread,Warm Temp Dry,1
+Pigglets (less than 1 year),Low Productivity,Daily Spread,Warm Temp Dry,1
+Sows/Boars,Low Productivity,Daily Spread,Warm Temp Dry,1
+Sheep,Low Productivity,Dry lot,Warm Temp Dry,1.3
+Lambs (less than 1 year),Low Productivity,Dry lot,Warm Temp Dry,1.3
+Goats,Low Productivity,Dry lot,Warm Temp Dry,1.3
+Goat Kids(less than 1 year),Low Productivity,Dry lot,Warm Temp Dry,1.3
+Poultry,Low Productivity,All Systems,Warm Temp Dry,2.4
