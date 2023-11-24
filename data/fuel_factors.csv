@@ -1,3 +1,9 @@
-fuel_type,ef_fuel_kg_l
-Diesel,2.64
-Petrol,2.3
+Variable,Value
+ef_diesel_kg_l,2.64
+ef_petrol_kg_l,2.3
+diesel_l_ha_mower,2.81
+diesel_l_ha_graindrill,2.81
+diesel_l_ha_windrower,4.21
+diesel_l_ha_rake,2.34
+diesel_l_ha_baler,3.74
+diesel_l_ha_harvester_haylage,10.76

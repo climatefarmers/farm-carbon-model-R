@@ -34,7 +34,7 @@ call_lca <- function(init_file, farm_EnZ, inputs, factors){
   scenarios <- c("baseline", paste0("year", c(1:10)))
   
   # merge in factors into lca data
-  for (i in years){
+  for (i in years) {
     scenario_selected <- scenarios[i+1]
     animals <- merge(filter(inputs$animal_inputs, scenario==scenario_selected), factors$animal_factors, by = "species", all.x = TRUE)
     # animals <- merge(animals, factors$methane_factors, by = c("species", "grazing_management", "productivity"), all.x = TRUE)
@@ -44,9 +44,7 @@ call_lca <- function(init_file, farm_EnZ, inputs, factors){
     #n_fixing_species_pasture <- merge(filter(inputs$pasture_inputs, scenario==scenario_selected), factors$pasture_factors, by = "grass", all.x = TRUE)
     #n_fixing_species_pasture <- merge(n_fixing_species_pasture, inputs$parcel_inputs, by = "parcel_ID", all.x = TRUE)
     fertilizers <- merge(filter(inputs$fertilizer_inputs, scenario==scenario_selected), factors$fertilizer_factors, by = "fertilizer_type", all.x = TRUE)
-    if(nrow(inputs$fuel_inputs)>0){
-      fuel <- merge(filter(inputs$fuel_inputs, scenario==scenario_selected), factors$fuel_factors, by = "fuel_type", all.x = TRUE)
-    }else{fuel<-data.frame(inputs$fuel_inputs)}
+    if(nrow(inputs$fuel_inputs)>0) { fuel <- filter(inputs$fuel_inputs, scenario==scenario_selected)} else {fuel <- inputs$fuel_inputs}
     amendments <- merge(filter(inputs$orgamendments_inputs, scenario==scenario_selected), factors$manure_factors, by = "source", all.x = TRUE)
     amendments <- merge(filter(amendments, scenario==scenario_selected), inputs$parcel_inputs, by = "parcel_ID", all.x = TRUE)
     
@@ -59,7 +57,7 @@ call_lca <- function(init_file, farm_EnZ, inputs, factors){
     n_fixing_species_crop <- n2o_n_fixing_species_crop(n_fixing_species_crop = n_fixing_species_crop, n2o_emission_factors = factors$n2o_emission_factors, field_area = field_area)
     # not using pasture n fixation 
     # n_fixing_species_pasture <- n2o_n_fixing_species_pasture(n_fixing_species_pasture, field_area = field_area)
-    fuel <- co2_fuel_consumption(fuel)
+    fuel <- co2_fuel_consumption(fuel, factors$fuel_factors)
     # add leakage calculations
     leakage <- manure_leakage(amendments)
     yearly_productivity <- productivity_crops(inputs$crop_inputs, scenario_selected, farm_EnZ, inputs$parcel_inputs)
@@ -84,7 +82,7 @@ call_lca <- function(init_file, farm_EnZ, inputs, factors){
       emissions_fuel <- fuel %>% select(fuel_type, co2_fuel)} else {
         emissions_fuel <- create_empty_dataframe(c("fuel_type", "co2_fuel"))
       }
-    
+
     # # not using pasture n fixation 
     # if (nrow(n_fixing_species_pasture) > 0){pasture_results <- n_fixing_species_pasture %>% select(grass, n2o_n_fixing)}else{
     #   pasture_results <- create_empty_dataframe(c("grass", "n2o_n_fixing"))

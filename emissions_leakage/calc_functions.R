@@ -1,17 +1,21 @@
 # Initial calculations all in kg -> convert to tonnes later
 
 ## Calculation: co2 fuel consumption
-co2_fuel_consumption <- function(
-    fuel_data
-){
-  if(nrow(fuel_data) > 0){
-    fuel_data <- fuel_data %>% 
-      mutate(co2_fuel = value_l * ef_fuel_kg_l)
+co2_fuel_consumption <- function(fuel_data, fuel_factors) {
+
+  ef_diesel <- fuel_factors$Value[fuel_factors$Variable == "ef_diesel_kg_l"]
+  ef_petrol <- fuel_factors$Value[fuel_factors$Variable == "ef_petrol_kg_l"]
+  
+  if(nrow(fuel_data) > 0) {
+    fuel_data$co2_fuel <- NA
+    i_diesel <- fuel_data$fuel_type=="Diesel"
+    i_petrol <- fuel_data$fuel_type=="Petrol"
+    fuel_data$co2_fuel[i_diesel] <- fuel_data$value_l * ef_diesel
+    fuel_data$co2_fuel[i_petrol] <- fuel_data$value_l * ef_petrol
   }else{
-    warning("No fuel data provided - or included in project")
+    warning("No fuel data provided")
   }
   return(fuel_data)
-  
 }
 
 ## Calculation: ch4 enteric fermentation

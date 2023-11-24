@@ -1,26 +1,26 @@
-type,source,mass_kg_per_animal,vs_kg_per_tonne_per_day,ef_enteric_fermentation_kg_head,n_excretion_rate_kg_1000am,carbon_content,c_kg_per_year_per_animal
-manure,Dairy Cattle,600,8.4,126,0.54,0.175,975.5
-manure,Beef Cattle,405,5.7,52,0.42,0.175,509.5
-manure,Other Cattle,405,5.7,52,0.42,0.175,509.5
-manure,Calves (less than 1year),230,5.7,52,0.42,0.175,204.3
-manure,Sows/Boars,190,2.4,1.5,0.38,,104.5
-manure,Pigs,76,4.5,1.5,0.65,,66.2
-manure,Pigglets (less than 1 year),61,5.3,1.5,0.76,,34.8
-manure,Poultry (Hens layers),1.4,12.3,0,0.99,,2.3
-manure,Poultry,1.4,12.3,0,0.99,,3.3
-manure,Turkey,6.8,10.3,0,0.74,,13.6
-manure,Sheep,40,8.2,9,0.36,,63.5
-manure,Lambs (less than 1 year),20,8.2,9,0.36,,31.7
-manure,Goats,40,9,9,0.46,,69.7
-manure,Goat Kids(less than 1 year),20,9,9,0.46,,34.8
-manure,Horses,377,,18,0.3,,
-manure,Mules/Asses,120,,10,0.3,,
-manure,Camels,217,,46,0.38,,
-manure,Buffalo,509,,,0.45,,
-manure,Ducks,2.7,,0,0.83,,
-manure,Deer,,,20,,,
-compost,Mushroom compost,,,,,,
-compost,Houshold compost,,,,,,
-compost,Green compost,,,,,0.222,
-compost,Hay,,,,,0.352,
-manure,Volatile solids,,,,,0.53,
+type,source,mass_kg_per_animal,vs_kg_per_tonne_per_day,ef_enteric_fermentation_kg_head,n_excretion_rate_kg_1000am,carbon_content,c_kg_per_year_per_animal,days_on_farm_per_year
+manure,Dairy Cattle,600,8.4,126,0.54,0.175,975.5,365
+manure,Beef Cattle,405,5.7,52,0.42,0.175,509.5,365
+manure,Other Cattle,405,5.7,52,0.42,0.175,509.5,365
+manure,Calves (less than 1year),230,5.7,52,0.42,0.175,231.5,180
+manure,Sows/Boars,190,2.4,1.5,0.38,,104.5,365
+manure,Pigs,76,5.3,1.5,0.76,,66.2,90
+manure,Pigglets (less than 1 year),30,4.5,1,0.65,,26.1,90
+manure,Poultry (Hens layers),1.9,8.6,0,0.87,,2.3,365
+manure,Poultry,1.4,12.3,0,0.99,,3.3,365
+manure,Turkey,6.8,10.3,0,0.74,,13.6,365
+manure,Sheep,40,8.2,9,0.36,,63.5,365
+manure,Lambs (less than 1 year),20,8.2,9,0.36,,31.7,365
+manure,Goats,40,9,9,0.46,,69.7,365
+manure,Goat Kids(less than 1 year),20,9,9,0.46,,34.8,365
+manure,Horses,377,,18,0.3,,,
+manure,Mules/Asses,120,,10,0.3,,,
+manure,Camels,217,,46,0.38,,,
+manure,Buffalo,509,,,0.45,,,
+manure,Ducks,2.7,,0,0.83,,,
+manure,Deer,,,20,,,,
+compost,Mushroom compost,,,,,,,
+compost,Houshold compost,,,,,,,
+compost,Green compost,,,,,0.222,,
+compost,Hay,,,,,0.352,,
+manure,Volatile solids,,,,,0.53,,
