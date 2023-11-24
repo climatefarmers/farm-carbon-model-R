@@ -76,7 +76,7 @@ extract_longitude_landUseSummaryOrPractices <- function(landUseSummaryOrPractice
 }
 
 
-get_livestock_table <- function(livestock) {
+get_livestock_table <- function(livestock, animal_factors) {
   
   year_strings <- paste0("year", 0:10)
   
@@ -105,6 +105,11 @@ get_livestock_table <- function(livestock) {
     }
   }
   animals <- animals[animals$n_animals!=0, ] # removing all rows that do not apply.
+  
+  # Limit the grazing days to not be higher than days on farm (this should be dealt with at dashboard level)
+  animals <- merge(animals, animal_factors[,c('species', 'days_on_farm_per_year')])
+  ind <- animals$grazing_days > animals$days_on_farm_per_year
+  animals$grazing_days[ind] <- animals$days_on_farm_per_year[ind] 
   
   return(animals)
 }
@@ -173,7 +178,7 @@ get_grazing_amounts <- function(landUseSummaryOrPractices, livestock, animal_fac
         # getting sum for parcel
         grazing_parcel <- grazing_parcel + grazing_month * parcel_inputs$area[i]
       }
-      
+
       # Correct for moisture content
       dryOrFresh <- year_chosen$yieldsResiduesDryOrFresh[i]
       if(is.null(dryOrFresh)) dryOrFresh <- NA
@@ -195,7 +200,7 @@ get_grazing_amounts <- function(landUseSummaryOrPractices, livestock, animal_fac
   
   # Merge with factors and calculate the grazing per animal type
   animals <- merge(x = livestock_inputs, y = animal_factors, by = "species", all.x = TRUE)
-  animals <- animals %>%
+    animals <- animals %>%
     mutate(yearly_grazing_needs_tDM = n_animals * mass_kg_per_animal / 1000 * 0.025 * grazing_days) # 0.025 is the 2.5% of animal mass required as feed every day
   # Sum up the calculated grazing of all animal types for each year
   grazing_yearly_calc <- animals  %>% group_by(scenario) %>%
@@ -232,7 +237,7 @@ get_grazing_amounts <- function(landUseSummaryOrPractices, livestock, animal_fac
   } else if(grazing_used == 'min') {
     grazing_yearly$grazing_final <- pmin(grazing_yearly$grazing_calc, grazing_yearly$grazing_rep) 
   } else {stop("Wrong grazing_used value provided.")}
-  
+
   grazing_yearly <- grazing_yearly %>% 
     mutate(forage = grazing_final - fodder_eaten)
   
@@ -254,7 +259,7 @@ get_grazing_amounts <- function(landUseSummaryOrPractices, livestock, animal_fac
     grazing_final = grazing_rep / grazing_rep_yearly * grazing_final_yearly
   )
   grazing_monthly$grazing_final[is.nan(grazing_monthly$grazing_final)] <- 0 # Correct NaN from 0 divisions to 0 
-  
+
   return(list(grazing_monthly=grazing_monthly, grazing_yearly=grazing_yearly))
 }
 
@@ -910,7 +915,7 @@ get_fuel_inputs = function(fuel){
     for (k in c(1:nrow(fuel[[status]][[1]]))){
       if (is.na(fuel[[status]][[1]]$typeOfFuel[[k]]) | fuel[[status]][[1]]$typeOfFuel[[k]]==""){next}
       fuel_inputs <- rbind(fuel_inputs,data.frame(
-        scenario = c(year_str), 
+        scenario = c(year_str),
         fuel_type = fuel[[status]][[1]]$typeOfFuel[[k]],
         value_l = missing_to_zero(fuel[[status]][[1]]$amountInLiters[[k]])))
     }

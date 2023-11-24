@@ -196,7 +196,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   methane_factors <- read_csv(file.path("data", "methane_emission_factors.csv"), show_col_types = FALSE) %>%
     filter(climate == natural_area_factors$climate_zone) %>% select(-climate)
   n2o_emission_factors <- read_csv(file.path("data", "n2o_emission_factors.csv"), show_col_types = FALSE)
-  
+
   print("Finished reading factors.")
   
   factors <- list(
@@ -220,7 +220,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   # Extraction of inputs per parcel and scenario
   parcel_inputs <- get_parcel_inputs(landUseSummaryOrPractices)  # Parcel information
   landUseType <- get_land_use_type(landUseSummaryOrPractices, parcel_inputs)
-  livestock_inputs <- get_livestock_table(livestock)
+  livestock_inputs <- get_livestock_table(livestock, animal_factors)
   grazing_tables <- get_grazing_amounts(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs, livestock_inputs, settings$grazing_used)  # grazing data
   grazing_monthly <- grazing_tables[[1]]
   grazing_yearly <- grazing_tables[[2]]
@@ -234,12 +234,13 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   bare_field_inputs <- get_bareground_inputs(landUseSummaryOrPractices, soil_cover_factors, farm_EnZ, settings$bare_bl_type)
   tilling_inputs <- get_tilling_inputs(landUseSummaryOrPractices, tilling_factors, farm_EnZ)
 
-  # Check input data for validity
-  check_animal_data(animal_inputs, animal_factors)
-  check_crop_data(crop_inputs, crop_factors)
-  check_fertilizer_data(fertilizer_inputs, fertilizer_factors)
-  check_fuel_data(fuel_inputs, fuel_factors)
-  check_manure_data(orgamendments_inputs, manure_factors)  
+  # Deactivated. If active should lead to errors and not warnings.
+  # # Check input data for validity
+  # check_animal_data(animal_inputs, animal_factors)
+  # check_crop_data(crop_inputs, crop_factors)
+  # check_fertilizer_data(fertilizer_inputs, fertilizer_factors)
+  # check_fuel_data(fuel_inputs, fuel_factors)
+  # check_manure_data(orgamendments_inputs, manure_factors)  
   
   # Collect inputs as list
   inputs <- list(
