@@ -19,12 +19,12 @@ co2_fuel_consumption <- function(fuel_data, fuel_factors) {
 }
 
 ## Calculation: ch4 enteric fermentation
-ch4_enteric_fermentation <- function(
-    animal_data
-){
+ch4_enteric_fermentation <- function(animal_data) {
+
   if(nrow(animal_data) > 0){
-    animal_data <- animal_data %>% 
-      mutate(ch4_ent_ferm = n_animals * ef_enteric_fermentation_kg_head) # add non-grazing days
+    animal_data <- animal_data %>% mutate(
+      ch4_ent_ferm = n_animals * ef_enteric_fermentation_kg_head / 365 * days_on_farm_per_year
+      )
   }else{
     warning("No animal data provided - or included in project")
   }
@@ -35,9 +35,10 @@ ch4_enteric_fermentation <- function(
 ch4_manure <- function(
     animal_data
 ){
+
   if(nrow(animal_data) > 0){
     animal_data <- animal_data %>% 
-      mutate(ch4_manure = n_animals * vs_kg_per_tonne_per_day * 365 * (mass_kg_per_animal/1000) * ef_methane_manure / 1000)
+      mutate(ch4_manure = n_animals * vs_kg_per_tonne_per_day * days_on_farm_per_year * (mass_kg_per_animal/1000) * ef_methane_manure / 1000)
   }else{
     warning("No animal data provided - or included in project")
   }
@@ -136,7 +137,7 @@ n2o_manure_direct <- function(
   if(nrow(animal_data) > 0){
     animal_data <- animal_data %>% 
       mutate(n2o_manure_direct = n_animals * n_excretion_rate_kg_1000am * mass_kg_per_animal / 1000 * 
-               (grazing_days * ef_3_pasture + (365 - grazing_days) * ef_3_deep_bedding) * (44/28)) 
+               (grazing_days * ef_3_pasture + (days_on_farm_per_year - grazing_days) * ef_3_deep_bedding) * (44/28)) 
   }else{
     warning("No Animal data provided - or included in project")
   }
