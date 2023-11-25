@@ -67,7 +67,7 @@ get_monthly_Cinputs_pasture <- function (pasture_inputs, pasture_factors, scenar
   annual_factors <- pasture_factors %>% filter(grass == 'Generic grasses', pasture_type == "annual")
   perennial_factors <- pasture_factors %>% filter(grass == 'Generic grasses', pasture_type == "perennial")
 
-  if(year > settings$curr_monit_year) {
+  if(year > settings$curr_monit_year & settings$predict_amp_effect) {
     annual_pastures <- 
       merge(x = pasture, y = annual_factors, by = "grass", all.x = TRUE) %>% 
       mutate(c_input_shoot = (dry_residue + dry_grazing * 0.15) * pasture_efficiency * AMP_baseline_factor * dry_c) %>%

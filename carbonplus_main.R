@@ -17,10 +17,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   # debug_mode: Skip some steps. For now just skip fetching and use dummy climate data.
   # save2mongoDB: Set to TRUE for production runs to save to database
   # # To copy the practice of a single year to all others
-  # copy_yearX_to_following_years_landUse: set to FALSE for production runs
-  # copy_yearX_to_following_years_livestock: set to FALSE for production runs
-  # yearX_landuse: setting to 0 will copy baseline
-  # yearX_livestock: setting to 0 will copy baseline
+  # copy_curr_monit_year_to_following_years: Completed data up to year 10 with latest monitored year
   # server: Server to use. One of: "prod", dev", "test"
   # bareground: How baseline bare ground values should be determined: "envzone": uses a regional common practice, "reported": uses the reported current practice (year0) or "none": bare ground always FALSE
   ####################################################################
@@ -162,20 +159,16 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   
   ## If set, copy data from a specific year to following years (disabled for monitoring / credit issuance runs!)
 
-  if (settings$copy_yearX_to_following_years_landUse == TRUE){
-    for(i in c(settings$yearX_landuse+1:10)){
+  if (settings$copy_curr_monit_year_to_following_years){
+    for(i in c(settings$curr_monit_year+1:10)){
       landUseSummaryOrPractices[[1]][[paste0("year", i)]] <- 
-        landUseSummaryOrPractices[[1]][[paste0("year", settings$yearX_landuse)]]}
-    log4r::info(my_logger, paste("MODIF: EVERY PARCELS: Data from year", settings$yearX_landuse,
-                                 "was pasted to every following years", sep=" "))
+        landUseSummaryOrPractices[[1]][[paste0("year", settings$curr_monit_year)]]
+      livestock[["futureManagement"]][[1]][[paste0("year",i)]] <-
+        livestock[["futureManagement"]][[1]][[paste0("year", settings$curr_monit_year)]]
+      }
+    log4r::info(my_logger, paste("MODIF: EVERY PARCELS: Data from year", settings$curr_monit_year,
+                                 "was pasted to every following years"))
   }
-  if (settings$copy_yearX_to_following_years_livestock == TRUE){
-    for(i in c(settings$yearX_livestock+1:10)){
-      livestock[["futureManagement"]][[1]][[paste("year",i,sep="")]] <-
-        livestock[["futureManagement"]][[1]][[paste("year", settings$yearX_livestock,sep="")]]}
-    log4r::info(my_logger, paste("MODIF: LIVESTOCK: Data from year", settings$yearX_livestock,
-                                 "was pasted to every following years", sep=" "))
-  }    
 
   ## Reading in calculation factors from csv files
   animal_factors <- read_csv(file.path("data", "carbon_share_manure.csv"), show_col_types = FALSE) %>%
@@ -349,12 +342,10 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
               ".\nGrazing estimations by CF (Y/N): ", settings$use_calculated_grazing,
               "\nStandard deviation used for extrinsic uncertainty of practices (Cinputs): ",
               settings$se_field_carbon_in,
-              ifelse(settings$copy_yearX_to_following_years_landUse==TRUE,
-                     paste("\nWARNING: Duplicated and applied land use from 'year",
-                           settings$yearX_landuse,"' to following years in EVERY parcel.",sep=""),""),
-              ifelse(settings$copy_yearX_to_following_years_livestock==TRUE,
-                     paste("\nWARNING: Duplicated and applied livestock from 'year",
-                           settings$yearX_livestock,"' to ALL following years.",sep=""),""),sep="")
+              if(settings$copy_curr_monit_year_to_following_years) {
+                paste0("\nDuplicated and applied land use from year", settings$curr_monit_year," to following years in all parcels.")
+              }
+              )
   
   
   ## Write data to files -----------------------------------------------------
