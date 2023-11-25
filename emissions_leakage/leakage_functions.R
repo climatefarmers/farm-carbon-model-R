@@ -1,8 +1,5 @@
 # leakage functions
 
-
-# Carbon share of manure come from: https://www.researchgate.net/publication/225385126_Carbon_resources_of_residue_and_manure_in_Japanese_farmland_soils/figures?lo=1
-
 manure_leakage <- function(orgamendments_data){
   
   if(nrow(orgamendments_data) > 0){
