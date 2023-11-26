@@ -346,7 +346,6 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
                                               bulk_density = batch$bulk_density[1])
       baseline_soil_content <- as.numeric(tail(C0_df_baseline, 1))[c(1:5)]
       
-      
       # Run the projected baseline scenario
       time_horizon = 10
       C0_df_baseline_proj <- calc_carbon_over_time(time_horizon, 
@@ -430,33 +429,51 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
     
   } # End of model runs
   
-  ## Calculations of CO2 ERR per year
+  ## Calculations of CO2 ERR per year ----
+
+  # Make a dataframe with monthly means
+  soc_parcels_monthly <- all_results %>% group_by(parcel_ID, year, month, scenario) %>%
+    summarise_all(mean) %>% mutate(SOC_rel = SOC * farm_frac)
+  soc_monthly <- soc_parcels_monthly %>% group_by(year, month, scenario) %>%
+    summarise(SOC_ha = sum(SOC_rel)) %>% 
+    mutate(SOC_abs = SOC_ha * sum(inputs$parcel_inputs$area))
+  # Add calendar year
+  soc_monthly <- soc_monthly %>% mutate(cal_year = settings$proj_start_year + (year-1))
   
-  # Select only month 12 of each year
-  soc_allruns_yearly <- all_results[all_results$month == 12, ]
-  soc_allruns_yearly <- left_join(soc_allruns_yearly, inputs$parcel_inputs[, c('parcel_ID', 'area')], by = 'parcel_ID') %>%
+  # Select December, calculate absolute SOC values and restructure (remove scenario column)
+  soc_allruns_parcels <- all_results[all_results$month == 12, ]
+  soc_allruns_parcels <- left_join(soc_allruns_parcels, inputs$parcel_inputs[, c('parcel_ID', 'area')], by = 'parcel_ID') %>%
     mutate(SOC_abs = SOC * area)
-  soc_allruns_yearly <- soc_allruns_yearly %>%
+  soc_allruns_parcels <- soc_allruns_parcels %>%
     group_by(parcel_ID, run, year, month, area) %>%
     summarise(
       SOC_ha_pr = SOC[2], SOC_ha_bl = SOC[1], SOC_abs_pr = SOC_abs[2], 
       SOC_abs_bl = SOC_abs[1], SOC_abs_pbdiff = SOC_abs[2]-SOC_abs[1]
       )
   
-  soc_parcels <- soc_allruns_yearly %>% group_by(parcel_ID, year) %>% summarise_all(mean) %>% select(-c(run, month))
+  # Summarize over runs and add soil C input information
+  soc_parcels <- soc_allruns_parcels %>% group_by(parcel_ID, year) %>% summarise_all(mean) %>% select(-c(run, month))
   soc_parcels <- left_join(soc_parcels, parcel_Cinputs[,c('parcel_ID', 'year', 'Cinputs_ha')], by = c('parcel_ID', 'year'))
   soc_parcels <- soc_parcels %>% mutate(Cinputs_abs = Cinputs_ha * area)
+  # Add calendar year
+  soc_parcels <- soc_parcels %>% mutate(cal_year = settings$proj_start_year + (year-1))
   
-  soc_allruns_farm <- soc_allruns_yearly %>% group_by(run, year, month) %>% select(-parcel_ID) %>% 
+  # Summarize over parcels and calculate CO2 values
+  soc_allruns_farm <- soc_allruns_parcels %>% group_by(run, year, month) %>% select(-parcel_ID) %>% 
     summarise(SOC_sum_pr = sum(SOC_abs_pr), SOC_sum_bl = sum(SOC_abs_bl)) %>%
     mutate(SOC_abs_pbdiff = SOC_sum_pr - SOC_sum_bl, CO2 = SOC_abs_pbdiff * 44/12)
   
+  # Summarize over runs and calculate mean, sd, 95% conf and yearly values
   soc_farm <- soc_allruns_farm %>% group_by(year) %>% 
     summarise(SOC_pbdiff = mean(SOC_abs_pbdiff), CO2_mean = mean(CO2), CO2_sd = sd(CO2)) %>%
     mutate(CO2_95conf = CO2_mean - CO2_sd * 1.96) %>%
-    mutate(CO2_95conf_yearly = c(0, diff(CO2_95conf)))
+    mutate(CO2_95conf_gain = c(0, diff(CO2_95conf)))
+  
+  # Add farm level C input variable
   farm_Cinput <- soc_parcels %>% select(c(year, Cinputs_abs)) %>% group_by(year) %>% summarise(Cinputs_abs = sum(Cinputs_abs))
-  soc_farm <- left_join(soc_farm, farm_Cinput)
+  soc_farm <- right_join(farm_Cinput, soc_farm)
+  # Add calendar year
+  soc_farm <- soc_farm %>% mutate(cal_year = settings$proj_start_year + (year-1))
   
   
   # ## Final data frames by taking the average over the runs
@@ -495,7 +512,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   #   log4r::error(my_logger, 'NAs in results.')
   # }
   
-  # Print the last spinup to check for equilibrium
+  ## Print the last spinup to check for equilibrium ----
   graph <- ggplot(data = C0_df_spinup, aes(x=1:nrow(C0_df_spinup), y=TOT)) +
     geom_line() +
     theme(legend.position = "bottom") +
@@ -504,11 +521,11 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
     ylab("SOC (in tonnes per hectare)") +
     ylim(0, 30)
   print(graph)
-  
-  browser()
-  
+
+  ## Return values ----
   return(list(soc_farm=soc_farm,
               soc_parcels=soc_parcels,
+              soc_monthly=soc_monthly,
               parcel_Cinputss=parcel_Cinputs,
               soil_inputs=soil_inputs,
               climate_inputs=present_climate))

@@ -274,20 +274,21 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
                                      factors=factors,
                                      settings=settings
   )
-  
-  soil_results_yearly <- soil_results_out$step_in_table_final
-  soil_results_monthly <- soil_results_out$farm_results_final
+
+  soil_results_yearly <- soil_results_out$soc_farm
+  soil_results_monthly <- soil_results_out$soc_monthly
   
   yearly_results <- soil_results_yearly %>%
-    mutate(CO2eq_soil_final=yearly_CO2diff_final,
-           CO2eq_soil_mean=yearly_CO2diff_mean,
-           CO2eq_soil_sd=yearly_CO2diff_sd) %>% 
-    select(cal_year, scenario, CO2eq_soil_final, CO2eq_soil_mean, CO2eq_soil_sd)
-  yearly_results$CO2eq_emissions <- emissions_yearly_total$emissions_diff_tCO2_eq[2:11]
-  yearly_results$CO2eq_leakage <- emissions_yearly_total$leakage_tCO2_eq[2:11]
+    mutate(CO2eq_soil_95conf_gain = CO2_95conf_gain,
+           CO2eq_soil_95conf = CO2_95conf,
+           CO2eq_soil_mean = CO2_mean,
+           CO2eq_soil_sd = CO2_sd) %>% 
+    select(year, cal_year, CO2eq_soil_95conf_gain, CO2eq_soil_95conf, CO2eq_soil_mean, CO2eq_soil_sd)
+  yearly_results$CO2eq_emissions <- emissions_yearly_total$emissions_diff_tCO2_eq
+  yearly_results$CO2eq_leakage <- emissions_yearly_total$leakage_tCO2_eq
   
   yearly_results <- yearly_results %>%
-    mutate(CO2eq_total = CO2eq_soil_final - CO2eq_emissions - CO2eq_leakage)
+    mutate(CO2eq_total = CO2eq_soil_95conf_gain - CO2eq_emissions - CO2eq_leakage)
   
   readLines(my_logfile)
   
@@ -317,7 +318,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
     )
     
     farms_everything$modelResults$yearlyCO2eqTotal=list(c(yearly_results$CO2eq_total))
-    farms_everything$modelResults$yearlyCO2eqSoil=list(c(yearly_results$CO2eq_soil_final))
+    farms_everything$modelResults$yearlyCO2eqSoil=list(c(yearly_results$CO2eq_soil_95conf_gain))
     farms_everything$modelResults$yearlyCO2eqEmissions=list(c(yearly_results$CO2eq_emissions))
     farms_everything$modelResults$yearlyCO2eqLeakage=list(c(yearly_results$CO2eq_leakage))
     farms_everything$modelResults$yearlyCO2eqEmissions_detailed=list(c(emissions_yearly_sources))
@@ -330,20 +331,19 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
     carbonresults_collection$insert(farms_everything)
     
   }
-  
+
   ## Log Messages --------------------------------------------------------------
   
   log4r::info(my_logger,'Total soil CO2eq: ', 
-              sum(yearly_results$CO2eq_soil_final),
+              sum(yearly_results$CO2eq_soil_95conf_gain),
               '.\nCredits per year (before emission reductions): ', 
-              list(yearly_results$CO2eq_soil_final),
+              list(yearly_results$CO2eq_soil_95conf_gain[-1]),
               '.\nArea considered: ', round(sum(parcel_inputs$area), 2), ' ha.', 
               "\nNumber of runs: ", settings$n_runs,
-              ".\nGrazing estimations by CF (Y/N): ", settings$use_calculated_grazing,
-              "\nStandard deviation used for extrinsic uncertainty of practices (Cinputs): ",
+              "\nStandard error used for extrinsic uncertainty of practices (Cinputs): ",
               settings$se_field_carbon_in,
               if(settings$copy_year_currmonit_to_future) {
-                paste0("\nDuplicated and applied land use from year", settings$curr_monit_year," to following years in all parcels.")
+                paste0("\nCopied farm data from year", settings$curr_monit_year," to following years in all parcels.")
               }
   )
   
@@ -351,10 +351,6 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   ## Write data to files -----------------------------------------------------
   
   file_prefix <- paste0(farmId, "_", farms_everything$farmInfo$farmManagerLastName, '_') # farms_everything$farmInfo$farmManagerFirstName
-  
-  # Prepare some tables
-  soil_results_out$all_results_final <- soil_results_out$all_results_final %>%
-    rename(scen = scenario)
   
   # Function to mark monitored years and write out data
   write_out <- function(data, path) {
@@ -390,8 +386,8 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   # Outputs
   outputs <- list(
     parcel_Cinputs = soil_results_out$parcel_Cinputs,
-    SOC_baseline_and_project_totals = soil_results_out$step_in_table_final,
-    SOC_baseline_and_project_parcels = soil_results_out$all_results_final,
+    SOC_baseline_and_project_totals = soil_results_out$soc_farm,
+    SOC_baseline_and_project_parcels = soil_results_out$soc_parcels,
     yearly_results = yearly_results,
     productivity_table = productivity_table,
     emissions_yearly_sources = emissions_yearly_sources,
@@ -403,29 +399,38 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   ## Plotting ------------------------------------------------------------------
   
   name<-paste0("Results_farm_", farmId)
-  
+
+  soil_results_monthly <- soil_results_monthly %>% 
+    mutate(time = paste0(cal_year,'-',month), time = ym(time))
   png(filename = file.path('logs', paste0(file_prefix, 'timeseries', '.png')))
-  graph <- ggplot(data = soil_results_monthly, aes(x = time, y = SOC_farm_mean, colour=scenario)) +
+  graph <- ggplot(data = soil_results_monthly, aes(x = time, y = SOC_ha, colour=scenario)) +
     geom_line()+
     #geom_errorbar(aes(ymin=SOC_farm_mean-SOC_farm_sd, ymax=SOC_farm_mean+SOC_farm_sd), width=.1) +
-    scale_color_manual(values = c("darkred","#5CB85C"),labels = c("Modern-day","project"))+
+    scale_color_manual(values = c("darkred","#5CB85C"),labels = c("baseline","project"))+
     theme(legend.position = "bottom")+
     labs(title = name)+
     xlab("Time")+
     ylab("SOC (in tonnes per hectare)")
   print(graph)
   dev.off()
-  
-  png(filename = file.path('logs', paste0(file_prefix, 'barplot', '.png')))
-  histogram <- ggplot(yearly_results, aes(x=cal_year, group = 1)) +
-    geom_bar(aes(y=CO2eq_soil_mean), stat="identity", fill="#5CB85C", alpha=0.7) +
+browser()
+  png(filename = file.path('logs', paste0(file_prefix, 'barplot1', '.png'))) 
+  barplot1 <- ggplot(yearly_results, aes(x=cal_year, group = 1)) +
+    geom_bar(aes(y=CO2eq_soil_mean), stat="identity", fill="brown", alpha=0.7) +
     geom_errorbar(aes(ymin = CO2eq_soil_mean-1.96*CO2eq_soil_sd,
                       ymax = CO2eq_soil_mean+1.96*CO2eq_soil_sd, color = "95% CI"), colour="black", width=.5, show.legend = T) +
-    geom_bar(aes(y=CO2eq_emissions), stat="identity", fill="#0C785C", alpha=0.7) +
-    geom_bar(aes(y=CO2eq_total), stat="identity", fill="darkred", alpha=0.7) +
+    geom_bar(aes(y=CO2eq_total), stat="identity", fill="green", alpha=0.7) +
     xlab("Time")+
-    ylab("Number of certificates issuable (per year)")
-  print(histogram)
+    ylab("Number of credits issuable (per year)")
+  print(barplot1)
+  dev.off()
+  
+  png(filename = file.path('logs', paste0(file_prefix, 'barplot2', '.png'))) 
+  barplot_data <- yearly_results %>% mutate(CO2eq_emission_red = -CO2eq_emissions) %>%
+    select(-c(CO2eq_soil_95conf, CO2eq_soil_mean, CO2eq_soil_sd, CO2eq_emissions)) %>%
+    pivot_longer(!c(year, cal_year))
+  barplot2 <- ggplot() + geom_bar(data = barplot_data, aes(x = cal_year, y = value, fill = name), position = "dodge", stat = "identity")
+  print(barplot2)
   dev.off()
   
   ## Rename output dir ---------------------------------------------------------
