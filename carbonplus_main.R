@@ -408,7 +408,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   graph <- ggplot(data = soil_results_monthly, aes(x = time, y = SOC_farm_mean, colour=scenario)) +
     geom_line()+
     #geom_errorbar(aes(ymin=SOC_farm_mean-SOC_farm_sd, ymax=SOC_farm_mean+SOC_farm_sd), width=.1) +
-    scale_color_manual(values = c("darkred","#5CB85C"),labels = c("Modern-day","Holistic"))+
+    scale_color_manual(values = c("darkred","#5CB85C"),labels = c("Modern-day","project"))+
     theme(legend.position = "bottom")+
     labs(title = name)+
     xlab("Time")+
