@@ -356,6 +356,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   write_out <- function(data, path) {
     for(name in names(data)) {
       out <- data[[name]]
+      if(nrow(out) == 0) next
       out$monitored <- FALSE
       if("scenario" %in% colnames(out)) {
         f <- c('baseline', paste0("year", 0:settings$curr_monit_year))
