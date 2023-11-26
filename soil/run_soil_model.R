@@ -190,13 +190,56 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
     clay = c(soilMapsData$clay, rep(NA, 11)),
     silt = c(soilMapsData$silt, rep(NA, 11)),
     bulk_density = c(soilMapsData$bulk_density, rep(NA, 11)),
-    pE = c(0.75, rep(NA, 11)), # mean potential transpiration to open-pan evaporation convertion rate
+    pE = c(0.75, rep(NA, 11)), # mean potential transpiration to open-pan evap convertion rate
     tilling_factor = c(1.0, rep(NA, 11))
   )
   
-  ## Standard error for each input
-  # Modelling perform several times with different inputs
-  # Let's define standard deviation for each input representing extrinsic uncertainty of the model
+  ## Get SOC steady state using mean values ----
+  # This section gets soil C close to steady state so spin-ups are not
+  # required for every nth run.
+  
+  SOC_start <- data.frame(
+    parcel_ID = inputs$parcel_inputs$parcel_ID,
+    DPM = NA, RPM = NA, BIO = NA, HUM = NA, IOM = NA
+    )
+  
+  batch <- mean_input
+  
+  for(i in 1:nrow(inputs$parcel_inputs)) {
+
+    parcel = inputs$parcel_inputs$parcel_ID[i]
+    batch$dr_ratio = ifelse((soil_inputs %>% filter(parcel_ID==parcel))$irrigation==TRUE, dr_ratio_irrigated, dr_ratio_non_irrigated)
+
+    # Select values for the baseline scenario
+    batch$field_carbon_in <- (parcel_Cinputs %>% filter (scenario==baseline_chosen & parcel_ID==parcel))$Cinputs_ha
+    batch$bare = (inputs$bare_field_inputs %>% filter(scenario == baseline_chosen & parcel_ID == parcel))$bareground
+    batch$tilling_factor = (inputs$tilling_inputs %>% filter(scenario==baseline_chosen & parcel_ID==parcel))$tilling_factor
+
+    # Get starting soil content
+    starting_soil_content <- estimate_starting_soil_content(SOC = batch$SOC[1], clay = batch$clay[1]) / 2
+
+    # Run spinup to equilibrium using baseline data
+    time_horizon = settings$spinup_years
+
+    modelSOC_spinup <- calc_carbon_over_time(time_horizon,
+                                          field_carbon_in = rep(batch$field_carbon_in[1], time_horizon),
+                                          dr_ratio = rep(batch$dr_ratio[1], time_horizon),
+                                          bare = batch$bare,
+                                          temp = spinup_climate$temperature,
+                                          precip = spinup_climate$precipitation,
+                                          evap = spinup_climate$evap,
+                                          soil_thick = batch$soil_thick[1],
+                                          clay = batch$clay[1],
+                                          pE = batch$pE[1],
+                                          PS = starting_soil_content,
+                                          tilling_factor = batch$tilling_factor[1],
+                                          version=model_version,
+                                          silt = batch$silt[1],
+                                          bulk_density = batch$bulk_density[1])
+    SOC_start[SOC_start$parcel_ID == parcel, 2:6] <- as.numeric(tail(modelSOC_spinup, 1))[c(1:5)]
+  }
+  
+  ## Prepare for multiple runs sampling from input probability distributions
   
   # Remove uncertainty for testing
   if(settings$debug_mode) {
@@ -220,19 +263,18 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
                 pE = se_inputs_nonfarm, 
                 tilling_factor = se_inputs_nonfarm)
   
-  # Data frame that includes total soc per parcel per scenario 
-  all_results <- data.frame(run=c(), parcel_ID=c(), SOC=c(), scenario=c(), farm_frac=c())
+  # Data frame for holding all results
+  all_results <- data.frame()
   
-  ## Initialization of model runs
   # Initializing run counter
   run_ID <- 0
   
-  ## Model runs
+  ## Start model runs ----
   for (n in c(1:settings$n_runs)){
     
     run_ID <- run_ID + 1
-    all_results_batch <- data.frame(run=c(), parcel_ID=c(), SOC=c(), scenario=c(), farm_frac=c())
-    farm_results_batch <- data.frame(run=c(), SOC_farm=c(), scenario=c())
+    # Dataframe for all results of one run
+    all_results_batch <- data.frame()
     
     # Choice of a random factor to normally randomize input values
     batch_coef <- data.frame(field_carbon_in = rnorm(1, 1, se$field_carbon_in), 
@@ -247,8 +289,6 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
                              tilling_factor = rnorm(1, 1, se$tilling_factor), 
                              silt = rnorm(1, 1, se$silt), 
                              bulk_density = rnorm(1, 1, se$bulk_density))
-    
-    # No longer using future climate scenarios. They do not makes sense for 10 year prediction and actual certified credits are calculated for past years anyway
     
     # Apply factors to inputs average
     batch <- data.frame(run=run_ID, 
@@ -288,15 +328,14 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
       batch$field_carbon_in <- (batch_parcel_Cinputs %>% filter (scenario==baseline_chosen & parcel_ID==parcel))$Cinputs_ha
       batch$bare = (inputs$bare_field_inputs %>% filter(scenario == baseline_chosen & parcel_ID == parcel))$bareground
       batch$tilling_factor = (inputs$tilling_inputs %>% filter(scenario==baseline_chosen & parcel_ID==parcel))$tilling_factor
-      starting_soil_content = estimate_starting_soil_content(SOC=batch$SOC[1], clay=batch$clay[1])
-      
-      # Get starting soil content
-      starting_soil_content <- estimate_starting_soil_content(SOC = batch$SOC[1], clay = batch$clay[1]) / 2
-      
-      # Run spinup to equilibrium using baseline data
-      time_horizon = settings$spinup_years
 
-      C0_df_spinup <- calc_carbon_over_time(time_horizon, 
+      # Get starting soil content
+      starting_soil_content <- as.numeric(SOC_start[SOC_start$parcel_ID == parcel, 2:6])
+
+      # Run spinup to equilibrium using baseline data
+      time_horizon = 20
+
+      modelSOC_steadystate <- calc_carbon_over_time(time_horizon, 
                                             field_carbon_in = rep(batch$field_carbon_in[1], time_horizon), 
                                             dr_ratio = rep(batch$dr_ratio[1], time_horizon), 
                                             bare = batch$bare,
@@ -311,11 +350,23 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
                                             version=model_version, 
                                             silt = batch$silt[1], 
                                             bulk_density = batch$bulk_density[1])
-      spinup_soil_content <- as.numeric(tail(C0_df_spinup, 1))[c(1:5)]
+      steadystate_soil_content <- as.numeric(tail(modelSOC_steadystate, 1))[c(1:5)]
+      
+      if(n==1) {
+        ## Print the last spinup to check for equilibrium ----
+        graph <- ggplot(data = modelSOC_steadystate, aes(x=1:nrow(modelSOC_steadystate), y=TOT)) +
+          geom_line() +
+          theme(legend.position = "bottom") +
+          # labs(title = "Model spinup for an example farm plot") +
+          xlab("Months") +
+          ylab("SOC (in tonnes per hectare)") +
+          ylim(0, 30)
+        print(graph)
+      }
       
       # Run a single year for historical baseline
       time_horizon = 1
-      C0_df_baseline <- calc_carbon_over_time(time_horizon, 
+      modelSOC_baseline <- calc_carbon_over_time(time_horizon, 
                                               field_carbon_in = rep(batch$field_carbon_in[1], time_horizon), 
                                               dr_ratio = rep(batch$dr_ratio[1], time_horizon), 
                                               bare = batch$bare,
@@ -325,16 +376,16 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
                                               soil_thick = batch$soil_thick[1], 
                                               clay = batch$clay[1], 
                                               pE = batch$pE[1], 
-                                              PS = spinup_soil_content, 
+                                              PS = steadystate_soil_content, 
                                               tilling_factor = batch$tilling_factor[1], 
                                               version=model_version, 
                                               silt = batch$silt[1], 
                                               bulk_density = batch$bulk_density[1])
-      baseline_soil_content <- as.numeric(tail(C0_df_baseline, 1))[c(1:5)]
+      baseline_soil_content <- as.numeric(tail(modelSOC_baseline, 1))[c(1:5)]
       
       # Run the projected baseline scenario
       time_horizon = 10
-      C0_df_baseline_proj <- calc_carbon_over_time(time_horizon, 
+      modelSOC_baseline_proj <- calc_carbon_over_time(time_horizon, 
                                                    field_carbon_in = rep(batch$field_carbon_in[1], time_horizon), 
                                                    dr_ratio = rep(batch$dr_ratio[1], time_horizon), 
                                                    bare = batch$bare,
@@ -349,12 +400,12 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
                                                    version=model_version, 
                                                    silt = batch$silt[1], 
                                                    bulk_density = batch$bulk_density[1])
-      C0_df_baseline_proj <- rbind(C0_df_baseline, C0_df_baseline_proj)
+      modelSOC_baseline_proj <- rbind(modelSOC_baseline, modelSOC_baseline_proj)
       
       
       # Project scenario run
       starting_project_soil_content <- baseline_soil_content
-      C0_df_project <- C0_df_baseline
+      modelSOC_project <- modelSOC_baseline
       for (N in 1:10){
         # print(paste(run_ID, parcel, N)) # debugging line
         batch_parcel_Cinputs = parcel_Cinputs %>% mutate(Cinputs_ha=Cinputs_ha*batch_coef$field_carbon_in)
@@ -363,7 +414,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
         batch$tilling_factor = (inputs$tilling_inputs %>% filter(scenario==paste("year", N, sep="") & parcel_ID==parcel))$tilling_factor
         time_horizon = 1
         
-        C0_df_project_yearly <- calc_carbon_over_time(time_horizon, 
+        modelSOC_project_yearly <- calc_carbon_over_time(time_horizon, 
                                                        field_carbon_in = rep(batch$field_carbon_in[1], time_horizon), 
                                                        dr_ratio = rep(batch$dr_ratio[1], time_horizon), 
                                                        bare = batch$bare,
@@ -378,15 +429,15 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
                                                        version=model_version, 
                                                        silt = batch$silt[1], 
                                                        bulk_density = batch$bulk_density[1])
-        starting_project_soil_content <- as.numeric(tail(C0_df_project_yearly , 1))[c(1:5)]
-        C0_df_project <- rbind(C0_df_project, C0_df_project_yearly) 
+        starting_project_soil_content <- as.numeric(tail(modelSOC_project_yearly , 1))[c(1:5)]
+        modelSOC_project <- rbind(modelSOC_project, modelSOC_project_yearly) 
       }
 
-      all_results_batch_temp <- data.frame(run=run_ID, #, C0_df_baseline_proj$TOT#, rep("current", 120)
+      all_results_batch_temp <- data.frame(run=run_ID, #, modelSOC_baseline_proj$TOT#, rep("current", 120)
                                            parcel_ID=rep(parcel, 264), 
                                            year=rep(0:10, each=12),
                                            month=rep(seq(1:12), 11),
-                                           SOC=c(C0_df_baseline_proj$TOT, C0_df_project$TOT), 
+                                           SOC=c(modelSOC_baseline_proj$TOT, modelSOC_project$TOT), 
                                            scenario=c(rep("baseline", 132), rep("project", 132)), 
                                            farm_frac=rep(farm_frac, 264))
       all_results_batch <- rbind(all_results_batch, all_results_batch_temp) 
@@ -394,7 +445,6 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
     }
     
     all_results <- rbind(all_results_batch, all_results)
-    # farm_results <- rbind(farm_results_batch, farm_results)
     print(paste("Run ", n, "over", settings$n_runs, "done"))
     
   } # End of model runs
@@ -446,17 +496,6 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   soc_farm <- right_join(farm_Cinput, soc_farm)
   # Add calendar year
   soc_farm <- soc_farm %>% mutate(cal_year = settings$proj_start_year + (year-1))
-  
-  
-  ## Print the last spinup to check for equilibrium ----
-  graph <- ggplot(data = C0_df_spinup, aes(x=1:nrow(C0_df_spinup), y=TOT)) +
-    geom_line() +
-    theme(legend.position = "bottom") +
-    # labs(title = "Model spinup for an example farm plot") +
-    xlab("Months") +
-    ylab("SOC (in tonnes per hectare)") +
-    ylim(0, 30)
-  print(graph)
 
   ## Return values ----
   return(list(soc_farm=soc_farm,
