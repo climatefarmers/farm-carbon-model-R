@@ -669,7 +669,7 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
       
       parcel <- parcel_names[i]
       
-      # Excluding non-arable parcels: no holistic grazing compatible land-uses (no pasture efficiency coef will be used in crop inputs)
+      # Excluding non-arable parcels: no project grazing compatible land-uses (no pasture efficiency coef will be used in crop inputs)
       if (!year_chosen$landUseType[i]=="Arablecrops") { next }
       
       # Creating the data frame storing monthly yield and residue
