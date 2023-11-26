@@ -220,22 +220,8 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
                 pE = se_inputs_nonfarm, 
                 tilling_factor = se_inputs_nonfarm)
   
-  ## Initialising data structures
-  # Data frame per year that includes soc per year, co2 per year and co2 difference per year
-  step_in_table <- data.frame(run=c(), 
-                              scenario=c(),
-                              cal_year=c(),
-                              baseline_step_SOC_per_hectare=c(), 
-                              project_step_SOC_per_hectare=c(), 
-                              baseline_step_total_CO2=c(), 
-                              project_step_total_CO2=c(), 
-                              yearly_CO2diff=c()
-  )
-  
   # Data frame that includes total soc per parcel per scenario 
   all_results <- data.frame(run=c(), parcel_ID=c(), SOC=c(), scenario=c(), farm_frac=c())
-  # Data frame that includes total soc per farm
-  farm_results <- data.frame(run=c(), scenario=c(), SOC_farm=c())
   
   ## Initialization of model runs
   # Initializing run counter
@@ -406,22 +392,6 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
       all_results_batch <- rbind(all_results_batch, all_results_batch_temp) 
       
     }
-
-    # farm_results_batch <- data.frame(unique(all_results_batch %>% group_by(year, month, scenario) %>% mutate(SOC_farm=sum(SOC * farm_frac)) %>% select(run, year, month, scenario, SOC_farm)))
-    # step_in_results <- farm_results_batch[farm_results_batch$month==12, ]  # SOC content at end of year (December, month 12) is selected.
-    # step_baseline <- diff(step_in_results$SOC_farm[step_in_results$scenario=="baseline"])
-    # step_project <- diff(step_in_results$SOC_farm[step_in_results$scenario=="project"])
-    # year_temp <- step_in_results$year[step_in_results$scenario=="project"][-1]
-    
-    # step_in_table_temp <- data.frame(run=run_ID, 
-    #                                  scenario=paste0("year", 1:10),
-    #                                  cal_year=year_temp,
-    #                                  baseline_step_SOC_per_hectare=step_baseline, 
-    #                                  project_step_SOC_per_hectare=step_project, 
-    #                                  baseline_step_total_CO2=step_baseline * sum(inputs$parcel_inputs$area) * 44 / 12, 
-    #                                  project_step_total_CO2=step_project * sum(inputs$parcel_inputs$area) * 44 / 12) %>%
-    #   mutate(yearly_CO2diff=project_step_total_CO2-baseline_step_total_CO2)
-    # step_in_table <- rbind(step_in_table, step_in_table_temp)
     
     all_results <- rbind(all_results_batch, all_results)
     # farm_results <- rbind(farm_results_batch, farm_results)
@@ -457,17 +427,19 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   soc_parcels <- soc_parcels %>% mutate(Cinputs_abs = Cinputs_ha * area)
   # Add calendar year
   soc_parcels <- soc_parcels %>% mutate(cal_year = settings$proj_start_year + (year-1))
-  
+
   # Summarize over parcels and calculate CO2 values
   soc_allruns_farm <- soc_allruns_parcels %>% group_by(run, year, month) %>% select(-parcel_ID) %>% 
     summarise(SOC_sum_pr = sum(SOC_abs_pr), SOC_sum_bl = sum(SOC_abs_bl)) %>%
     mutate(SOC_abs_pbdiff = SOC_sum_pr - SOC_sum_bl, CO2 = SOC_abs_pbdiff * 44/12)
+  soc_allruns_farm$CO2_gain <- c(0, diff(soc_allruns_farm$CO2))
+  soc_allruns_farm$CO2_gain[soc_allruns_farm$year == 0] <- 0
   
   # Summarize over runs and calculate mean, sd, 95% conf and yearly values
   soc_farm <- soc_allruns_farm %>% group_by(year) %>% 
-    summarise(SOC_pbdiff = mean(SOC_abs_pbdiff), CO2_mean = mean(CO2), CO2_sd = sd(CO2)) %>%
-    mutate(CO2_95conf = CO2_mean - CO2_sd * 1.96) %>%
-    mutate(CO2_95conf_gain = c(0, diff(CO2_95conf)))
+    summarise(SOC_pbdiff = mean(SOC_abs_pbdiff), CO2_cum = mean(CO2), 
+              CO2_gain_mean = mean(CO2_gain), CO2_gain_sd = sd(CO2_gain)) %>%
+    mutate(CO2_gain_95conf = CO2_gain_mean - CO2_gain_sd * 1.96)
   
   # Add farm level C input variable
   farm_Cinput <- soc_parcels %>% select(c(year, Cinputs_abs)) %>% group_by(year) %>% summarise(Cinputs_abs = sum(Cinputs_abs))
@@ -475,42 +447,6 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   # Add calendar year
   soc_farm <- soc_farm %>% mutate(cal_year = settings$proj_start_year + (year-1))
   
-  
-  # ## Final data frames by taking the average over the runs
-  # # Results of soc and co2 per year
-  # step_in_table_final <- step_in_table %>% group_by(cal_year, scenario) %>% 
-  #   summarise(yearly_CO2diff_mean=mean(yearly_CO2diff), 
-  #             yearly_CO2diff_sd=sd(yearly_CO2diff), 
-  #             baseline_step_total_CO2_mean=mean(baseline_step_total_CO2), 
-  #             baseline_step_total_CO2_var=var(baseline_step_total_CO2), 
-  #             project_step_total_CO2_mean=mean(project_step_total_CO2), 
-  #             project_step_total_CO2_var=var(project_step_total_CO2), 
-  #             cov_step_total_CO2=cov(baseline_step_total_CO2, project_step_total_CO2), 
-  #             sd_diff=sqrt(baseline_step_total_CO2_var+project_step_total_CO2_var-2*cov_step_total_CO2) #this equal yearly_CO2diff_sd
-  #   )%>%
-  #   mutate(yearly_CO2diff_final=round(yearly_CO2diff_mean-1.96*yearly_CO2diff_sd)) %>%
-  #   select(scenario, cal_year, yearly_CO2diff_final, yearly_CO2diff_mean, 
-  #          yearly_CO2diff_sd, baseline_step_total_CO2_mean, 
-  #          baseline_step_total_CO2_var, project_step_total_CO2_mean, 
-  #          project_step_total_CO2_var, cov_step_total_CO2, sd_diff)
-  
-  # # Results of soc per parcel per scenario/year
-  # all_results_final <- all_results %>% group_by(scenario, parcel_ID, year, farm_frac) %>% 
-  #   summarise(SOC_mean=mean(SOC), SOC_sd=sd(SOC)) %>%
-  #   select(parcel_ID, farm_frac, year, scenario, SOC_mean, SOC_sd)
-  # 
-  # # Results of soc on farm level
-  # farm_results_final <- farm_results %>% group_by(year, scenario) %>% 
-  #   summarise(SOC_farm_mean=mean(SOC_farm), 
-  #             SOC_farm_sd=sd(SOC_farm)) %>%
-  #   select(year, scenario, SOC_farm_mean, SOC_farm_sd)
-  # 
-  # 
-  # if (length(apply(is.na(step_in_table_final), 2, which))==0){
-  #   log4r::info(my_logger, 'soil_run_model.R calculations ran smoothly.', sep=" ")
-  # } else {
-  #   log4r::error(my_logger, 'NAs in results.')
-  # }
   
   ## Print the last spinup to check for equilibrium ----
   graph <- ggplot(data = C0_df_spinup, aes(x=1:nrow(C0_df_spinup), y=TOT)) +
