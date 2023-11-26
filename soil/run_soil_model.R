@@ -105,7 +105,9 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   
   years <- 0:10
   
-  for(parcel in unique(inputs$parcel_inputs$parcel_ID)){
+  for(p in 1:length(inputs$parcel_inputs$parcel_ID)) {
+    
+    parcel <- inputs$parcel_inputs$parcel_ID[p]
     
     for(year in years){
       scenario <- paste0("year", year)
@@ -124,7 +126,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
                                         crop_Cinputs=crop_Cinputs, 
                                         pasture_Cinputs=pasture_Cinputs
       )
-      parcel_Cinputs<-rbind(parcel_Cinputs, parcel_Cinputs_temp)
+      parcel_Cinputs <- rbind(parcel_Cinputs, parcel_Cinputs_temp)
     }
   }
   
@@ -304,7 +306,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
       starting_soil_content <- estimate_starting_soil_content(SOC = batch$SOC[1], clay = batch$clay[1]) / 2
       
       # Run spinup to equilibrium using baseline data
-      time_horizon = 300
+      time_horizon = settings$spinup_years
 
       C0_df_spinup <- calc_carbon_over_time(time_horizon, 
                                             field_carbon_in = rep(batch$field_carbon_in[1], time_horizon), 
@@ -392,10 +394,10 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
         starting_holistic_soil_content <- as.numeric(tail(C0_df_holistic_yearly , 1))[c(1:5)]
         C0_df_holistic <- rbind(C0_df_holistic, C0_df_holistic_yearly) 
       }
-      
+
       all_results_batch_temp <- data.frame(run=run_ID, #, C0_df_baseline_proj$TOT#, rep("current", 120)
                                            parcel_ID=rep(parcel, 264), 
-                                           time=rep(seq(as.Date("2020-1-1"), as.Date("2030-12-31"), by = "month"), 2), 
+                                           time=rep(seq(ymd(paste0(settings$proj_start_year-1, "-01-01")), ymd(paste0(settings$proj_start_year+9, "-12-31")), by = "month"), 2), 
                                            SOC=c(C0_df_baseline_proj$TOT, C0_df_holistic$TOT), 
                                            scenario=c(rep("baseline", 132), rep("holistic", 132)), 
                                            farm_frac=rep(farm_frac, 264))
@@ -472,6 +474,11 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
     ylab("SOC (in tonnes per hectare)") +
     ylim(0, 30)
   print(graph)
+  
+  # Create dataframe with C input totals vs soil C total per parcel
+  parcel_Cinput_SOC <- merge(parcel_Cinputs[,c('scenario', 'parcel_ID', 'tot_Cinputs')], inputs$parcel_inputs[,c('parcel_ID', 'area')], by = "parcel_ID")
+  parcel_Cinput_SOC$tot_Cinputs_abs <- parcel_Cinput_SOC$tot_Cinputs * parcel_Cinput_SOC$area
+  
   
   return(list(step_in_table_final=step_in_table_final,
               farm_results_final=farm_results_final,
