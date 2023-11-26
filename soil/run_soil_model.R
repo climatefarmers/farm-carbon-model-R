@@ -132,7 +132,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
     }
   }
   
-  parcel_Cinputs <- parcel_Cinputs %>% mutate(Cinputs = orgamendments_Cinputs + agroforestry_Cinputs + animal_Cinputs + crop_Cinputs + pasture_Cinputs)
+  parcel_Cinputs <- parcel_Cinputs %>% mutate(Cinputs_ha = orgamendments_Cinputs + agroforestry_Cinputs + animal_Cinputs + crop_Cinputs + pasture_Cinputs)
   
   if (length(apply(is.na(parcel_Cinputs), 2, which))==0){
     log4r::info(my_logger, 'parcel C inputs calculations have no NAs.', sep=" ")
@@ -147,11 +147,11 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   #                                   select(parcel_ID, area) %>%
   #                                   mutate(farm_frac= paste(round(area/sum(area)*100), '%')), by="parcel_ID") %>% 
   #   group_by(parcel_ID, farm_frac) %>% 
-  #   mutate(Cinput_per_ha_project = sum(Cinputs[scenario!=baseline_chosen & scenario!="year0"])/10) %>%
+  #   mutate(Cinput_per_ha_project = sum(Cinputs_ha[scenario!=baseline_chosen & scenario!="year0"])/10) %>%
   #   filter(scenario==baseline_chosen) %>%
-  #   mutate(additional_Cinput_per_ha = round(Cinput_per_ha_project - Cinputs, 2), 
-  #          relative_increase=paste(as.character(ifelse(Cinputs==0, NA, as.integer((Cinput_per_ha_project - Cinputs) / Cinputs*100))), '%'), 
-  #          additional_Cinput_total = round(unique(area)*(Cinput_per_ha_project - Cinputs), 1)) 
+  #   mutate(additional_Cinput_per_ha = round(Cinput_per_ha_project - Cinputs_ha, 2), 
+  #          relative_increase=paste(as.character(ifelse(Cinputs_ha==0, NA, as.integer((Cinput_per_ha_project - Cinputs_ha) / Cinputs_ha*100))), '%'), 
+  #          additional_Cinput_total = round(unique(area)*(Cinput_per_ha_project - Cinputs_ha), 1)) 
   # additional_Cinput_total_farm = sum(parcel_Cinputs_addition$additional_Cinput_total)
   # parcel_Cinputs_addition = parcel_Cinputs_addition %>%
   #   mutate(absolute_contribution_perc = round(100*additional_Cinput_total / additional_Cinput_total_farm)) %>%
@@ -163,7 +163,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   #                             y= inputs$parcel_inputs, 
   #                             by="parcel_ID") %>%
   #   group_by(scenario) %>%
-  #   summarise(Cinputs=sum(Cinputs*area), 
+  #   summarise(Cinputs_ha=sum(Cinputs_ha*area), 
   #             orgamendments_Cinputs=sum(area*orgamendments_Cinputs), 
   #             animal_Cinputs=sum(area*animal_Cinputs), 
   #             crop_Cinputs=sum(area*crop_Cinputs), 
@@ -233,9 +233,9 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   )
   
   # Data frame that includes total soc per parcel per scenario 
-  all_results <- data.frame(run=c(), parcel_ID=c(), time=c(), SOC=c(), scenario=c(), farm_frac=c())
+  all_results <- data.frame(run=c(), parcel_ID=c(), SOC=c(), scenario=c(), farm_frac=c())
   # Data frame that includes total soc per farm
-  farm_results <- data.frame(run=c(), time=c(), scenario=c(), SOC_farm=c())
+  farm_results <- data.frame(run=c(), scenario=c(), SOC_farm=c())
   
   ## Initialization of model runs
   # Initializing run counter
@@ -245,8 +245,8 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   for (n in c(1:settings$n_runs)){
     
     run_ID <- run_ID + 1
-    all_results_batch <- data.frame(run=c(), parcel_ID=c(), time=c(), SOC=c(), scenario=c(), farm_frac=c())
-    farm_results_batch <- data.frame(run=c(), time=c(), SOC_farm=c(), scenario=c())
+    all_results_batch <- data.frame(run=c(), parcel_ID=c(), SOC=c(), scenario=c(), farm_frac=c())
+    farm_results_batch <- data.frame(run=c(), SOC_farm=c(), scenario=c())
     
     # Choice of a random factor to normally randomize input values
     batch_coef <- data.frame(field_carbon_in = rnorm(1, 1, se$field_carbon_in), 
@@ -295,11 +295,11 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
       # Define parcel fixed values
       parcel = inputs$parcel_inputs$parcel_ID[i]
       farm_frac = inputs$parcel_inputs$area[i]/sum(inputs$parcel_inputs$area)
-      batch_parcel_Cinputs = parcel_Cinputs %>% mutate(Cinputs=Cinputs*batch_coef$field_carbon_in)
+      batch_parcel_Cinputs = parcel_Cinputs %>% mutate(Cinputs_ha=Cinputs_ha*batch_coef$field_carbon_in)
       batch$dr_ratio = ifelse((soil_inputs %>% filter(parcel_ID==parcel))$irrigation==TRUE, dr_ratio_irrigated, dr_ratio_non_irrigated) * batch_coef$dr_ratio
       
       # Select values for the baseline scenario
-      batch$field_carbon_in <- (batch_parcel_Cinputs %>% filter (scenario==baseline_chosen & parcel_ID==parcel))$Cinputs
+      batch$field_carbon_in <- (batch_parcel_Cinputs %>% filter (scenario==baseline_chosen & parcel_ID==parcel))$Cinputs_ha
       batch$bare = (inputs$bare_field_inputs %>% filter(scenario == baseline_chosen & parcel_ID == parcel))$bareground
       batch$tilling_factor = (inputs$tilling_inputs %>% filter(scenario==baseline_chosen & parcel_ID==parcel))$tilling_factor
       starting_soil_content = estimate_starting_soil_content(SOC=batch$SOC[1], clay=batch$clay[1])
@@ -372,8 +372,8 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
       C0_df_project <- C0_df_baseline
       for (N in 1:10){
         # print(paste(run_ID, parcel, N)) # debugging line
-        batch_parcel_Cinputs = parcel_Cinputs %>% mutate(Cinputs=Cinputs*batch_coef$field_carbon_in)
-        batch$field_carbon_in <- (batch_parcel_Cinputs %>% filter (scenario==paste("year", N, sep="") & parcel_ID==parcel))$Cinputs
+        batch_parcel_Cinputs = parcel_Cinputs %>% mutate(Cinputs_ha=Cinputs_ha*batch_coef$field_carbon_in)
+        batch$field_carbon_in <- (batch_parcel_Cinputs %>% filter (scenario==paste("year", N, sep="") & parcel_ID==parcel))$Cinputs_ha
         batch$bare = (inputs$bare_field_inputs %>% filter(scenario == paste("year", N, sep="") & parcel_ID == parcel))$bareground
         batch$tilling_factor = (inputs$tilling_inputs %>% filter(scenario==paste("year", N, sep="") & parcel_ID==parcel))$tilling_factor
         time_horizon = 1
@@ -408,78 +408,92 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
       
     }
 
-    farm_results_batch <- data.frame(unique(all_results_batch %>% group_by(year, month, scenario) %>% mutate(SOC_farm=sum(SOC * farm_frac)) %>% select(run, year, month, scenario, SOC_farm)))
-    step_in_results <- farm_results_batch[farm_results_batch$month==12, ]  # SOC content at end of year (December, month 12) is selected.
-    step_baseline <- diff(step_in_results$SOC_farm[step_in_results$scenario=="baseline"])
-    step_project <- diff(step_in_results$SOC_farm[step_in_results$scenario=="project"])
-    year_temp <- step_in_results$year[step_in_results$scenario=="project"][-1]
+    # farm_results_batch <- data.frame(unique(all_results_batch %>% group_by(year, month, scenario) %>% mutate(SOC_farm=sum(SOC * farm_frac)) %>% select(run, year, month, scenario, SOC_farm)))
+    # step_in_results <- farm_results_batch[farm_results_batch$month==12, ]  # SOC content at end of year (December, month 12) is selected.
+    # step_baseline <- diff(step_in_results$SOC_farm[step_in_results$scenario=="baseline"])
+    # step_project <- diff(step_in_results$SOC_farm[step_in_results$scenario=="project"])
+    # year_temp <- step_in_results$year[step_in_results$scenario=="project"][-1]
     
-    step_in_table_temp <- data.frame(run=run_ID, 
-                                     scenario=paste0("year", 1:10),
-                                     cal_year=year_temp,
-                                     baseline_step_SOC_per_hectare=step_baseline, 
-                                     project_step_SOC_per_hectare=step_project, 
-                                     baseline_step_total_CO2=step_baseline * sum(inputs$parcel_inputs$area) * 44 / 12, 
-                                     project_step_total_CO2=step_project * sum(inputs$parcel_inputs$area) * 44 / 12) %>%
-      mutate(yearly_CO2diff=project_step_total_CO2-baseline_step_total_CO2)
-    step_in_table <- rbind(step_in_table, step_in_table_temp)
+    # step_in_table_temp <- data.frame(run=run_ID, 
+    #                                  scenario=paste0("year", 1:10),
+    #                                  cal_year=year_temp,
+    #                                  baseline_step_SOC_per_hectare=step_baseline, 
+    #                                  project_step_SOC_per_hectare=step_project, 
+    #                                  baseline_step_total_CO2=step_baseline * sum(inputs$parcel_inputs$area) * 44 / 12, 
+    #                                  project_step_total_CO2=step_project * sum(inputs$parcel_inputs$area) * 44 / 12) %>%
+    #   mutate(yearly_CO2diff=project_step_total_CO2-baseline_step_total_CO2)
+    # step_in_table <- rbind(step_in_table, step_in_table_temp)
     
     all_results <- rbind(all_results_batch, all_results)
-    farm_results <- rbind(farm_results_batch, farm_results)
+    # farm_results <- rbind(farm_results_batch, farm_results)
     print(paste("Run ", n, "over", settings$n_runs, "done"))
     
   } # End of model runs
   
-  ## Alternative (improved) calculations
+  ## Calculations of CO2 ERR per year
   
   # Select only month 12 of each year
-  allruns_dec <- all_results[all_results$month == 12, ]
-  allruns_dec <- left_join(allruns_dec, inputs$parcel_inputs[, c('parcel_ID', 'area')], by = 'parcel_ID') %>%
+  soc_allruns_yearly <- all_results[all_results$month == 12, ]
+  soc_allruns_yearly <- left_join(soc_allruns_yearly, inputs$parcel_inputs[, c('parcel_ID', 'area')], by = 'parcel_ID') %>%
     mutate(SOC_abs = SOC * area)
-  allruns_dec <- allruns_dec %>%
+  soc_allruns_yearly <- soc_allruns_yearly %>%
     group_by(parcel_ID, run, year, month, area) %>%
-    summarise(SOC_pr = SOC_abs[2], SOC_bl = SOC_abs[1], SOC_diff = SOC_abs[2]-SOC_abs[1])
-  parcels_dec <- allruns_dec %>% group_by(parcel_ID, year, month) %>% summarise_all(mean)
-  parcels_dec <- left_join(parcels_dec, parcel_Cinputs[,c('parcel_ID', 'year', 'Cinputs')], by = c('parcel_ID', 'year'))
-  parcels_dec <- parcels_dec %>% mutate(Cinputs_abs = Cinputs * area)
+    summarise(
+      SOC_ha_pr = SOC[2], SOC_ha_bl = SOC[1], SOC_abs_pr = SOC_abs[2], 
+      SOC_abs_bl = SOC_abs[1], SOC_abs_pbdiff = SOC_abs[2]-SOC_abs[1]
+      )
   
-  browser()
+  soc_parcels <- soc_allruns_yearly %>% group_by(parcel_ID, year) %>% summarise_all(mean) %>% select(-c(run, month))
+  soc_parcels <- left_join(soc_parcels, parcel_Cinputs[,c('parcel_ID', 'year', 'Cinputs_ha')], by = c('parcel_ID', 'year'))
+  soc_parcels <- soc_parcels %>% mutate(Cinputs_abs = Cinputs_ha * area)
   
-  ## Final data frames by taking the average over the runs
-  # Results of soc and co2 per year
-  step_in_table_final <- step_in_table %>% group_by(cal_year, scenario) %>% 
-    summarise(yearly_CO2diff_mean=mean(yearly_CO2diff), 
-              yearly_CO2diff_sd=sd(yearly_CO2diff), 
-              baseline_step_total_CO2_mean=mean(baseline_step_total_CO2), 
-              baseline_step_total_CO2_var=var(baseline_step_total_CO2), 
-              project_step_total_CO2_mean=mean(project_step_total_CO2), 
-              project_step_total_CO2_var=var(project_step_total_CO2), 
-              cov_step_total_CO2=cov(baseline_step_total_CO2, project_step_total_CO2), 
-              sd_diff=sqrt(baseline_step_total_CO2_var+project_step_total_CO2_var-2*cov_step_total_CO2) #this equal yearly_CO2diff_sd
-    )%>%
-    mutate(yearly_CO2diff_final=round(yearly_CO2diff_mean-1.96*yearly_CO2diff_sd)) %>%
-    select(scenario, cal_year, yearly_CO2diff_final, yearly_CO2diff_mean, 
-           yearly_CO2diff_sd, baseline_step_total_CO2_mean, 
-           baseline_step_total_CO2_var, project_step_total_CO2_mean, 
-           project_step_total_CO2_var, cov_step_total_CO2, sd_diff)
+  soc_allruns_farm <- soc_allruns_yearly %>% group_by(run, year, month) %>% select(-parcel_ID) %>% 
+    summarise(SOC_sum_pr = sum(SOC_abs_pr), SOC_sum_bl = sum(SOC_abs_bl)) %>%
+    mutate(SOC_abs_pbdiff = SOC_sum_pr - SOC_sum_bl, CO2 = SOC_abs_pbdiff * 44/12)
   
-  # Results of soc per parcel per scenario/year
-  all_results_final <- all_results %>% group_by(scenario, parcel_ID, year, farm_frac) %>% 
-    summarise(SOC_mean=mean(SOC), SOC_sd=sd(SOC)) %>%
-    select(parcel_ID, farm_frac, time, scenario, SOC_mean, SOC_sd)
-  
-  # Results of soc on farm level
-  farm_results_final <- farm_results %>% group_by(year, scenario) %>% 
-    summarise(SOC_farm_mean=mean(SOC_farm), 
-              SOC_farm_sd=sd(SOC_farm)) %>%
-    select(time, scenario, SOC_farm_mean, SOC_farm_sd)
+  soc_farm <- soc_allruns_farm %>% group_by(year) %>% 
+    summarise(SOC_pbdiff = mean(SOC_abs_pbdiff), CO2_mean = mean(CO2), CO2_sd = sd(CO2)) %>%
+    mutate(CO2_95conf = CO2_mean - CO2_sd * 1.96) %>%
+    mutate(CO2_95conf_yearly = c(0, diff(CO2_95conf)))
+  farm_Cinput <- soc_parcels %>% select(c(year, Cinputs_abs)) %>% group_by(year) %>% summarise(Cinputs_abs = sum(Cinputs_abs))
+  soc_farm <- left_join(soc_farm, farm_Cinput)
   
   
-  if (length(apply(is.na(step_in_table_final), 2, which))==0){
-    log4r::info(my_logger, 'soil_run_model.R calculations ran smoothly.', sep=" ")
-  } else {
-    log4r::error(my_logger, 'NAs in results.')
-  }
+  # ## Final data frames by taking the average over the runs
+  # # Results of soc and co2 per year
+  # step_in_table_final <- step_in_table %>% group_by(cal_year, scenario) %>% 
+  #   summarise(yearly_CO2diff_mean=mean(yearly_CO2diff), 
+  #             yearly_CO2diff_sd=sd(yearly_CO2diff), 
+  #             baseline_step_total_CO2_mean=mean(baseline_step_total_CO2), 
+  #             baseline_step_total_CO2_var=var(baseline_step_total_CO2), 
+  #             project_step_total_CO2_mean=mean(project_step_total_CO2), 
+  #             project_step_total_CO2_var=var(project_step_total_CO2), 
+  #             cov_step_total_CO2=cov(baseline_step_total_CO2, project_step_total_CO2), 
+  #             sd_diff=sqrt(baseline_step_total_CO2_var+project_step_total_CO2_var-2*cov_step_total_CO2) #this equal yearly_CO2diff_sd
+  #   )%>%
+  #   mutate(yearly_CO2diff_final=round(yearly_CO2diff_mean-1.96*yearly_CO2diff_sd)) %>%
+  #   select(scenario, cal_year, yearly_CO2diff_final, yearly_CO2diff_mean, 
+  #          yearly_CO2diff_sd, baseline_step_total_CO2_mean, 
+  #          baseline_step_total_CO2_var, project_step_total_CO2_mean, 
+  #          project_step_total_CO2_var, cov_step_total_CO2, sd_diff)
+  
+  # # Results of soc per parcel per scenario/year
+  # all_results_final <- all_results %>% group_by(scenario, parcel_ID, year, farm_frac) %>% 
+  #   summarise(SOC_mean=mean(SOC), SOC_sd=sd(SOC)) %>%
+  #   select(parcel_ID, farm_frac, year, scenario, SOC_mean, SOC_sd)
+  # 
+  # # Results of soc on farm level
+  # farm_results_final <- farm_results %>% group_by(year, scenario) %>% 
+  #   summarise(SOC_farm_mean=mean(SOC_farm), 
+  #             SOC_farm_sd=sd(SOC_farm)) %>%
+  #   select(year, scenario, SOC_farm_mean, SOC_farm_sd)
+  # 
+  # 
+  # if (length(apply(is.na(step_in_table_final), 2, which))==0){
+  #   log4r::info(my_logger, 'soil_run_model.R calculations ran smoothly.', sep=" ")
+  # } else {
+  #   log4r::error(my_logger, 'NAs in results.')
+  # }
   
   # Print the last spinup to check for equilibrium
   graph <- ggplot(data = C0_df_spinup, aes(x=1:nrow(C0_df_spinup), y=TOT)) +
@@ -491,15 +505,11 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
     ylim(0, 30)
   print(graph)
   
-  # Create dataframe with C input totals vs soil C total per parcel
-  parcel_Cinput_SOC <- merge(parcel_Cinputs[,c('scenario', 'parcel_ID', 'Cinputs')], inputs$parcel_inputs[,c('parcel_ID', 'area')], by = "parcel_ID")
-  parcel_Cinput_SOC$tot_Cinputs_abs <- parcel_Cinput_SOC$Cinputs * parcel_Cinput_SOC$area
+  browser()
   
-  
-  return(list(step_in_table_final=step_in_table_final,
-              farm_results_final=farm_results_final,
-              all_results_final=all_results_final,
-              parcel_Cinputs=parcel_Cinputs,
+  return(list(soc_farm=soc_farm,
+              soc_parcels=soc_parcels,
+              parcel_Cinputss=parcel_Cinputs,
               soil_inputs=soil_inputs,
               climate_inputs=present_climate))
 }
