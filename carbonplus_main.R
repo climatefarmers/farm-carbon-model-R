@@ -156,9 +156,8 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   ## Extracting livestock, landUseSummaryOrPractices
   livestock <- farms_everything$liveStock
   landUseSummaryOrPractices <- farms_everything$landUse$landUseSummaryOrPractices
-  
+
   ## If set, copy data from a specific year to following years (disabled for monitoring / credit issuance runs!)
-  
   if (settings$copy_year_currmonit_to_future){
     for(i in c(settings$curr_monit_year+1:10)){
       landUseSummaryOrPractices[[1]][[paste0("year", i)]] <- 
@@ -171,9 +170,11 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   }
   
   ## Reading in calculation factors from csv files
-  animal_factors <- read_csv(file.path("data", "carbon_share_manure.csv"), show_col_types = FALSE) %>%
-    filter(type=="manure") %>% mutate(species = source)
-  crop_factors <- read_csv(file.path("data", "crop_factors.csv"), show_col_types = FALSE)
+  animal_factors <- read_csv(file.path("data", "animal_factors.csv"), show_col_types = FALSE) %>% select(1:7) %>%
+    mutate(species = type)
+  co2eq_factors <- read_csv(file.path("data", "co2eq_factors.csv"), show_col_types = FALSE)
+  
+  crop_factors <- read_csv(file.path("data", "crop_factors1.csv"), show_col_types = FALSE)
   grazing_factors <- read_csv(file.path("data", "grazing_factors.csv"), show_col_types = FALSE)
   manure_factors <- read_csv(file.path("data", "carbon_share_manure.csv"), show_col_types = FALSE)
   natural_area_factors <- read_csv(file.path( "data", "natural_area_factors.csv"), show_col_types = FALSE) %>% 
@@ -182,7 +183,6 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   tilling_factors <- read_csv(file.path("data", "tilling_factors.csv"), show_col_types = FALSE)
   soil_cover_factors <- read_csv(file.path("data", "soil_cover_factors.csv"), show_col_types = FALSE)
   agroforestry_factors <- read_csv(file.path("data", "agroforestry_factors.csv"), show_col_types = FALSE) 
-  co2eq_factors <- read_csv(file.path("data", "co2eq_factors.csv"), show_col_types = FALSE)
   fertilizer_factors <- read_csv(file.path("data", "fertilizer_factors.csv"), show_col_types = FALSE)
   fuel_factors <- read_csv(file.path("data", "fuel_factors.csv"), show_col_types = FALSE)
   tree_factors <- read_csv(file.path("data", "agroforestry_factors.csv"), show_col_types = FALSE)
@@ -209,7 +209,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
     methane_factors = methane_factors,
     n2o_emission_factors = n2o_emission_factors
   )
-  
+  browser()
   # Extraction of inputs per parcel and scenario
   parcel_inputs <- get_parcel_inputs(landUseSummaryOrPractices)  # Parcel information
   landUseType <- get_land_use_type(landUseSummaryOrPractices, parcel_inputs)
