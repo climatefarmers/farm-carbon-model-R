@@ -10,8 +10,8 @@ co2_fuel_consumption <- function(fuel_data, fuel_factors) {
     fuel_data$co2_fuel <- NA
     i_diesel <- fuel_data$fuel_type=="Diesel"
     i_petrol <- fuel_data$fuel_type=="Petrol"
-    fuel_data$co2_fuel[i_diesel] <- fuel_data$value_l * ef_diesel
-    fuel_data$co2_fuel[i_petrol] <- fuel_data$value_l * ef_petrol
+    fuel_data$co2_fuel[i_diesel] <- fuel_data$value_l[i_diesel] * ef_diesel
+    fuel_data$co2_fuel[i_petrol] <- fuel_data$value_l[i_petrol] * ef_petrol
   }else{
     warning("No fuel data provided")
   }

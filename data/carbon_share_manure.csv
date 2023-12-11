@@ -1,12 +1,12 @@
 type,source,mass_kg_per_animal,vs_kg_per_tonne_per_day,ef_enteric_fermentation_kg_head,n_excretion_rate_kg_1000am,carbon_content,c_kg_per_year_per_animal,days_on_farm_per_year
 manure,Dairy Cattle,600,8.4,126,0.54,0.175,975.5,365
-manure,Beef Cattle,405,5.7,52,0.42,0.175,509.5,365
-manure,Other Cattle,405,5.7,52,0.42,0.175,509.5,365
-manure,Calves (less than 1year),230,5.7,52,0.42,0.175,231.5,180
-manure,Sows/Boars,190,2.4,1.5,0.38,,104.5,365
-manure,Pigs,76,5.3,1.5,0.76,,66.2,90
+manure,Beef Cattle,405,5.7,52,0.42,0.175,446.8,365
+manure,Other Cattle,405,5.7,52,0.42,0.175,446.8,365
+manure,Calves (less than 1year),230,5.7,52,0.42,0.175,253.8,180
+manure,Sows/Boars,190,2.4,1.5,0.38,,88.3,365
+manure,Pigs,76,5.3,1.5,0.76,,78,90
 manure,Pigglets (less than 1 year),30,4.5,1,0.65,,26.1,90
-manure,Poultry (Hens layers),1.9,8.6,0,0.87,,2.3,365
+manure,Poultry (Hens layers),1.9,8.6,0,0.87,,3.2,365
 manure,Poultry,1.4,12.3,0,0.99,,3.3,365
 manure,Turkey,6.8,10.3,0,0.74,,13.6,365
 manure,Sheep,40,8.2,9,0.36,,63.5,365
