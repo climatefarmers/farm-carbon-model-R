@@ -45,3 +45,9 @@ check_manure_data <- function(orgamendments_data, manure_factors){
   if(length(missing_manures) > 0){warning(paste(missing_manures, "manure data not in the database "))}  
   
 }
+
+align_input_data_and_factors <- function(input_data, factors, merge_var){
+  animal_input <- unique(input_data$merge_var)
+  if (animal_input)
+  
+}

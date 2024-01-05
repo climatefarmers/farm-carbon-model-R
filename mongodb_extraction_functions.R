@@ -104,8 +104,9 @@ get_livestock_table <- function(livestock, animal_factors) {
       animals$grazing_days[ind] <- max(animals$grazing_days[ind], grazing_days[k])  # This line doesn't work well with mutliple entries of same species with different days grazing. Using max otherwise entries with 0 nulify all.
     }
   }
-  animals <- animals[animals$n_animals!=0, ] # removing all rows that do not apply.
   
+  animals <- animals[animals$n_animals!=0, ] # removing all rows that do not apply.
+  browser()
   # Limit the grazing days to not be higher than days on farm (this should be dealt with at dashboard level)
   animals <- merge(animals, animal_factors[,c('species', 'days_on_farm_per_year')])
   ind <- animals$grazing_days > animals$days_on_farm_per_year

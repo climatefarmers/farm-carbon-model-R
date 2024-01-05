@@ -1,15 +1,15 @@
-type,mass_kg_per_animal,ef_enteric_fermentation_kg_head,n_excretion_rate_kg_1000am,c_kg_per_year_per_animal,vs_kg_per_tonne_per_day,days_on_farm_per_year,type_new,comments_mass,comments_ef_ent,comments_n_excr,comments_volatile_solids,comments_days_on_farm_per_year
-Dairy Cattle,600,126,0.54,975.5,8.4,365,Dairy Cattle,"table10A.5 ""Dairy cattle""","table10.11 ""WE: Dairy Cattle""","table10.19 ""WE: Dairy Cattle""","table10.13A ""Dairy Cattle""",Conservative asssumption
-Beef Cattle,405,52,0.42,509.5,5.7,365,Beef Cattle,"table10A.5 ""Other cattle""","table10.11 ""WE: Other Cattle""","table10.19 ""WE: Other Cattle""","table10.13A ""Other cattle""",Conservative asssumption
-Other Cattle,405,52,0.42,509.5,5.7,365,Other Cattle,"table10A.5 ""Other cattle""","table10.11 ""WE: Other Cattle""","table10.19 ""WE: Other Cattle""","table10.13A ""Other cattle""",Conservative asssumption
-Calves (less than 1year),230,52,0.42,231.5,5.7,180,Calves (less than 6 months),"table 10A.2 ""Calves""","table10.11 ""WE: Other Cattle""","table10.19 ""WE: Other Cattle""","table10.13A ""Other cattle""",By definition
-Sows/Boars,190,1.5,0.38,104.5,2.4,365,Sows/Boars,"table10A.5 ""Swine Breeding""","table10.10 ""Swine"" High Prod","table10.19 ""WE: Swine Breeding""","table10.13A ""Swine Breeding""",Conservative asssumption
-Pigs,76,1.5,0.76,66.2,5.3,90,Pigs (3-6 months),"table10A.5 ""Swine""","table10.10 ""Swine"" High Prod","table10.19 ""WE: Swine Finishing""","table10.13A ""Swine Finishing""","Ref 34, table 2: Weight range=Medium (+1 month b/c grass fed)"
-Pigglets (less than 1 year),30,1,0.65,26.1,4.5,90,Piglets (less than 3 months),34: Table 2 (Weight range=Medium),"table10.10 ""Swine"" Low Prod","table10.19 ""WE: Swine""","table10.13A ""Swine""","Ref 34, table 2: Weight range=Medium (rounded to 3 months)"
-Poultry (Hens layers),1.9,0,0.87,2.3,8.6,365,Poultry (hens layers),"table10A.5 ""Chicken hens""","table10.10 ""Poulty"" n/a","table10.19 ""WE: Chicken hens""","table10.13A ""Chicken hens""",Conservative asssumption
-Poultry,1.4,0,0.99,3.3,12.3,365,Poultry,"table10A.5 ""Chicken""","table10.10 ""Poulty"" n/a","table10.19 ""WE: Chicken""","table10.13A ""Chicken""",Conservative asssumption
-Turkey,6.8,0,0.74,13.6,10.3,365,Turkey,"table10A.5 ""Turkey""","table10.10 ""Poulty"" n/a","table10.19 ""WE: Chicken""","table10.13A ""Turkey""",Conservative asssumption
-Sheep,40,9,0.36,63.5,8.2,365,Sheep,"table10A.5 ""Sheep""","table10.10 ""Sheep"" High Prod","table10.19 ""WE: Sheep""","table10.13A ""Sheep""",Conservative asssumption
-Lambs (less than 1 year),20,9,0.36,31.7,8.2,365,Lambs (less than 1 year),"half of table10A.5 ""Sheep""","table10.10 ""Sheep"" High Prod","table10.19 ""WE: Sheep""","table10.13A ""Sheep""",Conservative asssumption
-Goats,40,9,0.46,69.7,9,365,Goats,"table10A.5 ""Goats""","table10.10 ""Goats"" High Prod","table10.19 ""WE: Goats""","table10.13A ""Goats""",Conservative asssumption
-Goat Kids(less than 1 year),20,9,0.46,34.8,9,365,Goat Kids (less than 1 year),"half of table10A.5 ""Goats""","table10.10 ""Goats"" High Prod","table10.19 ""WE: Goats""","table10.13A ""Goats""",Conservative asssumption
+type,mass_kg_per_animal,ef_enteric_fermentation_kg_head,n_excretion_rate_kg_1000am,c_kg_per_year_per_animal,vs_kg_per_tonne_per_day,days_on_farm_per_year,comments_mass,comments_ef_ent,comments_n_excr,comments_volatile_solids,comments_days_on_farm_per_year
+Dairy Cattle,600,126,0.54,975.5,8.4,365,"table10A.5 ""Dairy cattle""","table10.11 ""WE: Dairy Cattle""","table10.19 ""WE: Dairy Cattle""","table10.13A ""Dairy Cattle""",Conservative asssumption
+Beef Cattle,405,52,0.42,509.5,5.7,365,"table10A.5 ""Other cattle""","table10.11 ""WE: Other Cattle""","table10.19 ""WE: Other Cattle""","table10.13A ""Other cattle""",Conservative asssumption
+Other Cattle,405,52,0.42,509.5,5.7,365,"table10A.5 ""Other cattle""","table10.11 ""WE: Other Cattle""","table10.19 ""WE: Other Cattle""","table10.13A ""Other cattle""",Conservative asssumption
+Calves (less than 6 months),230,52,0.42,231.5,5.7,180,"table 10A.2 ""Calves""","table10.11 ""WE: Other Cattle""","table10.19 ""WE: Other Cattle""","table10.13A ""Other cattle""",By definition
+Sows/Boars,190,1.5,0.38,104.5,2.4,365,"table10A.5 ""Swine Breeding""","table10.10 ""Swine"" High Prod","table10.19 ""WE: Swine Breeding""","table10.13A ""Swine Breeding""",Conservative asssumption
+Pigs (3-6 months),76,1.5,0.76,66.2,5.3,90,"table10A.5 ""Swine""","table10.10 ""Swine"" High Prod","table10.19 ""WE: Swine Finishing""","table10.13A ""Swine Finishing""","Ref 34, table 2: Weight range=Medium (+1 month b/c grass fed)"
+Piglets (less than 3 months),30,1,0.65,26.1,4.5,90,34: Table 2 (Weight range=Medium),"table10.10 ""Swine"" Low Prod","table10.19 ""WE: Swine""","table10.13A ""Swine""","Ref 34, table 2: Weight range=Medium (rounded to 3 months)"
+Poultry (hens layers),1.9,0,0.87,2.3,8.6,365,"table10A.5 ""Chicken hens""","table10.10 ""Poulty"" n/a","table10.19 ""WE: Chicken hens""","table10.13A ""Chicken hens""",Conservative asssumption
+Poultry,1.4,0,0.99,3.3,12.3,365,"table10A.5 ""Chicken""","table10.10 ""Poulty"" n/a","table10.19 ""WE: Chicken""","table10.13A ""Chicken""",Conservative asssumption
+Turkey,6.8,0,0.74,13.6,10.3,365,"table10A.5 ""Turkey""","table10.10 ""Poulty"" n/a","table10.19 ""WE: Chicken""","table10.13A ""Turkey""",Conservative asssumption
+Sheep,40,9,0.36,63.5,8.2,365,"table10A.5 ""Sheep""","table10.10 ""Sheep"" High Prod","table10.19 ""WE: Sheep""","table10.13A ""Sheep""",Conservative asssumption
+Lambs (less than 1 year),20,9,0.36,31.7,8.2,365,"half of table10A.5 ""Sheep""","table10.10 ""Sheep"" High Prod","table10.19 ""WE: Sheep""","table10.13A ""Sheep""",Conservative asssumption
+Goats,40,9,0.46,69.7,9,365,"table10A.5 ""Goats""","table10.10 ""Goats"" High Prod","table10.19 ""WE: Goats""","table10.13A ""Goats""",Conservative asssumption
+Goat Kids (less than 1 year),20,9,0.46,34.8,9,365,"half of table10A.5 ""Goats""","table10.10 ""Goats"" High Prod","table10.19 ""WE: Goats""","table10.13A ""Goats""",Conservative asssumption
