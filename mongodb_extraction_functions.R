@@ -99,14 +99,12 @@ get_livestock_table <- function(livestock, animal_factors) {
     for (k in c(1:nrow(livestock_scenario))){
       species <- livestock_scenario$species[k]
       if (is.na(species)) {next}  # This line should not be needed if data is input correctly. Consider eventual removal.
-      ind <- animals$scenario == year_str & animals$species == species
-      animals$n_animals[ind] <- animals$n_animals[ind] + n_animals[k]  # adding to deal with current situation that same species can be given more than once.
-      animals$grazing_days[ind] <- max(animals$grazing_days[ind], grazing_days[k])  # This line doesn't work well with mutliple entries of same species with different days grazing. Using max otherwise entries with 0 nulify all.
+        ind <- animals$scenario == year_str & animals$species == species
+        animals$n_animals[ind] <- animals$n_animals[ind] + n_animals[k]  # adding to deal with current situation that same species can be given more than once.
+        animals$grazing_days[ind] <- max(animals$grazing_days[ind], grazing_days[k])  # This line doesn't work well with mutliple entries of same species with different days grazing. Using max otherwise entries with 0 nulify all.
     }
   }
-  
   animals <- animals[animals$n_animals!=0, ] # removing all rows that do not apply.
-  browser()
   # Limit the grazing days to not be higher than days on farm (this should be dealt with at dashboard level)
   animals <- merge(animals, animal_factors[,c('species', 'days_on_farm_per_year')])
   ind <- animals$grazing_days > animals$days_on_farm_per_year

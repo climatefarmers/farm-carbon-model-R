@@ -170,8 +170,19 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   }
   
   ## Reading in calculation factors from csv files
+  # Solution as long as Dashboard still provides the old species names
+  # old sepecies names:
+  species <- c("Dairy Cattle", "Beef Cattle", "Other Cattle", "Calves (less than 1year)", "Sows/Boars", "Pigs", "Pigglets (less than 1 year)",
+               "Poultry (Hens layers)", "Poultry", "Turkey", "Sheep", "Lambs (less than 1 year)", "Goats", "Goat Kids(less than 1 year)", "Horses", "Mules/Asses",
+               "Camels", "Buffalo", "Ducks", "Deer")
+  #old species names as species in animal factors table
   animal_factors <- read_csv(file.path("data", "animal_factors.csv"), show_col_types = FALSE) %>% select(1:7) %>%
-    mutate(species = type)
+    mutate(species = species)
+  # Actual code
+  # animal_factors <- read_csv(file.path("data", "animal_factors.csv"), show_col_types = FALSE) %>% select(1:7) %>%
+  #   mutate(species = type)
+  # Checks if animal species from dashboard  matches animal factors tables
+  check_animal_data_2(livestock, animal_factors) #not needed if dashboard input and factors table matches
   co2eq_factors <- read_csv(file.path("data", "co2eq_factors.csv"), show_col_types = FALSE)
   
   crop_factors <- read_csv(file.path("data", "crop_factors1.csv"), show_col_types = FALSE)
@@ -209,7 +220,6 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
     methane_factors = methane_factors,
     n2o_emission_factors = n2o_emission_factors
   )
-  browser()
   # Extraction of inputs per parcel and scenario
   parcel_inputs <- get_parcel_inputs(landUseSummaryOrPractices)  # Parcel information
   landUseType <- get_land_use_type(landUseSummaryOrPractices, parcel_inputs)

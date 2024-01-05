@@ -46,8 +46,26 @@ check_manure_data <- function(orgamendments_data, manure_factors){
   
 }
 
-align_input_data_and_factors <- function(input_data, factors, merge_var){
-  animal_input <- unique(input_data$merge_var)
-  if (animal_input)
+check_animal_data_2 <- function(livestock, animal_factors){
+  
+  year_strings <- paste0("year", 0:10)
+  err = 0
+  for (y in c(0:10)){
+    year_str <- year_strings[y+1]
+    if(y == 0) {
+      livestock_scenario = livestock[["currentManagement"]][[1]]
+    } else {
+      livestock_scenario = livestock[["futureManagement"]][[1]][[year_str]] 
+    }
+    for (k in c(1:nrow(livestock_scenario))){
+      species <- livestock_scenario$species[k]
+      if (is.na(species)) {next}  # This line should not be needed if data is input correctly. Consider eventual removal.
+      if (species %in% animal_factors$species == FALSE) { # This line should not be needed if data input mathces parameter csv
+        warning(paste(species, "not in factors table or mispelled."))
+        err = err +1
+      }
+    }
+    if (err > 0){stop("Mismatch between animal data input and animal factors. STOP.")}
+  }
   
 }

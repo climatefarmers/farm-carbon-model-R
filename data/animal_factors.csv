@@ -13,3 +13,9 @@ Sheep,40,9,0.36,63.5,8.2,365,"table10A.5 ""Sheep""","table10.10 ""Sheep"" High P
 Lambs (less than 1 year),20,9,0.36,31.7,8.2,365,"half of table10A.5 ""Sheep""","table10.10 ""Sheep"" High Prod","table10.19 ""WE: Sheep""","table10.13A ""Sheep""",Conservative asssumption
 Goats,40,9,0.46,69.7,9,365,"table10A.5 ""Goats""","table10.10 ""Goats"" High Prod","table10.19 ""WE: Goats""","table10.13A ""Goats""",Conservative asssumption
 Goat Kids (less than 1 year),20,9,0.46,34.8,9,365,"half of table10A.5 ""Goats""","table10.10 ""Goats"" High Prod","table10.19 ""WE: Goats""","table10.13A ""Goats""",Conservative asssumption
+Horses,377,,18,0.3,,,,,,,
+Mules/Asses,120,,10,0.3,,,,,,,
+Camels,217,,46,0.38,,,,,,,
+Buffalo,509,,,0.45,,,,,,,
+Ducks,2.7,,0,0.83,,,,,,,
+Deer,,,20,,,,,,,,
