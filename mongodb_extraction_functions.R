@@ -452,7 +452,7 @@ get_orgamendments_inputs = function(landUseSummaryOrPractices){
       orgamendments_temp <- data.frame(
         parcel_ID = parcel_names[i], 
         scenario = year_str, 
-        source = "Other Cattle", # AN UNFOLDING LIST OF MANURE TYPE MIGHT HAVE TO BE ADDED TO UI
+        source = "Manure (Cattle)", # AN UNFOLDING LIST OF MANURE TYPE MIGHT HAVE TO BE ADDED TO UI
         quantity_t_ha = manureApplication,
         imported_frac = percentManureImported/100,
         remaining_frac = 1

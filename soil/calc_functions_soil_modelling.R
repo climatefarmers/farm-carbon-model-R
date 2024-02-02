@@ -3,13 +3,12 @@ library(tidyr)
 ### Calculation of added manure input: Carbon input due to manure/compost/hay daily spreading over a grazed field
 # YEARLY
 get_monthly_Cinputs_orgamendments <- function (orgamendments_inputs, orgamendments, scenario_chosen, parcel){
-  
   orgamendments_inputs = filter(orgamendments_inputs, scenario==scenario_chosen & parcel_ID==parcel)
   
   if(nrow(orgamendments_inputs)==0){return(0)}
   
   orgamendments = merge(x = orgamendments_inputs, y = orgamendments, by = "source", all.x = TRUE) %>% 
-    mutate (tC_inputs_orgamendments = quantity_t_ha * carbon_content)
+    mutate (tC_inputs_orgamendments = quantity_t_ha * carbon_content_fresh)
   
   tC_inputs_orgamendments = sum(orgamendments$tC_inputs_orgamendments)
   

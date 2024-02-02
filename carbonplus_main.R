@@ -185,9 +185,9 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   check_animal_data_2(livestock, animal_factors) #not needed if dashboard input and factors table matches
   co2eq_factors <- read_csv(file.path("data", "co2eq_factors.csv"), show_col_types = FALSE)
   
-  crop_factors <- read_csv(file.path("data", "crop_factors1.csv"), show_col_types = FALSE)
+  crop_factors <- read_csv(file.path("data", "crop_factors.csv"), show_col_types = FALSE)
   grazing_factors <- read_csv(file.path("data", "grazing_factors.csv"), show_col_types = FALSE)
-  manure_factors <- read_csv(file.path("data", "carbon_share_manure.csv"), show_col_types = FALSE)
+  manure_factors <- read_csv(file.path("data", "organic_matter_factors.csv"), show_col_types = FALSE)
   natural_area_factors <- read_csv(file.path( "data", "natural_area_factors.csv"), show_col_types = FALSE) %>% 
     filter(pedo_climatic_area==farm_EnZ)
   pasture_factors <- read_csv(file.path("data", "pasture_factors.csv"), show_col_types = FALSE)
@@ -236,7 +236,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   tree_inputs <- get_tree_inputs(landUseSummaryOrPractices)
   bare_field_inputs <- get_bareground_inputs(landUseSummaryOrPractices, soil_cover_factors, farm_EnZ, settings$bare_bl_type)
   tilling_inputs <- get_tilling_inputs(landUseSummaryOrPractices, tilling_factors, farm_EnZ)
-  
+  browser()
   # Deactivated. If active should lead to errors and not warnings.
   # # Check input data for validity
   # check_animal_data(animal_inputs, animal_factors)
