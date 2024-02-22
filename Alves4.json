@@ -1,0 +1,510 @@
+{
+    "farmInfo": {
+        "farmId": "bb393d6d-f952-474e-a790-5486365d929b",
+        "uniqueCfFarmId": "PT1_4",
+        "farmName": null,
+        "farmManagerFirstName": null,
+        "farmManagerLastName": null,
+        "landOwnerFirstName": null,
+        "landOwnerLastName": null,
+        "relationshipManagerOrOwner": null,
+        "email": null,
+        "farmSize": null,
+        "address": null,
+        "postalCode": null,
+        "farmCoordinatesNorth": null,
+        "farmCoordinatesEast": null,
+        "country": null,
+        "telephone": null,
+        "creationDate": null
+       },
+    
+    "monitoringData": {
+        "farmId": null,
+        "email": null,
+        "uniqueCfFarmId": null,
+        "projectStartYear": -9999,
+        "yearlyFarmData": [
+            {
+                "year": 2018,
+                "fuelUsage": {
+                    "direct": {
+                        "diesel": {
+                            "amount": 650,
+                            "units": "l"
+                        },
+                        "petrol": {
+                            "amount": -9999,
+                            "units": null
+                        }
+                    },
+                    "indirect": [
+                        {
+                            "service": null,
+                            "area": {
+                                "amount": -9999,
+                                "units": null
+                            },
+                            "serviceDetail": null,
+                            "serviceCategory": null
+                        }
+                    ]
+                },
+                "fertilizerUsage": [
+                    {
+                        "amount": -9999,
+                        "units": null,
+                        "percentN": -9999
+                    }
+                ],
+                "importedOrganicMatter": [
+                    {
+                        "type": null,
+                        "percentImported": -9999
+                    }
+                ],
+                "livestock": {
+                    "grazingManagement": null,
+                    "inFarm": [
+                        {
+                            "species": null,
+                            "grazingDays": -9999,
+                            "manureTreatment": null,
+                            "fertilityRate": -9999,
+                            "category": [
+                                {
+                                    "name": null,
+                                    "amount": -9999
+                                }
+                            ]
+                        }
+                    ],
+                    "outFarm": [
+                        {
+                            "species": null,
+                            "amount": -9999,
+                            "grazingDays": -9999
+                        }
+                    ]
+                },
+                "parcelLevelData": [
+                    {
+                        "parcelFixedValues": {
+                            "parcelName": null,
+                            "parcelID": null,
+                            "areaGeoFile": {
+                                "area": -9999,
+                                "units": null
+                            },
+                            "areaManualEntry": {
+                                "area": -9999,
+                                "units": null
+                            },
+                            "coordinates": [
+                                null
+                            ]
+                        },
+                        "yearParcelData": {
+                            "primaryLandUse": null,
+                            "secondaryLandUse": null,
+                            "addedOrganicMatter": [
+                                {
+                                    "type": null,
+                                    "subType": null,
+                                    "other": null,
+                                    "amount": -9999,
+                                    "units": null
+                                }
+                            ],
+                            "animalFodder": {
+                                "amount": -9999,
+                                "units": null
+                            },
+                            "grazingMonthlyEvent": [
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false
+                            ],
+                            "tillage": [
+                                {
+                                    "type": null,
+                                    "date": null,
+                                    "percent": -9999
+                                }
+                            ],
+                            "irrigation": false,
+                            "treeFelling": [
+                                {
+                                    "species": null,
+                                    "other": null,
+                                    "tree-9999": -9999,
+                                    "DBHmean": {
+                                        "diameter": -9999,
+                                        "units": null
+                                    }
+                                }
+                            ],
+                            "perennialCrops": [
+                                {
+                                    "cohortID": null,
+                                    "species": null,
+                                    "other": null,
+                                    "plantingYear": -9999,
+                                    "tree-9999": -9999,
+                                    "DBHmean": {
+                                        "diameter": -9999,
+                                        "units": null
+                                    },
+                                    "hasRotation": false,
+                                    "rotationYears": -9999,
+                                    "harvest": [
+                                        {
+                                            "date": -9999,
+                                            "type": null,
+                                            "amount": -9999,
+                                            "units": null,
+                                            "dry": false
+                                        }
+                                    ],
+                                    "residue": [
+                                        {
+                                            "date": -9999,
+                                            "type": null,
+                                            "amount": -9999,
+                                            "units": null,
+                                            "dry": false
+                                        }
+                                    ]
+                                }
+                            ],
+                            "annualCrops": [
+                                {
+                                    "species": null,
+                                    "other": null,
+                                    "sowingDate": null,
+                                    "harvestDate": null,
+                                    "harvest": [
+                                        {
+                                            "date": -9999,
+                                            "type": null,
+                                            "amount": -9999,
+                                            "units": null,
+                                            "dry": false
+                                        }
+                                    ],
+                                    "residue": [
+                                        {
+                                            "date": -9999,
+                                            "type": null,
+                                            "amount": -9999,
+                                            "units": null,
+                                            "dry": false
+                                        }
+                                    ]
+                                }
+                            ],
+                            "pastures": [
+                                {
+                                    "percentArea": -9999,
+                                    "productivity": [
+                                        {
+                                            "date": -9999,
+                                            "type": null,
+                                            "amount": -9999,
+                                            "units": null,
+                                            "dry": false
+                                        }
+                                    ],
+                                    "harvest": [
+                                        {
+                                            "date": -9999,
+                                            "type": null,
+                                            "amount": -9999,
+                                            "units": null,
+                                            "dry": false
+                                        }
+                                    ]
+                                }
+                            ],
+                            "fallow": [
+                                {
+                                    "type": null,
+                                    "percentArea": -9999,
+                                    "startDate": null,
+                                    "endDate": null,
+                                    "harvest": [
+                                        {
+                                            "date": -9999,
+                                            "type": null,
+                                            "amount": -9999,
+                                            "units": null,
+                                            "dry": false
+                                        }
+                                    ],
+                                    "residue": [
+                                        {
+                                            "date": -9999,
+                                            "type": null,
+                                            "amount": -9999,
+                                            "units": null,
+                                            "dry": false
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            {
+                "year": 2019,
+                "fuelUsage": {
+                    "direct": {
+                        "diesel": {
+                            "amount": 659,
+                            "units": "l"
+                        },
+                        "petrol": {
+                            "amount": -9999,
+                            "units": null
+                        }
+                    },
+                    "indirect": [
+                        {
+                            "service": null,
+                            "area": {
+                                "amount": -9999,
+                                "units": null
+                            },
+                            "serviceDetail": null,
+                            "serviceCategory": null
+                        }
+                    ]
+                },
+                "fertilizerUsage": [
+                    {
+                        "amount": -9999,
+                        "units": null,
+                        "percentN": -9999
+                    }
+                ],
+                "importedOrganicMatter": [
+                    {
+                        "type": null,
+                        "percentImported": -9999
+                    }
+                ],
+                "livestock": {
+                    "grazingManagement": null,
+                    "inFarm": [
+                        {
+                            "species": null,
+                            "grazingDays": -9999,
+                            "manureTreatment": null,
+                            "fertilityRate": -9999,
+                            "category": [
+                                {
+                                    "name": null,
+                                    "amount": -9999
+                                }
+                            ]
+                        }
+                    ],
+                    "outFarm": [
+                        {
+                            "species": null,
+                            "amount": -9999,
+                            "grazingDays": -9999
+                        }
+                    ]
+                },
+                "parcelLevelData": [
+                    {
+                        "parcelFixedValues": {
+                            "parcelName": null,
+                            "parcelID": null,
+                            "areaGeoFile": {
+                                "area": -9999,
+                                "units": null
+                            },
+                            "areaManualEntry": {
+                                "area": -9999,
+                                "units": null
+                            },
+                            "coordinates": [
+                                null
+                            ]
+                        },
+                        "yearParcelData": {
+                            "primaryLandUse": null,
+                            "secondaryLandUse": null,
+                            "addedOrganicMatter": [
+                                {
+                                    "type": null,
+                                    "subType": null,
+                                    "other": null,
+                                    "amount": -9999,
+                                    "units": null
+                                }
+                            ],
+                            "animalFodder": {
+                                "amount": -9999,
+                                "units": null
+                            },
+                            "grazingMonthlyEvent": [
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false,
+                                false
+                            ],
+                            "tillage": [
+                                {
+                                    "type": null,
+                                    "date": null,
+                                    "percent": -9999
+                                }
+                            ],
+                            "irrigation": false,
+                            "treeFelling": [
+                                {
+                                    "species": null,
+                                    "other": null,
+                                    "tree-9999": -9999,
+                                    "DBHmean": {
+                                        "diameter": -9999,
+                                        "units": null
+                                    }
+                                }
+                            ],
+                            "perennialCrops": [
+                                {
+                                    "cohortID": null,
+                                    "species": null,
+                                    "other": null,
+                                    "plantingYear": -9999,
+                                    "tree-9999": -9999,
+                                    "DBHmean": {
+                                        "diameter": -9999,
+                                        "units": null
+                                    },
+                                    "hasRotation": false,
+                                    "rotationYears": -9999,
+                                    "harvest": [
+                                        {
+                                            "date": -9999,
+                                            "type": null,
+                                            "amount": -9999,
+                                            "units": null,
+                                            "dry": false
+                                        }
+                                    ],
+                                    "residue": [
+                                        {
+                                            "date": -9999,
+                                            "type": null,
+                                            "amount": -9999,
+                                            "units": null,
+                                            "dry": false
+                                        }
+                                    ]
+                                }
+                            ],
+                            "annualCrops": [
+                                {
+                                    "species": null,
+                                    "other": null,
+                                    "sowingDate": null,
+                                    "harvestDate": null,
+                                    "harvest": [
+                                        {
+                                            "date": -9999,
+                                            "type": null,
+                                            "amount": -9999,
+                                            "units": null,
+                                            "dry": false
+                                        }
+                                    ],
+                                    "residue": [
+                                        {
+                                            "date": -9999,
+                                            "type": null,
+                                            "amount": -9999,
+                                            "units": null,
+                                            "dry": false
+                                        }
+                                    ]
+                                }
+                            ],
+                            "pastures": [
+                                {
+                                    "percentArea": -9999,
+                                    "productivity": [
+                                        {
+                                            "date": -9999,
+                                            "type": null,
+                                            "amount": -9999,
+                                            "units": null,
+                                            "dry": false
+                                        }
+                                    ],
+                                    "harvest": [
+                                        {
+                                            "date": -9999,
+                                            "type": null,
+                                            "amount": -9999,
+                                            "units": null,
+                                            "dry": false
+                                        }
+                                    ]
+                                }
+                            ],
+                            "fallow": [
+                                {
+                                    "type": null,
+                                    "percentArea": -9999,
+                                    "startDate": null,
+                                    "endDate": null,
+                                    "harvest": [
+                                        {
+                                            "date": -9999,
+                                            "type": null,
+                                            "amount": -9999,
+                                            "units": null,
+                                            "dry": false
+                                        }
+                                    ],
+                                    "residue": [
+                                        {
+                                            "date": -9999,
+                                            "type": null,
+                                            "amount": -9999,
+                                            "units": null,
+                                            "dry": false
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+    }
