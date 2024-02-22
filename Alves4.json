@@ -3,27 +3,27 @@
         "farmId": "bb393d6d-f952-474e-a790-5486365d929b",
         "uniqueCfFarmId": "PT1_4",
         "farmName": null,
-        "farmManagerFirstName": null,
-        "farmManagerLastName": null,
-        "landOwnerFirstName": null,
-        "landOwnerLastName": null,
-        "relationshipManagerOrOwner": null,
-        "email": null,
-        "farmSize": null,
-        "address": null,
-        "postalCode": null,
-        "farmCoordinatesNorth": null,
-        "farmCoordinatesEast": null,
-        "country": null,
-        "telephone": null,
-        "creationDate": null
+        "farmManagerFirstName": "Francisco Manuel ",
+        "farmManagerLastName": "Cidade Alves",
+        "landOwnerFirstName": "Sociedade Alves",
+        "landOwnerLastName": ".",
+        "relationshipManagerOrOwner": "",
+        "email": "socalvescarbonplusdev@gmail.com",
+        "farmSize": "78.64",
+        "address": "Herdade de S. Luís, Nossa Senhora da Vila, Montemor-o-Novo",
+        "postalCode": "",
+        "farmCoordinatesNorth": "38.5811098610307",
+        "farmCoordinatesEast": "-8.209816265622996",
+        "country": "Portugal",
+        "telephone": "+351939858934",
+        "creationDate": ""
        },
     
     "monitoringData": {
-        "farmId": null,
-        "email": null,
-        "uniqueCfFarmId": null,
-        "projectStartYear": -9999,
+        "farmId": "bb393d6d-f952-474e-a790-5486365d929b",
+        "email": "socalvescarbonplusdev@gmail.com",
+        "uniqueCfFarmId": "PT1_4",
+        "projectStartYear": 2021, 
         "yearlyFarmData": [
             {
                 "year": 2018,
@@ -38,7 +38,7 @@
                             "units": null
                         }
                     },
-                    "indirect": [
+                    "indirect": [ //@Fernando: to do for you
                         {
                             "service": null,
                             "area": {
@@ -50,14 +50,14 @@
                         }
                     ]
                 },
-                "fertilizerUsage": [
+                "fertilizerUsage": [ //no fertilizerUsage for Alves4
                     {
                         "amount": -9999,
                         "units": null,
                         "percentN": -9999
                     }
                 ],
-                "importedOrganicMatter": [
+                "importedOrganicMatter": [ //no importedManure for Alves4
                     {
                         "type": null,
                         "percentImported": -9999
@@ -507,4 +507,4 @@
             }
         ]
     }
-    }
+}
