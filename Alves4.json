@@ -57,24 +57,68 @@
                         "percentN": -9999
                     }
                 ],
-                "importedOrganicMatter": [ //no importedManure for Alves4
+                "importedOrganicMatter": [ //no imported manure, compost, hayStra for Alves4 (for all years)
                     {
                         "type": null,
                         "percentImported": -9999
                     }
                 ],
-                "livestock": {
-                    "grazingManagement": null,
+                "livestock": { //talk about livestock with Fernando
+                    "grazingManagement": "unplanned grazing", //setStockgrazing?
                     "inFarm": [
                         {
-                            "species": null,
-                            "grazingDays": -9999,
-                            "manureTreatment": null,
-                            "fertilityRate": -9999,
+                            "species": "cattle",
+                            "grazingDays": 365,
+                            "manureTreatment": null, //no manure treatment for stabled animals as all of them are outside?
+                            "fertilityRate": -9999, //leave unfilled for pioneer data?
                             "category": [
                                 {
-                                    "name": null,
-                                    "amount": -9999
+                                    "name": "mature females",
+                                    "amount": 51
+                                },
+                                {
+                                    "name": "calves", //calves have different number of grazing days
+                                    "amount": 22
+                                }
+                            ]
+                        },
+                        {
+                            "species": "swine",
+                            "grazingDays": 365,
+                            "manureTreatment": null, //manure treatment on field? or no manure treatment at all, because sows are outside 365
+                            "fertilityRate": -9999, //leave unfilled for pioneer data?
+                            "category": [
+                                {
+                                    "name": "finishers", //no grazing days
+                                    "amount": 25
+                                },
+                                {
+                                    "name": "piglets", //grazing days 60
+                                    "amount": 619
+                                },
+                                {
+                                    "name": "sows", //grazing days 365
+                                    "amount": 64
+                                }
+                            ]
+                        },
+                        {
+                            "species": "swine",
+                            "grazingDays": 365,
+                            "manureTreatment": null, //manure treatment on field? or no manure treatment at all, because sows are outside 365
+                            "fertilityRate": -9999, //leave unfilled for pioneer data?
+                            "category": [
+                                {
+                                    "name": "finishers", //no grazing days
+                                    "amount": 25
+                                },
+                                {
+                                    "name": "piglets", //grazing days 60
+                                    "amount": 619
+                                },
+                                {
+                                    "name": "sows", //grazing days 365
+                                    "amount": 64
                                 }
                             ]
                         }
@@ -90,24 +134,83 @@
                 "parcelLevelData": [
                     {
                         "parcelFixedValues": {
-                            "parcelName": null,
-                            "parcelID": null,
+                            "parcelName": "Pivot Novo",
+                            "parcelID": "928f33c6-457d-4420-9c59-5ca1cfbbb4c6",
                             "areaGeoFile": {
-                                "area": -9999,
-                                "units": null
+                                "area": 158424.74,
+                                "units": "sqm"
                             },
                             "areaManualEntry": {
-                                "area": -9999,
-                                "units": null
+                                "area": 158000,
+                                "units": "sqm"
                             },
                             "coordinates": [
-                                null
+                                [
+                                    -8.213033149496766,
+                                    38.57694944354392
+                                  ],
+                                  [
+                                    -8.21666393507087,
+                                    38.5791653928385
+                                  ],
+                                  [
+                                    -8.217968186654653,
+                                    38.5781002137325
+                                  ],
+                                  [
+                                    -8.218685908046352,
+                                    38.57725953916056
+                                  ],
+                                  [
+                                    -8.219142157839238,
+                                    38.57663996263796
+                                  ],
+                                  [
+                                    -8.219265818272971,
+                                    38.57632342648803
+                                  ],
+                                  [
+                                    -8.21940316701462,
+                                    38.5761337759625
+                                  ],
+                                  [
+                                    -8.21750892028323,
+                                    38.57533385529069
+                                  ],
+                                  [
+                                    -8.215529718352384,
+                                    38.57471755063332
+                                  ],
+                                  [
+                                    -8.214359083845013,
+                                    38.57456801633439
+                                  ],
+                                  [
+                                    -8.21417727539109,
+                                    38.57537827212047
+                                  ],
+                                  [
+                                    -8.214070986217578,
+                                    38.57587366689327
+                                  ],
+                                  [
+                                    -8.213805604836928,
+                                    38.57632792027806
+                                  ],
+                                  [
+                                    -8.213445819726783,
+                                    38.57663930128411
+                                  ],
+                                  [
+                                    -8.213033149496766,
+                                    38.57694944354392
+                                  ]
                             ]
                         },
                         "yearParcelData": {
-                            "primaryLandUse": null,
+                            "primaryLandUse": "Arablecrops",
                             "secondaryLandUse": null,
-                            "addedOrganicMatter": [
+                            "addedOrganicMatter": [ //no added OM in the baseline years
                                 {
                                     "type": null,
                                     "subType": null,
@@ -116,7 +219,7 @@
                                     "units": null
                                 }
                             ],
-                            "animalFodder": {
+                            "animalFodder": { //no added OM in the baseline years
                                 "amount": -9999,
                                 "units": null
                             },
@@ -137,11 +240,11 @@
                             "tillage": [
                                 {
                                     "type": null,
-                                    "date": null,
+                                    "date": null, //Is this an array?
                                     "percent": -9999
                                 }
                             ],
-                            "irrigation": false,
+                            "irrigation": true,
                             "treeFelling": [
                                 {
                                     "species": null,
@@ -188,10 +291,83 @@
                             ],
                             "annualCrops": [
                                 {
-                                    "species": null,
+                                    "species": "sorghum",
                                     "other": null,
-                                    "sowingDate": null,
-                                    "harvestDate": null,
+                                    "sowingDate": 3,
+                                    "harvestDate": 9,
+                                    "harvest": [
+                                        {
+                                            "date": 9,
+                                            "type": "grains/cereals",
+                                            "amount": 1.5, //needs clarification
+                                            "units": "t/ha",
+                                            "dry": true
+                                        }
+                                    ],
+                                    "residue": [
+                                        {
+                                            "date": -9999,
+                                            "type": null,
+                                            "amount": -9999,
+                                            "units": null,
+                                            "dry": false
+                                        }
+                                    ]
+                                },
+                                {
+                                    "species": "sorghum", //can we have the same cash crop twice?
+                                    "other": null,
+                                    "sowingDate": 3,
+                                    "harvestDate": 5,
+                                    "harvest": [
+                                        {
+                                            "date": 5,
+                                            "type": "grains/cereals",
+                                            "amount": 1, //needs clarification
+                                            "units": "t/ha",
+                                            "dry": true
+                                        }
+                                    ],
+                                    "residue": [
+                                        {
+                                            "date": -9999,
+                                            "type": null,
+                                            "amount": -9999,
+                                            "units": null,
+                                            "dry": false
+                                        }
+                                    ]
+                                }
+                            ],
+                            "pastures": [
+                                {
+                                    "percentArea": 100, // if no value indicated, should we assume 100?
+                                    "productivity": [
+                                        {
+                                            "date": 11,
+                                            "type": null,
+                                            "amount": 0.5,
+                                            "units": "t/ha",
+                                            "dry": true
+                                        }
+                                    ],
+                                    "harvest": [
+                                        {
+                                            "date": -9999,
+                                            "type": null,
+                                            "amount": -9999,
+                                            "units": null,
+                                            "dry": false
+                                        }
+                                    ]
+                                }
+                            ],
+                            "fallow": [
+                                {
+                                    "type": "productive fallow",
+                                    "percentArea": 100,
+                                    "startDate": 2,
+                                    "endDate": 2,
                                     "harvest": [
                                         {
                                             "date": -9999,
@@ -210,37 +386,12 @@
                                             "dry": false
                                         }
                                     ]
-                                }
-                            ],
-                            "pastures": [
+                                },
                                 {
-                                    "percentArea": -9999,
-                                    "productivity": [
-                                        {
-                                            "date": -9999,
-                                            "type": null,
-                                            "amount": -9999,
-                                            "units": null,
-                                            "dry": false
-                                        }
-                                    ],
-                                    "harvest": [
-                                        {
-                                            "date": -9999,
-                                            "type": null,
-                                            "amount": -9999,
-                                            "units": null,
-                                            "dry": false
-                                        }
-                                    ]
-                                }
-                            ],
-                            "fallow": [
-                                {
-                                    "type": null,
-                                    "percentArea": -9999,
-                                    "startDate": null,
-                                    "endDate": null,
+                                    "type": "productive fallow",
+                                    "percentArea": 100,
+                                    "startDate": 10,
+                                    "endDate": 12,
                                     "harvest": [
                                         {
                                             "date": -9999,
