@@ -65,92 +65,99 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   source(file.path("test_functions.R"), local = TRUE)
   
   ## Get the farm data from the JSON file or MongoDB ---------------------------
+  # !!CODE STILL NEEDS TO BE ADAPTED TO NEW DB SCHEMA!!
   
-  # Check that only one source of farm data was provided
-  if(!is.na(farmId) & !is.na(JSONfile)){
-    stop("Both farmId AND JSON files were passed to the model. Please choose only one.")
-  }
+  monitoringData <- fromJSON(txt = jsonfile)
   
-  if(is.na(farmId) & is.na(JSONfile)){
-    stop("Both farmId AND JSON files are missing. One must be passed.")
-  }
+  ## Check that only one source of farm data was provided
+  # if(!is.na(farmId) & !is.na(JSONfile)){
+  #   stop("Both farmId AND JSON files were passed to the model. Please choose only one.")
+  # }
+  # 
+  # if(is.na(farmId) & is.na(JSONfile)){
+  #   stop("Both farmId AND JSON files are missing. One must be passed.")
+  # }
+  # 
+  # if(!is.na(JSONfile)){
+  #   JSONfile_entered <- TRUE
+  #   farms_everything <- fromJSON(JSONfile)
+  #   farmId <- farms_everything$farmInfo$farmId
+  # }
+  # 
+  # if(!is.na(farmId)) {
+  #   if(settings$server == "prod") {
+  #     connection_string = init_file$connection_string_prod
+  #     db <- "carbonplus_production_db"
+  #   } else if(settings$server == "dev") {
+  #     connection_string = init_file$connection_string_cfdev
+  #     db <- "carbonplusdb"
+  #   } else if(settings$server == "test") {
+  #     connection_string = init_file$connection_string_test
+  #     db <- "test_server_db"
+  #   } else {stop("Wrong value for variable: server")}
+  #   farms_collection = mongo(collection="farms", db=db, url=connection_string) # farms_collection = mongo(collection="farms_backups", db=db, url=connection_string) 
+  #   farms_everything = farms_collection$find(paste('{"farmInfo.farmId":"',farmId,'"}',sep=""))
+  # }
   
-  if(!is.na(JSONfile)){
-    JSONfile_entered <- TRUE
-    farms_everything <- fromJSON(JSONfile)
-    farmId <- farms_everything$farmInfo$farmId
-  }
   
-  if(!is.na(farmId)) {
-    if(settings$server == "prod") {
-      connection_string = init_file$connection_string_prod
-      db <- "carbonplus_production_db"
-    } else if(settings$server == "dev") {
-      connection_string = init_file$connection_string_cfdev
-      db <- "carbonplusdb"
-    } else if(settings$server == "test") {
-      connection_string = init_file$connection_string_test
-      db <- "test_server_db"
-    } else {stop("Wrong value for variable: server")}
-    farms_collection = mongo(collection="farms", db=db, url=connection_string) # farms_collection = mongo(collection="farms_backups", db=db, url=connection_string) 
-    farms_everything = farms_collection$find(paste('{"farmInfo.farmId":"',farmId,'"}',sep=""))
-  }
-  
-  
-  # Checking correctness and unicity of farmIds
-  if (is.null(farms_everything$farmInfo)){ # Can this be TRUE? Because already used above to select the data. Move to above?
-    log4r::error(my_logger, "farmId wasn't found.")
-  } else if (length(farms_everything$farmInfo$farmId)>1){
-    log4r::error(my_logger, 
-                 paste("Multiple identical farmIds were found. Number of farmIds matching =",
-                       length(farms_everything$farmInfo$farmId),".", sep="")
-    )
-  } else if (farms_everything$farmInfo$farmId==farmId){
-    log4r::info(my_logger, paste("farm with farmId = ",farmId," has been read succesfully. 
-                                  \nMail adress = ",farms_everything$farmInfo$email,'.', sep=""))
-  }
-  
-  # Selecting only the first case if more than one farmId match in mongoDB
-  if (length(farms_everything$farmInfo$farmId)>1){
-    farms_everything = farms_collection$find(paste('{"farmInfo.farmId":"',farmId,'"}',sep=""),
-                                             limit = 1)
-    log4r::info(my_logger,paste("After multiple matches, only the first profile with farmId = ",
-                                farmId," was selected.",sep=""))
-  }
+  # # Checking correctness and unicity of farmIds
+  # if (is.null(farms_everything$farmInfo)){ # Can this be TRUE? Because already used above to select the data. Move to above?
+  #   log4r::error(my_logger, "farmId wasn't found.")
+  # } else if (length(farms_everything$farmInfo$farmId)>1){
+  #   log4r::error(my_logger, 
+  #                paste("Multiple identical farmIds were found. Number of farmIds matching =",
+  #                      length(farms_everything$farmInfo$farmId),".", sep="")
+  #   )
+  # } else if (farms_everything$farmInfo$farmId==farmId){
+  #   log4r::info(my_logger, paste("farm with farmId = ",farmId," has been read succesfully. 
+  #                                 \nMail adress = ",farms_everything$farmInfo$email,'.', sep=""))
+  # }
+  # 
+  # # Selecting only the first case if more than one farmId match in mongoDB
+  # if (length(farms_everything$farmInfo$farmId)>1){
+  #   farms_everything = farms_collection$find(paste('{"farmInfo.farmId":"',farmId,'"}',sep=""),
+  #                                            limit = 1)
+  #   log4r::info(my_logger,paste("After multiple matches, only the first profile with farmId = ",
+  #                               farmId," was selected.",sep=""))
+  # }
   
   
   ## Fetching pedo-climatic zone -----------------------------------------------
+  # !!CODE STILL NEEDS TO BE ADAPTED TO NEW DB SCHEMA!!
   
-  farm_parameters <- mongo(collection="farmparameters", 
-                           db="carbonplus_production_db", 
-                           url=init_file$connection_string_prod
-  )
-  farm_EnZ <-  farm_parameters$find(paste('{"farmId":"',farmId,'"}',sep=""))
-  if (length(unique(farm_EnZ$enz))==1){
-    farm_EnZ = unique(farm_EnZ$enz)
-    log4r::info(
-      my_logger, 
-      paste("farmparameters collection contain unique info on EnZ for farmId", farmId, sep=" ")
-    )
-  } else if (length(unique(farm_EnZ$enz))==0){
-    log4r::error(
-      my_logger, 
-      paste("Caution: farmparameters collection doesn't contain info on EnZ for farmId", 
-            farmId, 
-            sep=" ")
-    )
-  } else if (length(unique(farm_EnZ$enz))>1){
-    log4r::error(
-      my_logger, 
-      paste("Caution: farmparameters collection content SEVERAL EnZ for farmId",
-            farmId,"leading to conflicts",
-            sep=" ")
-    )
-  }
+  farmEnz <- "Mediterranean south"
+  
+  # farm_parameters <- mongo(collection="farmparameters",
+  #                          db="carbonplus_production_db",
+  #                          url=init_file$connection_string_prod
+  # )
+  # farm_EnZ <-  farm_parameters$find(paste('{"farmId":"',farmId,'"}',sep=""))
+  # if (length(unique(farm_EnZ$enz))==1){
+  #   farm_EnZ = unique(farm_EnZ$enz)
+  #   log4r::info(
+  #     my_logger, 
+  #     paste("farmparameters collection contain unique info on EnZ for farmId", farmId, sep=" ")
+  #   )
+  # } else if (length(unique(farm_EnZ$enz))==0){
+  #   log4r::error(
+  #     my_logger, 
+  #     paste("Caution: farmparameters collection doesn't contain info on EnZ for farmId", 
+  #           farmId, 
+  #           sep=" ")
+  #   )
+  # } else if (length(unique(farm_EnZ$enz))>1){
+  #   log4r::error(
+  #     my_logger, 
+  #     paste("Caution: farmparameters collection content SEVERAL EnZ for farmId",
+  #           farmId,"leading to conflicts",
+  #           sep=" ")
+  #   )
+  # }
   
   
   ## Processing Inputs ------------------------------------------------------------
   
+  browser()
   source("mongodb_extraction_functions.R", local = TRUE)
   
   ## Extracting livestock, landUseSummaryOrPractices

@@ -7,6 +7,8 @@ rm(list=ls())
 
 library(tidyverse)
 library(jsonlite)
+library(rjson) # for reading in the example farm data
+library(here) # for having relative a relative path
 
 source("carbonplus_main.R")
 
@@ -63,9 +65,9 @@ settings <- settings_testing
 # farmId <- '3f916c12-3a2c-4904-91cb-bb64e6fb0832' # Alves 1
 # farmId <- 'f67333e8-34a9-4030-93af-766f49d01310' # Alves 2
 # farmId <- '584b48dc-0e5d-4ecc-b7d4-9acf281faaba' # Alves 3
-farmId <- 'bb393d6d-f952-474e-a790-5486365d929b' # Alves 4
-
-out <- carbonplus_main(init_file=init_file, settings=settings, farmId=farmId)
+# farmId <- 'bb393d6d-f952-474e-a790-5486365d929b' # Alves 4
+# 
+# out <- carbonplus_main(init_file=init_file, settings=settings, farmId=farmId)
 
 
 # farmIds <- c(
@@ -101,3 +103,7 @@ out <- carbonplus_main(init_file=init_file, settings=settings, farmId=farmId)
 # for (jsonfile in json_files){
 #   carbonplus_main(init_file=init_file, settings=settings, JSONfile = jsonfile)
 # }
+
+## Run with example json
+jsonfile = here("example-farm-data","example-farm-monitoringData.json")
+out <- carbonplus_main(init_file=init_file, settings=settings, JSONfile = jsonfile)
