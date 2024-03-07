@@ -12,8 +12,9 @@ library(here) # for having relative a relative path
 
 source("carbonplus_main.R")
 
-sensitive_data_loc <- "../sensitive-data"
-init_file <- fromJSON(file.path(sensitive_data_loc,"init_file.json"))
+# Read in init_file.json from sensitive-data folder
+
+init_file <- fromJSON(file = here("../sensitive-data", "init_file.json"))
 
 settings_testing <- list(
   n_runs = 2,

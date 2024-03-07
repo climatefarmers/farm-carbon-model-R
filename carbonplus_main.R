@@ -59,7 +59,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
     "AWS_DEFAULT_REGION" = init_file$AWS_DEFAULT_REGION
   )
   
-  init_file=fromJSON("../sensitive-data/init_file.json")
+  #init_file=fromJSON("../sensitive-data/init_file.json") #Do we need this? Rather check if init_file is passed to the function.
   source(file.path("soil","run_soil_model.R"), local = TRUE)
   source(file.path("emissions_leakage", "call_lca.R"), local = TRUE)
   source(file.path("test_functions.R"), local = TRUE)
@@ -67,7 +67,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   ## Get the farm data from the JSON file or MongoDB ---------------------------
   # !!CODE STILL NEEDS TO BE ADAPTED TO NEW DB SCHEMA!!
   
-  monitoringData <- fromJSON(txt = jsonfile)
+  monitoringData <- fromJSON(file = jsonfile)
   
   ## Check that only one source of farm data was provided
   # if(!is.na(farmId) & !is.na(JSONfile)){
@@ -218,7 +218,8 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   )
   
   # Extraction of inputs per parcel and scenario
-  parcel_inputs <- get_parcel_inputs(landUseSummaryOrPractices)  # Parcel information
+  parcel_inputs <- get_parcel_inputs(monitoringData)  # Parcel information
+  scenarios <- get_scenarios(monitoringData)  # Scenarios !!STILL NEED TO THINK ABOUT THIS!!
   landUseType <- get_land_use_type(landUseSummaryOrPractices, parcel_inputs)
   livestock_inputs <- get_livestock_table(livestock, animal_factors)
   grazing_tables <- get_grazing_amounts(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs, livestock_inputs, settings$grazing_used)  # grazing data

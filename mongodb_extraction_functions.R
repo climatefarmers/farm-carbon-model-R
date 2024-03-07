@@ -946,9 +946,15 @@ get_land_use_type <- function(landUseSummaryOrPractices, parcel_inputs){
   return(landUseType)
 }
 
-get_parcel_inputs <- function(landUseSummaryOrPractices){
-  # takes landUseSummaryOrPractices from farms collection
-  # extracts parcels input dataframe 
+get_parcel_inputs <- function(monitoringData){
+  
+  parcel_inputs = data.frame(parcel_name     = c(), 
+                             area_maps       = c(), 
+                             area_manual     = c(), 
+                             use_manual_area = c(), 
+                             area            = c(), 
+                             longitude       = c(), 
+                             latitude        = c())
   
   parcel_inputs = data.frame(
     parcel_ID = landUseSummaryOrPractices[[1]]$parcelName,
