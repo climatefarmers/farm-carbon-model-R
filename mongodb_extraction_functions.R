@@ -75,6 +75,21 @@ extract_longitude_landUseSummaryOrPractices <- function(landUseSummaryOrPractice
   return(mean(longitudes))
 }
 
+get_mean_longitude <- function(coordinates) {
+  longitude = c()
+  for (i in coordinates){
+    longitude <- append(longitude,i[[1]][1])
+  }
+  return(mean(longitude))
+}
+
+get_mean_latitude <- function(coordinates) {
+  latitude = c()
+  for (i in coordinates){
+    latitude <- append(latitude,i[[2]][1])
+  }
+  return(mean(latitude))
+}
 
 get_livestock_table <- function(livestock, animal_factors) {
   
@@ -946,39 +961,67 @@ get_land_use_type <- function(landUseSummaryOrPractices, parcel_inputs){
   return(landUseType)
 }
 
-get_parcel_inputs <- function(monitoringData){
+get_fixed_farm_inputs <- function(monitoringData) {
   
-  parcel_inputs = data.frame(parcel_name     = c(), 
-                             area_maps       = c(), 
-                             area_manual     = c(), 
-                             use_manual_area = c(), 
-                             area            = c(), 
-                             longitude       = c(), 
-                             latitude        = c())
+  fixed_farm_inputs <- data.frame(farm_Id            = monitoringData[[1]]$farmId,
+                                  email              = monitoringData[[1]]$email,
+                                  unique_CF_farm_Id  = monitoringData[[1]]$uniqueCfFarmId,
+                                  project_start_year = monitoringData[[1]]$projectStartYear)
+  return(fixed_farm_inputs)
   
-  parcel_inputs = data.frame(
-    parcel_ID = landUseSummaryOrPractices[[1]]$parcelName,
-    area_maps = missing_to_zero(landUseSummaryOrPractices[[1]]$area)/10000,
-    area_manual = missing_to_zero(landUseSummaryOrPractices[[1]]$manuallyEnteredArea)/10000,
-    use_manual_area = landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea,
-    area = NA,
-    longitude = NA,
-    latitude = NA
-  )
+}
+get_fixed_parcel_inputs <- function(monitoringData) {
   
-  # Data checks
-  if(any(!is.logical(parcel_inputs$use_manual_area))) stop("Expecting logical values. Check inputs.")
+  # Data frame for fixed parcel inputs
+  fixed_parcel_inputs = data.frame(parcel_name      = c(),
+                                   parcel_ID        = c(),
+                                   area_maps        = c(),
+                                   area_maps_unit   = c(),
+                                   area_manual      = c(),
+                                   area_manual_unit = c(),
+                                   use_manual_area  = c(),
+                                   area             = c(),
+                                   area_unit        = c(),
+                                   longitude        = c(),
+                                   latitude         = c()
+                                   )
+
   
-  # Select areas according to options
-  parcel_inputs$area <- parcel_inputs$area_maps
-  parcel_inputs$area[parcel_inputs$use_manual_area] <- parcel_inputs$area_manual[parcel_inputs$use_manual_area]
-  
-  # Get lat lon data
-  for (i in 1:nrow(parcel_inputs)){
-    parcel_inputs$longitude[i] <- missing_to_zero(extract_longitude_landUseSummaryOrPractices(landUseSummaryOrPractices,i))
-    parcel_inputs$latitude[i] <- missing_to_zero(extract_latitude_landUseSummaryOrPractices(landUseSummaryOrPractices,i))
+  # Loop through parcels and extract fixed parcel inputs
+  for (parcel in monitoringData[[1]]$yearlyFarmData[[1]]$parcelLevelData) {
+    fixed_parcel_inputs <- rbind(fixed_parcel_inputs, data.frame(
+      parcel_name      = parcel$parcelFixedValues$parcelName,
+      parcel_ID        = parcel$parcelFixedValues$parcelID,
+      area_geo         = parcel$parcelFixedValues$areaGeoFile$area, # missing_to_zero(landUseSummaryOrPractices[[1]]$area) --> missing_to_zero needed?
+      area_geo_unit    = parcel$parcelFixedValues$areaGeoFile$units,
+      area_manual      = parcel$parcelFixedValues$areaManualEntry$area, 
+      area_manual_unit = parcel$parcelFixedValues$areaManualEntry$units,
+      use_manual_area  = ifelse(parcel$parcelFixedValues$areaManualEntry$area != -9999, TRUE, FALSE),
+      area             = ifelse(parcel$parcelFixedValues$areaManualEntry$area != -9999, 
+                                parcel$parcelFixedValues$areaManualEntry$area/1000, 
+                                parcel$parcelFixedValues$areaGeoFile$area/1000), 
+      area_unit        = "ha",
+      longitude        = get_mean_longitude(parcel$parcelFixedValues$coordinates), 
+      latitude         = get_mean_latitude(parcel$parcelFixedValues$coordinates)
+      ))
   }
-  return(parcel_inputs)
+  ### OPTION 2 for use_manual_area and area
+  ## Set use_manual_area to TRUE if area_manual is not -9999 !!NEEDS TO BE CHECKED - DO WE ALWAYS USE THE MANUAL AREA IF AVAILABLE?!
+  # fixed_parcel_inputs$use_manual_area <- ifelse(fixed_parcel_inputs$area_manual != -9999, TRUE, FALSE)
+  # 
+  # ## Data checks !!NECESSARY!!
+  # #if(any(!is.logical(parcel_inputs$use_manual_area))) stop("Expecting logical values. Check inputs.")
+  # 
+  # # Select areas according to options
+  # fixed_parcel_inputs$area <- ifelse(fixed_parcel_inputs$use_manual_area, fixed_parcel_inputs$area_manual/1000, fixed_parcel_inputs$area_maps/1000)
+  # fixed_parcel_inputs$area_unit <- "ha"# !!PERHAPS TO SIMPLE - NEEDS TO BE CHECKED!!
+  # 
+  # # Get lat lon data
+  # for (i in 1:nrow(parcel_inputs)){
+  #   parcel_inputs$longitude[i] <- missing_to_zero(extract_longitude_landUseSummaryOrPractices(landUseSummaryOrPractices,i))
+  #   parcel_inputs$latitude[i] <- missing_to_zero(extract_latitude_landUseSummaryOrPractices(landUseSummaryOrPractices,i))
+  # }
+  return(fixed_parcel_inputs)
 }
 
 

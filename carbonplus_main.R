@@ -125,7 +125,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   ## Fetching pedo-climatic zone -----------------------------------------------
   # !!CODE STILL NEEDS TO BE ADAPTED TO NEW DB SCHEMA!!
   
-  farmEnz <- "Mediterranean south"
+  farm_EnZ <- "Mediterranean south"
   
   # farm_parameters <- mongo(collection="farmparameters",
   #                          db="carbonplus_production_db",
@@ -157,25 +157,24 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   
   ## Processing Inputs ------------------------------------------------------------
   
-  browser()
   source("mongodb_extraction_functions.R", local = TRUE)
   
-  ## Extracting livestock, landUseSummaryOrPractices
-  livestock <- farms_everything$liveStock
-  landUseSummaryOrPractices <- farms_everything$landUse$landUseSummaryOrPractices
+  ## Extracting livestock, landUseSummaryOrPractices !!DELETE!!
+  # livestock <- farms_everything$liveStock
+  # landUseSummaryOrPractices <- farms_everything$landUse$landUseSummaryOrPractices
   
   ## If set, copy data from a specific year to following years (disabled for monitoring / credit issuance runs!)
   
-  if (settings$copy_year_currmonit_to_future){
-    for(i in c(settings$curr_monit_year+1:10)){
-      landUseSummaryOrPractices[[1]][[paste0("year", i)]] <- 
-        landUseSummaryOrPractices[[1]][[paste0("year", settings$curr_monit_year)]]
-      livestock[["futureManagement"]][[1]][[paste0("year",i)]] <-
-        livestock[["futureManagement"]][[1]][[paste0("year", settings$curr_monit_year)]]
-    }
-    log4r::info(my_logger, paste("MODIF: EVERY PARCELS: Data from year", settings$curr_monit_year,
-                                 "was pasted to every following years"))
-  }
+  # if (settings$copy_year_currmonit_to_future){
+  #   for(i in c(settings$curr_monit_year+1:10)){
+  #     landUseSummaryOrPractices[[1]][[paste0("year", i)]] <- 
+  #       landUseSummaryOrPractices[[1]][[paste0("year", settings$curr_monit_year)]]
+  #     livestock[["futureManagement"]][[1]][[paste0("year",i)]] <-
+  #       livestock[["futureManagement"]][[1]][[paste0("year", settings$curr_monit_year)]]
+  #   }
+  #   log4r::info(my_logger, paste("MODIF: EVERY PARCELS: Data from year", settings$curr_monit_year,
+  #                                "was pasted to every following years"))
+  # }
   
   ## Reading in calculation factors from csv files
   animal_factors <- read_csv(file.path("data", "carbon_share_manure.csv"), show_col_types = FALSE) %>%
@@ -218,8 +217,11 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   )
   
   # Extraction of inputs per parcel and scenario
-  parcel_inputs <- get_parcel_inputs(monitoringData)  # Parcel information
-  scenarios <- get_scenarios(monitoringData)  # Scenarios !!STILL NEED TO THINK ABOUT THIS!!
+  fixed_farm_inputs <- get_fixed_farm_inputs(monitoringData)
+  fixed_parcel_inputs <- get_fixed_parcel_inputs(monitoringData)
+  yearly_farm_inputs <- get_yearly_inputs(monitoringData)
+  yearly_parcel_inputs <- get_yearly_parcel_inputs(monitoringData)
+  
   landUseType <- get_land_use_type(landUseSummaryOrPractices, parcel_inputs)
   livestock_inputs <- get_livestock_table(livestock, animal_factors)
   grazing_tables <- get_grazing_amounts(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs, livestock_inputs, settings$grazing_used)  # grazing data
