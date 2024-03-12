@@ -216,11 +216,17 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
     n2o_emission_factors = n2o_emission_factors
   )
   
-  # Extraction of inputs per parcel and scenario
+  ## Fixed farm and parcel inputs
   fixed_farm_inputs <- get_fixed_farm_inputs(monitoringData)
   fixed_parcel_inputs <- get_fixed_parcel_inputs(monitoringData)
-  yearly_farm_inputs <- get_yearly_inputs(monitoringData)
-  yearly_parcel_inputs <- get_yearly_parcel_inputs(monitoringData)
+  scenarios <- get_scenarios(monitoringData, fixed_farm_inputs$project_start_year) # defines project and baseline years based on the given project start year
+  
+  ## Yearly farm inputs
+  # GHG removals
+  # GHG reductions
+  fuel_inputs_direct <- get_fuel_inputs_direct(monitoringData, scenarios) 
+  fuel_inputs_indirect <- get_fuel_inputs_indirect(monitoringData, scenarios)
+  
   
   landUseType <- get_land_use_type(landUseSummaryOrPractices, parcel_inputs)
   livestock_inputs <- get_livestock_table(livestock, animal_factors)
@@ -232,7 +238,6 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   crop_inputs <- get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, grazing_yearly, grazing_monthly)  # Crops and residues
   pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, pasture_factors, farm_EnZ, grazing_yearly, grazing_monthly, my_logger, parcel_inputs)
   fertilizer_inputs <- get_fertilizer_inputs(landUseSummaryOrPractices)
-  fuel_inputs <- get_fuel_inputs(farms_everything$energyUsage)
   tree_inputs <- get_tree_inputs(landUseSummaryOrPractices)
   bare_field_inputs <- get_bareground_inputs(landUseSummaryOrPractices, soil_cover_factors, farm_EnZ, settings$bare_bl_type)
   tilling_inputs <- get_tilling_inputs(landUseSummaryOrPractices, tilling_factors, farm_EnZ)

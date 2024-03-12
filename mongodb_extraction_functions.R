@@ -909,34 +909,64 @@ get_fertilizer_inputs = function(landUseSummaryOrPractices){
 }
 
 
-get_fuel_inputs = function(fuel){
-  # extracts fuel inputs dataframe 
-  fuel_inputs = data.frame(scenario = c(), typeOfFuel = c(), amountInLiters = c())
-  status ="currentFuelUsage"
-  for (k in c(1:nrow(fuel[[status]][[1]]))){
-    if (is.na(fuel[[status]][[1]]$typeOfFuel[[k]]) | fuel[[status]][[1]]$typeOfFuel[[k]]==""){next}
-    fuel_inputs <- rbind(fuel_inputs,data.frame(
-      scenario = c(paste('year',0,sep="")), 
-      fuel_type = fuel[[status]][[1]]$typeOfFuel[[k]],
-      value_l = missing_to_zero(fuel[[status]][[1]]$amountInLiters[[k]])))
-    fuel_inputs <- rbind(fuel_inputs,data.frame(
-      scenario = c("baseline"), 
-      fuel_type = fuel[[status]][[1]]$typeOfFuel[[k]],
-      value_l = missing_to_zero(fuel[[status]][[1]]$amountInLiters[[k]])))
-  }
-  status = "futureFuelUsage"
-  for (year in c(1:10)){
-    year_str <- paste0('year', year)
-    for (k in c(1:nrow(fuel[[status]][[1]]))){
-      if (is.na(fuel[[status]][[1]]$typeOfFuel[[k]]) | fuel[[status]][[1]]$typeOfFuel[[k]]==""){next}
-      fuel_inputs <- rbind(fuel_inputs,data.frame(
-        scenario = c(year_str),
-        fuel_type = fuel[[status]][[1]]$typeOfFuel[[k]],
-        value_l = missing_to_zero(fuel[[status]][[1]]$amountInLiters[[k]])))
+get_fuel_inputs_direct = function(monitoringData, scenarios){
+  
+  # Direct fuel inputs data frame 
+  fuel_inputs_direct <- data.frame(
+    year       = c(), 
+    typeOfFuel = c(), 
+    amount     = c(),
+    units      = c()
+  )
+  
+  # For loop to extract fuel inputs
+  for (year in monitoringData[[1]]$yearlyFarmData) {
+    for (fuel_index in 1: length(year$fuelUsage$direct)) {
+      fuel_inputs_direct <- rbind(fuel_inputs_direct, data.frame(
+        year          = year$year, 
+        typeOfFuel    = ifelse(fuel_index == 1, "diesel", "petrol"),
+        amount        = year$fuelUsage$direct[[fuel_index]]$amount,
+        units         = year$fuelUsage$direct[[fuel_index]]$units
+      ))
     }
   }
-  return(fuel_inputs)
+  
+  fuel_inputs_direct <- left_join(fuel_inputs_direct, scenarios, by = "year")
+  
+  return(fuel_inputs_direct)
 }
+
+get_fuel_inputs_indirect = function(monitoringData, scenarios) {
+  
+  # Indirect fuel inputs data frame 
+  fuel_inputs_indirect <- data.frame(
+    year             = c(), 
+    service.         = c(), 
+    area             = c(),
+    units            = c(),
+    service_detail   = c(),
+    service_category = c()
+  )
+  
+  # For loop to extract fuel inputs
+  for (year in monitoringData[[1]]$yearlyFarmData) {
+    for (service in year$fuelUsage$indirect) {
+      fuel_inputs_indirect <- rbind(fuel_inputs_indirect, data.frame(
+        year             = year$year, 
+        service          = service$service,
+        area             = service$area$amount,
+        units            = service$area$units,
+        servie_detail    = service$serviceDetail,
+        service_category = service$serviceCategory
+      ))
+    }
+  }
+  fuel_inputs_indirect <- left_join(fuel_inputs_indirect, scenarios, by = "year")
+  return(fuel_inputs_indirect)
+  
+  
+}
+
 
 
 ## Helper function to extract land use type (not used!)
@@ -970,22 +1000,23 @@ get_fixed_farm_inputs <- function(monitoringData) {
   return(fixed_farm_inputs)
   
 }
+
 get_fixed_parcel_inputs <- function(monitoringData) {
   
   # Data frame for fixed parcel inputs
-  fixed_parcel_inputs = data.frame(parcel_name      = c(),
-                                   parcel_ID        = c(),
-                                   area_maps        = c(),
-                                   area_maps_unit   = c(),
-                                   area_manual      = c(),
-                                   area_manual_unit = c(),
-                                   use_manual_area  = c(),
-                                   area             = c(),
-                                   area_unit        = c(),
-                                   longitude        = c(),
-                                   latitude         = c()
-                                   )
-
+  fixed_parcel_inputs = data.frame(
+    parcel_name      = c(),
+    parcel_ID        = c(),
+    area_maps        = c(),
+    area_maps_unit   = c(),
+    area_manual      = c(),
+    area_manual_unit = c(),
+    use_manual_area  = c(),
+    area             = c(),
+    area_unit        = c(),
+    longitude        = c(),
+    latitude         = c()
+  )
   
   # Loop through parcels and extract fixed parcel inputs
   for (parcel in monitoringData[[1]]$yearlyFarmData[[1]]$parcelLevelData) {
@@ -1003,7 +1034,7 @@ get_fixed_parcel_inputs <- function(monitoringData) {
       area_unit        = "ha",
       longitude        = get_mean_longitude(parcel$parcelFixedValues$coordinates), 
       latitude         = get_mean_latitude(parcel$parcelFixedValues$coordinates)
-      ))
+    ))
   }
   ### OPTION 2 for use_manual_area and area
   ## Set use_manual_area to TRUE if area_manual is not -9999 !!NEEDS TO BE CHECKED - DO WE ALWAYS USE THE MANUAL AREA IF AVAILABLE?!
@@ -1022,6 +1053,28 @@ get_fixed_parcel_inputs <- function(monitoringData) {
   #   parcel_inputs$latitude[i] <- missing_to_zero(extract_latitude_landUseSummaryOrPractices(landUseSummaryOrPractices,i))
   # }
   return(fixed_parcel_inputs)
+}
+
+## Function extracts baseline and project years based on the project start year
+# Function needs refinement for the following cases
+# - more than three years of data for the baseline (take only the three years right before the project start year)
+# - count for baseline and project years baseline-01, baseline-02, baseline-03, project-01, project-02, project-03, ... 
+get_scenarios <- function(monitoringData, project_start_year) {
+  
+  scenarios <- data.frame(
+    scenario = c(),
+    year     = c()
+  )
+  
+  for (year in monitoringData[[1]]$yearlyFarmData) {
+    if (year$year >= project_start_year - 3) {
+      scenarios <- rbind(scenarios, data.frame(
+        scenario = ifelse (year$year < project_start_year, "baseline", "project"),
+        year     = year$year
+      ))
+    }
+  }
+  return(scenarios)
 }
 
 
