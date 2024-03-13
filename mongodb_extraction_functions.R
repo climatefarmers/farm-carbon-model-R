@@ -429,9 +429,57 @@ get_bulk_density <- function(soilAnalysis, soilMapsData){
 
 
 ### GET INPUT FUNCTIONS
-get_orgamendments_inputs = function(landUseSummaryOrPractices){
-  # takes landUseSummaryOrPractices from farms collection
-  # extracts manure application inputs dataframe 
+get_orgamendments_inputs = function(monitoringData, scenarios) {
+
+  # Data frame for added organic matter
+  added_OM_inputs <- data.frame(
+    year = c(),
+    parcel_name = c(),
+    parcel_ID = c(), # Do we need the parcel ID?
+    type = c(),
+    sub_type = c(),
+    other = c(),
+    amount = c(),
+    units = c()
+  )
+  
+  # Data frame for imported organic matter
+  imported_OM_inputs <- data.frame(
+    year = c(),
+    type = c(),
+    imported_percent = c(),
+    imported_frac = c()
+  )
+  
+  for (year in monitoringData[[1]]$yearlyFarmData) {
+    for (amendment in year$importedOrganicMatter) {
+      imported_OM_inputs = rbind(imported_OM_inputs, data.frame(
+        year = year$year,
+        type = amendment$type,
+        imported_percent = amendment$percentImported,
+        imported_frac = amendment$percentImported/100
+      ))
+    }
+    for (parcel in year$parcelLevelData) {
+      for (amendment in parcel$yearParcelData$addedOrganicMatter) {
+        added_OM_inputs = rbind(added_OM_inputs, data.frame(
+          year = year$year,
+          parcel_name = parcel$parcelFixedValues$parcelName,
+          parcel_ID = parcel$parcelFixedValues$parcelID,
+          type = amendment$type,
+          sub_type = amendment$subType,
+          other = amendment$other,
+          amount = amendment$amount,
+          units = amendment$units
+        ))
+      }
+    }
+  }
+  
+  added_OM_inputs <- left_join(added_OM_inputs, imported_OM_inputs, by = c("year","type"))
+    
+  
+  
   parcel_names <- landUseSummaryOrPractices[[1]]$parcelName
   orgamendments_inputs = data.frame(parcel_ID = c(), scenario = c(), source = c(), 
                                     quantity_t_ha = c(), imported_frac = c(), remaining_frac = c())
@@ -911,7 +959,7 @@ get_fertilizer_inputs = function(landUseSummaryOrPractices){
 
 get_fuel_inputs_direct = function(monitoringData, scenarios){
   
-  # Direct fuel inputs data frame 
+  # Data frame for direct fuel inputs
   fuel_inputs_direct <- data.frame(
     year       = c(), 
     typeOfFuel = c(), 
