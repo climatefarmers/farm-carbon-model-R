@@ -1,0 +1,2458 @@
+{
+    "farmId": "ex-farm01",
+    "email": "marlene@climatefarmers.org",
+    "uniqueCfFarmId": "ex-farm01-CF",
+    "projectStartYear": 2021,
+    "yearlyFarmData": [
+    [
+      {
+        "id": null,
+        "year": 2018,
+        "fuelUsage": {
+          "direct": {
+            "diesel": { "amount": -9999, "units": "litres" },
+            "petrol": { "amount": -9999, "units": "litres" }
+          },
+          "indirect": [
+            {
+              "service": null,
+              "area": { "amount": -9999, "units": "hectares" },
+              "serviceDetail": null,
+              "serviceCategory": null,
+              "_id": "65f45322d58468470ba00201"
+            }
+          ]
+        },
+        "fertilizerUsage": [
+          {
+            "amount": -9999,
+            "units": "tonnes",
+            "percentN": -9999,
+            "_id": "65f45322d58468470ba00202"
+          }
+        ],
+        "importedOrganicMatter": [
+          {
+            "type": "biochar",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00203"
+          },
+          {
+            "type": "compost",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00204"
+          },
+          {
+            "type": "manure",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00205"
+          },
+          {
+            "type": "mulch",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00206"
+          },
+          {
+            "type": "slurry",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00207"
+          },
+          {
+            "type": "fodder",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00208"
+          }
+        ],
+        "livestock": {
+          "grazingManagement": "",
+          "inFarm": [
+            {
+              "species": "Cattle",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (non-dairy)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00211"
+                },
+                {
+                  "name": "Mature males",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00212"
+                },
+                {
+                  "name": "Growing Cattle (6 - 24 months)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00213"
+                },
+                {
+                  "name": "Calves (< 6 months)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00214"
+                }
+              ],
+              "_id": "65f45324d58468470ba00215"
+            },
+            {
+              "species": "Dairy cows",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (> 2 years)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00216"
+                }
+              ]
+            },
+            {
+              "species": "Swine",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Sows",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00217"
+                },
+                {
+                  "name": "Boars",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00218"
+                },
+                {
+                  "name": "Finishers (3 - 6 months)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00219"
+                },
+                {
+                  "name": "Other swine",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021a"
+                },
+                {
+                  "name": "Piglets",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021b"
+                }
+              ]
+            },
+            {
+              "species": "Sheep",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021c"
+                },
+                {
+                  "name": "Mature males (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021d"
+                },
+                {
+                  "name": "Lambs (< 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021e"
+                }
+              ]
+            },
+            {
+              "species": "Goats",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021f"
+                },
+                {
+                  "name": "Mature males (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00220"
+                },
+                {
+                  "name": "Goat kids (< 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00221"
+                }
+              ]
+            },
+            {
+              "species": "Chicken",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Layer hens",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00222"
+                },
+                {
+                  "name": "Broilers",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00223"
+                },
+                {
+                  "name": "Other chicken",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00224"
+                }
+              ]
+            },
+            {
+              "species": "Turkeys",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Turkeys",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00225"
+                }
+              ]
+            }
+          ],
+          "outFarm": [
+            {
+              "species": null,
+              "amount": -9999,
+              "grazingDays": -9999,
+              "_id": "65f45323d58468470ba00209"
+            }
+          ]
+        },
+        "parcelLevelData": [
+          {
+            "id": null,
+            "parcelFixedValues": {
+              "parcelName": null,
+              "parcelID": null,
+              "areaGeoFile": { "area": -9999, "units": null },
+              "areaManualEntry": { "area": -9999, "units": null },
+              "coordinates": []
+            },
+            "yearParcelData": {
+              "primaryLandUse": null,
+              "secondaryLandUse": null,
+              "addedOrganicMatter": [
+                {
+                  "id": null,
+                  "type": null,
+                  "subType": null,
+                  "other": null,
+                  "amount": -9999,
+                  "units": null,
+                  "_id": "65f45323d58468470ba0020a"
+                }
+              ],
+              "animalFodder": { "amount": -9999, "units": null },
+              "grazingMonthlyEvent": [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ],
+              "tillage": [
+                {
+                  "type": null,
+                  "date": null,
+                  "percent": -9999,
+                  "_id": "65f45323d58468470ba0020b"
+                }
+              ],
+              "irrigation": false,
+              "treeFelling": [
+                {
+                  "species": null,
+                  "other": null,
+                  "treeNumber": -9999,
+                  "DBHmean": { "diameter": -9999, "units": null },
+                  "_id": "65f45323d58468470ba0020c"
+                }
+              ],
+              "perennialCrops": [
+                {
+                  "cohortID": null,
+                  "species": null,
+                  "other": null,
+                  "plantingYear": -9999,
+                  "treeNumber": -9999,
+                  "DBHmean": { "diameter": -9999, "units": null },
+                  "hasRotation": false,
+                  "rotationYears": -9999,
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "residue": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba0020d"
+                }
+              ],
+              "annualCrops": [
+                {
+                  "species": null,
+                  "other": null,
+                  "sowingDate": null,
+                  "harvestDate": null,
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "residue": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba0020e"
+                }
+              ],
+              "pastures": [
+                {
+                  "percentArea": -9999,
+                  "productivity": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba0020f"
+                }
+              ],
+              "fallow": [
+                {
+                  "type": null,
+                  "percentArea": -9999,
+                  "startDate": null,
+                  "endDate": null,
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "residue": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba00210"
+                }
+              ]
+            },
+            "_id": "65f45324d58468470ba00226"
+          }
+        ],
+        "_id": "65f45325d58468470ba00227"
+      },
+      {
+        "id": null,
+        "year": 2019,
+        "fuelUsage": {
+          "direct": {
+            "diesel": { "amount": -9999, "units": "litres" },
+            "petrol": { "amount": -9999, "units": "litres" }
+          },
+          "indirect": [
+            {
+              "service": null,
+              "area": { "amount": -9999, "units": "hectares" },
+              "serviceDetail": null,
+              "serviceCategory": null,
+              "_id": "65f45322d58468470ba00201"
+            }
+          ]
+        },
+        "fertilizerUsage": [
+          {
+            "amount": -9999,
+            "units": "percent",
+            "percentN": -9999,
+            "_id": "65f45322d58468470ba00202"
+          }
+        ],
+        "importedOrganicMatter": [
+          {
+            "type": "biochar",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00203"
+          },
+          {
+            "type": "compost",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00204"
+          },
+          {
+            "type": "manure",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00205"
+          },
+          {
+            "type": "mulch",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00206"
+          },
+          {
+            "type": "slurry",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00207"
+          },
+          {
+            "type": "fodder",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00208"
+          }
+        ],
+        "livestock": {
+          "grazingManagement": "",
+          "inFarm": [
+            {
+              "species": "Cattle",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (non-dairy)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00211"
+                },
+                {
+                  "name": "Mature males",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00212"
+                },
+                {
+                  "name": "Growing Cattle (6 - 24 months)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00213"
+                },
+                {
+                  "name": "Calves (< 6 months)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00214"
+                }
+              ],
+              "_id": "65f45324d58468470ba00215"
+            },
+            {
+              "species": "Dairy cows",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (> 2 years)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00216"
+                }
+              ]
+            },
+            {
+              "species": "Swine",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Sows",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00217"
+                },
+                {
+                  "name": "Boars",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00218"
+                },
+                {
+                  "name": "Finishers (3 - 6 months)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00219"
+                },
+                {
+                  "name": "Other swine",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021a"
+                },
+                {
+                  "name": "Piglets",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021b"
+                }
+              ]
+            },
+            {
+              "species": "Sheep",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021c"
+                },
+                {
+                  "name": "Mature males (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021d"
+                },
+                {
+                  "name": "Lambs (< 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021e"
+                }
+              ]
+            },
+            {
+              "species": "Goats",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021f"
+                },
+                {
+                  "name": "Mature males (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00220"
+                },
+                {
+                  "name": "Goat kids (< 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00221"
+                }
+              ]
+            },
+            {
+              "species": "Chicken",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Layer hens",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00222"
+                },
+                {
+                  "name": "Broilers",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00223"
+                },
+                {
+                  "name": "Other chicken",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00224"
+                }
+              ]
+            },
+            {
+              "species": "Turkeys",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Turkeys",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00225"
+                }
+              ]
+            }
+          ],
+          "outFarm": [
+            {
+              "species": null,
+              "amount": -9999,
+              "grazingDays": -9999,
+              "_id": "65f45323d58468470ba00209"
+            }
+          ]
+        },
+        "parcelLevelData": [
+          {
+            "id": null,
+            "parcelFixedValues": {
+              "parcelName": null,
+              "parcelID": null,
+              "areaGeoFile": { "area": -9999, "units": null },
+              "areaManualEntry": { "area": -9999, "units": null },
+              "coordinates": []
+            },
+            "yearParcelData": {
+              "primaryLandUse": null,
+              "secondaryLandUse": null,
+              "addedOrganicMatter": [
+                {
+                  "id": null,
+                  "type": null,
+                  "subType": null,
+                  "other": null,
+                  "amount": -9999,
+                  "units": null,
+                  "_id": "65f45323d58468470ba0020a"
+                }
+              ],
+              "animalFodder": { "amount": -9999, "units": null },
+              "grazingMonthlyEvent": [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ],
+              "tillage": [
+                {
+                  "type": null,
+                  "date": null,
+                  "percent": -9999,
+                  "_id": "65f45323d58468470ba0020b"
+                }
+              ],
+              "irrigation": false,
+              "treeFelling": [
+                {
+                  "species": null,
+                  "other": null,
+                  "treeNumber": -9999,
+                  "DBHmean": { "diameter": -9999, "units": null },
+                  "_id": "65f45323d58468470ba0020c"
+                }
+              ],
+              "perennialCrops": [
+                {
+                  "cohortID": null,
+                  "species": null,
+                  "other": null,
+                  "plantingYear": -9999,
+                  "treeNumber": -9999,
+                  "DBHmean": { "diameter": -9999, "units": null },
+                  "hasRotation": false,
+                  "rotationYears": -9999,
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "residue": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba0020d"
+                }
+              ],
+              "annualCrops": [
+                {
+                  "species": null,
+                  "other": null,
+                  "sowingDate": null,
+                  "harvestDate": null,
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "residue": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba0020e"
+                }
+              ],
+              "pastures": [
+                {
+                  "percentArea": -9999,
+                  "productivity": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba0020f"
+                }
+              ],
+              "fallow": [
+                {
+                  "type": null,
+                  "percentArea": -9999,
+                  "startDate": null,
+                  "endDate": null,
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "residue": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba00210"
+                }
+              ]
+            },
+            "_id": "65f45324d58468470ba00226"
+          }
+        ],
+        "_id": "65f45325d58468470ba00228"
+      },
+      {
+        "id": null,
+        "year": 2020,
+        "fuelUsage": {
+          "direct": {
+            "diesel": { "amount": -9999, "units": "litres" },
+            "petrol": { "amount": -9999, "units": "litres" }
+          },
+          "indirect": [
+            {
+              "service": null,
+              "area": { "amount": -9999, "units": "hectares" },
+              "serviceDetail": null,
+              "serviceCategory": null,
+              "_id": "65f45322d58468470ba00201"
+            }
+          ]
+        },
+        "fertilizerUsage": [
+          {
+            "amount": -9999,
+            "units": "percent",
+            "percentN": -9999,
+            "_id": "65f45322d58468470ba00202"
+          }
+        ],
+        "importedOrganicMatter": [
+          {
+            "type": "biochar",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00203"
+          },
+          {
+            "type": "compost",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00204"
+          },
+          {
+            "type": "manure",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00205"
+          },
+          {
+            "type": "mulch",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00206"
+          },
+          {
+            "type": "slurry",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00207"
+          },
+          {
+            "type": "fodder",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00208"
+          }
+        ],
+        "livestock": {
+          "grazingManagement": "",
+          "inFarm": [
+            {
+              "species": "Cattle",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (non-dairy)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00211"
+                },
+                {
+                  "name": "Mature males",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00212"
+                },
+                {
+                  "name": "Growing Cattle (6 - 24 months)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00213"
+                },
+                {
+                  "name": "Calves (< 6 months)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00214"
+                }
+              ],
+              "_id": "65f45324d58468470ba00215"
+            },
+            {
+              "species": "Dairy cows",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (> 2 years)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00216"
+                }
+              ]
+            },
+            {
+              "species": "Swine",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Sows",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00217"
+                },
+                {
+                  "name": "Boars",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00218"
+                },
+                {
+                  "name": "Finishers (3 - 6 months)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00219"
+                },
+                {
+                  "name": "Other swine",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021a"
+                },
+                {
+                  "name": "Piglets",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021b"
+                }
+              ]
+            },
+            {
+              "species": "Sheep",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021c"
+                },
+                {
+                  "name": "Mature males (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021d"
+                },
+                {
+                  "name": "Lambs (< 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021e"
+                }
+              ]
+            },
+            {
+              "species": "Goats",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021f"
+                },
+                {
+                  "name": "Mature males (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00220"
+                },
+                {
+                  "name": "Goat kids (< 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00221"
+                }
+              ]
+            },
+            {
+              "species": "Chicken",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Layer hens",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00222"
+                },
+                {
+                  "name": "Broilers",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00223"
+                },
+                {
+                  "name": "Other chicken",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00224"
+                }
+              ]
+            },
+            {
+              "species": "Turkeys",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Turkeys",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00225"
+                }
+              ]
+            }
+          ],
+          "outFarm": [
+            {
+              "species": null,
+              "amount": -9999,
+              "grazingDays": -9999,
+              "_id": "65f45323d58468470ba00209"
+            }
+          ]
+        },
+        "parcelLevelData": [
+          {
+            "id": null,
+            "parcelFixedValues": {
+              "parcelName": null,
+              "parcelID": null,
+              "areaGeoFile": { "area": -9999, "units": null },
+              "areaManualEntry": { "area": -9999, "units": null },
+              "coordinates": []
+            },
+            "yearParcelData": {
+              "primaryLandUse": null,
+              "secondaryLandUse": null,
+              "addedOrganicMatter": [
+                {
+                  "id": null,
+                  "type": null,
+                  "subType": null,
+                  "other": null,
+                  "amount": -9999,
+                  "units": null,
+                  "_id": "65f45323d58468470ba0020a"
+                }
+              ],
+              "animalFodder": { "amount": -9999, "units": null },
+              "grazingMonthlyEvent": [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ],
+              "tillage": [
+                {
+                  "type": null,
+                  "date": null,
+                  "percent": -9999,
+                  "_id": "65f45323d58468470ba0020b"
+                }
+              ],
+              "irrigation": false,
+              "treeFelling": [
+                {
+                  "species": null,
+                  "other": null,
+                  "treeNumber": -9999,
+                  "DBHmean": { "diameter": -9999, "units": null },
+                  "_id": "65f45323d58468470ba0020c"
+                }
+              ],
+              "perennialCrops": [
+                {
+                  "cohortID": null,
+                  "species": null,
+                  "other": null,
+                  "plantingYear": -9999,
+                  "treeNumber": -9999,
+                  "DBHmean": { "diameter": -9999, "units": null },
+                  "hasRotation": false,
+                  "rotationYears": -9999,
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "residue": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba0020d"
+                }
+              ],
+              "annualCrops": [
+                {
+                  "species": null,
+                  "other": null,
+                  "sowingDate": null,
+                  "harvestDate": null,
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "residue": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba0020e"
+                }
+              ],
+              "pastures": [
+                {
+                  "percentArea": -9999,
+                  "productivity": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba0020f"
+                }
+              ],
+              "fallow": [
+                {
+                  "type": null,
+                  "percentArea": -9999,
+                  "startDate": null,
+                  "endDate": null,
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "residue": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba00210"
+                }
+              ]
+            },
+            "_id": "65f45324d58468470ba00226"
+          }
+        ],
+        "_id": "65f45325d58468470ba00229"
+      },
+      {
+        "id": null,
+        "year": 2021,
+        "fuelUsage": {
+          "direct": {
+            "diesel": { "amount": -9999, "units": "litres" },
+            "petrol": { "amount": -9999, "units": "litres" }
+          },
+          "indirect": [
+            {
+              "service": null,
+              "area": { "amount": -9999, "units": "hectares" },
+              "serviceDetail": null,
+              "serviceCategory": null,
+              "_id": "65f45322d58468470ba00201"
+            }
+          ]
+        },
+        "fertilizerUsage": [
+          {
+            "amount": -9999,
+            "units": "percent",
+            "percentN": -9999,
+            "_id": "65f45322d58468470ba00202"
+          }
+        ],
+        "importedOrganicMatter": [
+          {
+            "type": "biochar",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00203"
+          },
+          {
+            "type": "compost",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00204"
+          },
+          {
+            "type": "manure",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00205"
+          },
+          {
+            "type": "mulch",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00206"
+          },
+          {
+            "type": "slurry",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00207"
+          },
+          {
+            "type": "fodder",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00208"
+          }
+        ],
+        "livestock": {
+          "grazingManagement": "",
+          "inFarm": [
+            {
+              "species": "Cattle",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (non-dairy)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00211"
+                },
+                {
+                  "name": "Mature males",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00212"
+                },
+                {
+                  "name": "Growing Cattle (6 - 24 months)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00213"
+                },
+                {
+                  "name": "Calves (< 6 months)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00214"
+                }
+              ],
+              "_id": "65f45324d58468470ba00215"
+            },
+            {
+              "species": "Dairy cows",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (> 2 years)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00216"
+                }
+              ]
+            },
+            {
+              "species": "Swine",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Sows",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00217"
+                },
+                {
+                  "name": "Boars",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00218"
+                },
+                {
+                  "name": "Finishers (3 - 6 months)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00219"
+                },
+                {
+                  "name": "Other swine",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021a"
+                },
+                {
+                  "name": "Piglets",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021b"
+                }
+              ]
+            },
+            {
+              "species": "Sheep",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021c"
+                },
+                {
+                  "name": "Mature males (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021d"
+                },
+                {
+                  "name": "Lambs (< 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021e"
+                }
+              ]
+            },
+            {
+              "species": "Goats",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021f"
+                },
+                {
+                  "name": "Mature males (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00220"
+                },
+                {
+                  "name": "Goat kids (< 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00221"
+                }
+              ]
+            },
+            {
+              "species": "Chicken",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Layer hens",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00222"
+                },
+                {
+                  "name": "Broilers",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00223"
+                },
+                {
+                  "name": "Other chicken",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00224"
+                }
+              ]
+            },
+            {
+              "species": "Turkeys",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Turkeys",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00225"
+                }
+              ]
+            }
+          ],
+          "outFarm": [
+            {
+              "species": null,
+              "amount": -9999,
+              "grazingDays": -9999,
+              "_id": "65f45323d58468470ba00209"
+            }
+          ]
+        },
+        "parcelLevelData": [
+          {
+            "id": null,
+            "parcelFixedValues": {
+              "parcelName": null,
+              "parcelID": null,
+              "areaGeoFile": { "area": -9999, "units": null },
+              "areaManualEntry": { "area": -9999, "units": null },
+              "coordinates": []
+            },
+            "yearParcelData": {
+              "primaryLandUse": null,
+              "secondaryLandUse": null,
+              "addedOrganicMatter": [
+                {
+                  "id": null,
+                  "type": null,
+                  "subType": null,
+                  "other": null,
+                  "amount": -9999,
+                  "units": null,
+                  "_id": "65f45323d58468470ba0020a"
+                }
+              ],
+              "animalFodder": { "amount": -9999, "units": null },
+              "grazingMonthlyEvent": [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ],
+              "tillage": [
+                {
+                  "type": null,
+                  "date": null,
+                  "percent": -9999,
+                  "_id": "65f45323d58468470ba0020b"
+                }
+              ],
+              "irrigation": false,
+              "treeFelling": [
+                {
+                  "species": null,
+                  "other": null,
+                  "treeNumber": -9999,
+                  "DBHmean": { "diameter": -9999, "units": null },
+                  "_id": "65f45323d58468470ba0020c"
+                }
+              ],
+              "perennialCrops": [
+                {
+                  "cohortID": null,
+                  "species": null,
+                  "other": null,
+                  "plantingYear": -9999,
+                  "treeNumber": -9999,
+                  "DBHmean": { "diameter": -9999, "units": null },
+                  "hasRotation": false,
+                  "rotationYears": -9999,
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "residue": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba0020d"
+                }
+              ],
+              "annualCrops": [
+                {
+                  "species": null,
+                  "other": null,
+                  "sowingDate": null,
+                  "harvestDate": null,
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "residue": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba0020e"
+                }
+              ],
+              "pastures": [
+                {
+                  "percentArea": -9999,
+                  "productivity": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba0020f"
+                }
+              ],
+              "fallow": [
+                {
+                  "type": null,
+                  "percentArea": -9999,
+                  "startDate": null,
+                  "endDate": null,
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "residue": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba00210"
+                }
+              ]
+            },
+            "_id": "65f45324d58468470ba00226"
+          }
+        ],
+        "_id": "65f45325d58468470ba0022a"
+      },
+      {
+        "id": null,
+        "year": 2022,
+        "fuelUsage": {
+          "direct": {
+            "diesel": { "amount": -9999, "units": "litres" },
+            "petrol": { "amount": -9999, "units": "litres" }
+          },
+          "indirect": [
+            {
+              "service": null,
+              "area": { "amount": -9999, "units": "hectares" },
+              "serviceDetail": null,
+              "serviceCategory": null,
+              "_id": "65f45322d58468470ba00201"
+            }
+          ]
+        },
+        "fertilizerUsage": [
+          {
+            "amount": -9999,
+            "units": "percent",
+            "percentN": -9999,
+            "_id": "65f45322d58468470ba00202"
+          }
+        ],
+        "importedOrganicMatter": [
+          {
+            "type": "biochar",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00203"
+          },
+          {
+            "type": "compost",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00204"
+          },
+          {
+            "type": "manure",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00205"
+          },
+          {
+            "type": "mulch",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00206"
+          },
+          {
+            "type": "slurry",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00207"
+          },
+          {
+            "type": "fodder",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00208"
+          }
+        ],
+        "livestock": {
+          "grazingManagement": "",
+          "inFarm": [
+            {
+              "species": "Cattle",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (non-dairy)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00211"
+                },
+                {
+                  "name": "Mature males",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00212"
+                },
+                {
+                  "name": "Growing Cattle (6 - 24 months)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00213"
+                },
+                {
+                  "name": "Calves (< 6 months)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00214"
+                }
+              ],
+              "_id": "65f45324d58468470ba00215"
+            },
+            {
+              "species": "Dairy cows",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (> 2 years)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00216"
+                }
+              ]
+            },
+            {
+              "species": "Swine",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Sows",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00217"
+                },
+                {
+                  "name": "Boars",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00218"
+                },
+                {
+                  "name": "Finishers (3 - 6 months)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00219"
+                },
+                {
+                  "name": "Other swine",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021a"
+                },
+                {
+                  "name": "Piglets",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021b"
+                }
+              ]
+            },
+            {
+              "species": "Sheep",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021c"
+                },
+                {
+                  "name": "Mature males (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021d"
+                },
+                {
+                  "name": "Lambs (< 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021e"
+                }
+              ]
+            },
+            {
+              "species": "Goats",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021f"
+                },
+                {
+                  "name": "Mature males (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00220"
+                },
+                {
+                  "name": "Goat kids (< 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00221"
+                }
+              ]
+            },
+            {
+              "species": "Chicken",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Layer hens",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00222"
+                },
+                {
+                  "name": "Broilers",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00223"
+                },
+                {
+                  "name": "Other chicken",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00224"
+                }
+              ]
+            },
+            {
+              "species": "Turkeys",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Turkeys",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00225"
+                }
+              ]
+            }
+          ],
+          "outFarm": [
+            {
+              "species": null,
+              "amount": -9999,
+              "grazingDays": -9999,
+              "_id": "65f45323d58468470ba00209"
+            }
+          ]
+        },
+        "parcelLevelData": [
+          {
+            "id": null,
+            "parcelFixedValues": {
+              "parcelName": null,
+              "parcelID": null,
+              "areaGeoFile": { "area": -9999, "units": null },
+              "areaManualEntry": { "area": -9999, "units": null },
+              "coordinates": []
+            },
+            "yearParcelData": {
+              "primaryLandUse": null,
+              "secondaryLandUse": null,
+              "addedOrganicMatter": [
+                {
+                  "id": null,
+                  "type": null,
+                  "subType": null,
+                  "other": null,
+                  "amount": -9999,
+                  "units": null,
+                  "_id": "65f45323d58468470ba0020a"
+                }
+              ],
+              "animalFodder": { "amount": -9999, "units": null },
+              "grazingMonthlyEvent": [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ],
+              "tillage": [
+                {
+                  "type": null,
+                  "date": null,
+                  "percent": -9999,
+                  "_id": "65f45323d58468470ba0020b"
+                }
+              ],
+              "irrigation": false,
+              "treeFelling": [
+                {
+                  "species": null,
+                  "other": null,
+                  "treeNumber": -9999,
+                  "DBHmean": { "diameter": -9999, "units": null },
+                  "_id": "65f45323d58468470ba0020c"
+                }
+              ],
+              "perennialCrops": [
+                {
+                  "cohortID": null,
+                  "species": null,
+                  "other": null,
+                  "plantingYear": -9999,
+                  "treeNumber": -9999,
+                  "DBHmean": { "diameter": -9999, "units": null },
+                  "hasRotation": false,
+                  "rotationYears": -9999,
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "residue": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba0020d"
+                }
+              ],
+              "annualCrops": [
+                {
+                  "species": null,
+                  "other": null,
+                  "sowingDate": null,
+                  "harvestDate": null,
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "residue": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba0020e"
+                }
+              ],
+              "pastures": [
+                {
+                  "percentArea": -9999,
+                  "productivity": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba0020f"
+                }
+              ],
+              "fallow": [
+                {
+                  "type": null,
+                  "percentArea": -9999,
+                  "startDate": null,
+                  "endDate": null,
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "residue": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba00210"
+                }
+              ]
+            },
+            "_id": "65f45324d58468470ba00226"
+          }
+        ],
+        "_id": "65f45325d58468470ba0022b"
+      },
+      {
+        "id": null,
+        "year": 2023,
+        "fuelUsage": {
+          "direct": {
+            "diesel": { "amount": -9999, "units": "litres" },
+            "petrol": { "amount": -9999, "units": "litres" }
+          },
+          "indirect": [
+            {
+              "service": null,
+              "area": { "amount": -9999, "units": "hectares" },
+              "serviceDetail": null,
+              "serviceCategory": null,
+              "_id": "65f45322d58468470ba00201"
+            }
+          ]
+        },
+        "fertilizerUsage": [
+          {
+            "amount": -9999,
+            "units": "percent",
+            "percentN": -9999,
+            "_id": "65f45322d58468470ba00202"
+          }
+        ],
+        "importedOrganicMatter": [
+          {
+            "type": "biochar",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00203"
+          },
+          {
+            "type": "compost",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00204"
+          },
+          {
+            "type": "manure",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00205"
+          },
+          {
+            "type": "mulch",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00206"
+          },
+          {
+            "type": "slurry",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00207"
+          },
+          {
+            "type": "fodder",
+            "percentImported": 0,
+            "_id": "65f45322d58468470ba00208"
+          }
+        ],
+        "livestock": {
+          "grazingManagement": "",
+          "inFarm": [
+            {
+              "species": "Cattle",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (non-dairy)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00211"
+                },
+                {
+                  "name": "Mature males",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00212"
+                },
+                {
+                  "name": "Growing Cattle (6 - 24 months)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00213"
+                },
+                {
+                  "name": "Calves (< 6 months)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00214"
+                }
+              ],
+              "_id": "65f45324d58468470ba00215"
+            },
+            {
+              "species": "Dairy cows",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (> 2 years)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00216"
+                }
+              ]
+            },
+            {
+              "species": "Swine",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Sows",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00217"
+                },
+                {
+                  "name": "Boars",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00218"
+                },
+                {
+                  "name": "Finishers (3 - 6 months)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00219"
+                },
+                {
+                  "name": "Other swine",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021a"
+                },
+                {
+                  "name": "Piglets",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021b"
+                }
+              ]
+            },
+            {
+              "species": "Sheep",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021c"
+                },
+                {
+                  "name": "Mature males (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021d"
+                },
+                {
+                  "name": "Lambs (< 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021e"
+                }
+              ]
+            },
+            {
+              "species": "Goats",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Mature females (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba0021f"
+                },
+                {
+                  "name": "Mature males (> 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00220"
+                },
+                {
+                  "name": "Goat kids (< 1 year)",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00221"
+                }
+              ]
+            },
+            {
+              "species": "Chicken",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Layer hens",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00222"
+                },
+                {
+                  "name": "Broilers",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00223"
+                },
+                {
+                  "name": "Other chicken",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00224"
+                }
+              ]
+            },
+            {
+              "species": "Turkeys",
+              "grazingDays": -9999,
+              "manureTreatment": null,
+              "fertilityRate": -9999,
+              "category": [
+                {
+                  "name": "Turkeys",
+                  "amount": -9999,
+                  "_id": "65f45324d58468470ba00225"
+                }
+              ]
+            }
+          ],
+          "outFarm": [
+            {
+              "species": null,
+              "amount": -9999,
+              "grazingDays": -9999,
+              "_id": "65f45323d58468470ba00209"
+            }
+          ]
+        },
+        "parcelLevelData": [
+          {
+            "id": null,
+            "parcelFixedValues": {
+              "parcelName": null,
+              "parcelID": null,
+              "areaGeoFile": { "area": -9999, "units": null },
+              "areaManualEntry": { "area": -9999, "units": null },
+              "coordinates": []
+            },
+            "yearParcelData": {
+              "primaryLandUse": null,
+              "secondaryLandUse": null,
+              "addedOrganicMatter": [
+                {
+                  "id": null,
+                  "type": null,
+                  "subType": null,
+                  "other": null,
+                  "amount": -9999,
+                  "units": null,
+                  "_id": "65f45323d58468470ba0020a"
+                }
+              ],
+              "animalFodder": { "amount": -9999, "units": null },
+              "grazingMonthlyEvent": [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+              ],
+              "tillage": [
+                {
+                  "type": null,
+                  "date": null,
+                  "percent": -9999,
+                  "_id": "65f45323d58468470ba0020b"
+                }
+              ],
+              "irrigation": false,
+              "treeFelling": [
+                {
+                  "species": null,
+                  "other": null,
+                  "treeNumber": -9999,
+                  "DBHmean": { "diameter": -9999, "units": null },
+                  "_id": "65f45323d58468470ba0020c"
+                }
+              ],
+              "perennialCrops": [
+                {
+                  "cohortID": null,
+                  "species": null,
+                  "other": null,
+                  "plantingYear": -9999,
+                  "treeNumber": -9999,
+                  "DBHmean": { "diameter": -9999, "units": null },
+                  "hasRotation": false,
+                  "rotationYears": -9999,
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "residue": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba0020d"
+                }
+              ],
+              "annualCrops": [
+                {
+                  "species": null,
+                  "other": null,
+                  "sowingDate": null,
+                  "harvestDate": null,
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "residue": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba0020e"
+                }
+              ],
+              "pastures": [
+                {
+                  "percentArea": -9999,
+                  "productivity": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba0020f"
+                }
+              ],
+              "fallow": [
+                {
+                  "type": null,
+                  "percentArea": -9999,
+                  "startDate": null,
+                  "endDate": null,
+                  "harvest": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "residue": [
+                    {
+                      "date": null,
+                      "type": null,
+                      "amount": -9999,
+                      "units": null,
+                      "dry": false,
+                      "_id": "65f45322d58468470ba00200"
+                    }
+                  ],
+                  "_id": "65f45323d58468470ba00210"
+                }
+              ]
+            },
+            "_id": "65f45324d58468470ba00226"
+          }
+        ],
+        "_id": "65f45325d58468470ba0022c"
+      }
+    ]
+  ]
+}

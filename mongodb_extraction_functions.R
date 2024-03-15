@@ -451,7 +451,7 @@ get_orgamendments_inputs = function(monitoringData, scenarios) {
     imported_frac = c()
   )
   
-  for (year in monitoringData[[1]]$yearlyFarmData) {
+  for (year in monitoringData$yearlyFarmData) {
     for (amendment in year$importedOrganicMatter) {
       imported_OM_inputs = rbind(imported_OM_inputs, data.frame(
         year = year$year,
@@ -477,82 +477,85 @@ get_orgamendments_inputs = function(monitoringData, scenarios) {
   }
   
   added_OM_inputs <- left_join(added_OM_inputs, imported_OM_inputs, by = c("year","type"))
+  added_OM_inputs <- left_join(added_OM_inputs, scenarios, by = "year")
+  
+  return(added_OM_inputs)
     
   
   
-  parcel_names <- landUseSummaryOrPractices[[1]]$parcelName
-  orgamendments_inputs = data.frame(parcel_ID = c(), scenario = c(), source = c(), 
-                                    quantity_t_ha = c(), imported_frac = c(), remaining_frac = c())
+  # parcel_names <- landUseSummaryOrPractices[[1]]$parcelName
+  # orgamendments_inputs = data.frame(parcel_ID = c(), scenario = c(), source = c(), 
+  #                                   quantity_t_ha = c(), imported_frac = c(), remaining_frac = c())
   
-  for (i in c(1:length(parcel_names))){
-    for (j in c(0:10)){
-      year_str <- paste0('year', j)
-      year_chosen = landUseSummaryOrPractices[[1]][[year_str]]
+  # for (i in c(1:length(parcel_names))){
+  #   for (j in c(0:10)){
+  #     year_str <- paste0('year', j)
+  #     year_chosen = landUseSummaryOrPractices[[1]][[year_str]]
       
       # Data check and correction (should not be necessary: data checks should be done upstream)
-      manureApplication <- missing_to_zero(year_chosen$manureApplication[i])
-      if(is.na(manureApplication) | manureApplication < 0) { manureApplication <- 0 }
-      compostApplication <- missing_to_zero(year_chosen$compostApplication[i])
-      if(is.na(compostApplication) | compostApplication < 0) { compostApplication <- 0 }
-      hayStrawApplication <- missing_to_zero(year_chosen$hayStrawApplication[i])
-      if(is.na(hayStrawApplication) | hayStrawApplication < 0) { hayStrawApplication <- 0 }
-      percentManureImported <- missing_to_na(year_chosen$percentManureImported[i])
-      if(is.null(percentManureImported)) {percentManureImported <- 100}
-      if(is.na(percentManureImported)) {percentManureImported <- 100}
-      percentCompostImported <- missing_to_na(year_chosen$percentCompostImported[i])
-      if(is.null(percentCompostImported)) {percentCompostImported <- 100}
-      if(is.na(percentCompostImported)) {percentCompostImported <- 100}
-      percentHayStrawImported <- missing_to_na(year_chosen$percentageOfHayStrawImported[i])
-      if(is.null(percentHayStrawImported)) {percentHayStrawImported <- 100}
-      if(is.na(percentHayStrawImported)) {percentHayStrawImported <- 100}
-      isBaleGrazing <- year_chosen$baleGrazing[i]
-      if(is.null(isBaleGrazing)) {isBaleGrazing <- FALSE}
-      if(is.na(isBaleGrazing)) {isBaleGrazing <- FALSE}
-      baleResidue <- missing_to_zero(year_chosen$residueLeftAfterBaleGrazing[i])
-      if(is.null(baleResidue)) {baleResidue <- NA}
-      if(is.na(baleResidue)) {baleResidue <- 15} # 15 is the default % residue left after grazing 
+      # manureApplication <- missing_to_zero(year_chosen$manureApplication[i])
+      # if(is.na(manureApplication) | manureApplication < 0) { manureApplication <- 0 }
+      # compostApplication <- missing_to_zero(year_chosen$compostApplication[i])
+      # if(is.na(compostApplication) | compostApplication < 0) { compostApplication <- 0 }
+      # hayStrawApplication <- missing_to_zero(year_chosen$hayStrawApplication[i])
+      # if(is.na(hayStrawApplication) | hayStrawApplication < 0) { hayStrawApplication <- 0 }
+      # percentManureImported <- missing_to_na(year_chosen$percentManureImported[i])
+      # if(is.null(percentManureImported)) {percentManureImported <- 100}
+      # if(is.na(percentManureImported)) {percentManureImported <- 100}
+      # percentCompostImported <- missing_to_na(year_chosen$percentCompostImported[i])
+      # if(is.null(percentCompostImported)) {percentCompostImported <- 100}
+      # if(is.na(percentCompostImported)) {percentCompostImported <- 100}
+      # percentHayStrawImported <- missing_to_na(year_chosen$percentageOfHayStrawImported[i])
+      # if(is.null(percentHayStrawImported)) {percentHayStrawImported <- 100}
+      # if(is.na(percentHayStrawImported)) {percentHayStrawImported <- 100}
+      # isBaleGrazing <- year_chosen$baleGrazing[i]
+      # if(is.null(isBaleGrazing)) {isBaleGrazing <- FALSE}
+      # if(is.na(isBaleGrazing)) {isBaleGrazing <- FALSE}
+      # baleResidue <- missing_to_zero(year_chosen$residueLeftAfterBaleGrazing[i])
+      # if(is.null(baleResidue)) {baleResidue <- NA}
+      # if(is.na(baleResidue)) {baleResidue <- 15} # 15 is the default % residue left after grazing 
       
-      # Manure (animal dung)
-      orgamendments_temp <- data.frame(
-        parcel_ID = parcel_names[i], 
-        scenario = year_str, 
-        source = "Other Cattle", # AN UNFOLDING LIST OF MANURE TYPE MIGHT HAVE TO BE ADDED TO UI
-        quantity_t_ha = manureApplication,
-        imported_frac = percentManureImported/100,
-        remaining_frac = 1
-      )
-      orgamendments_inputs <- rbind(orgamendments_inputs, orgamendments_temp)
+      # # Manure (animal dung)
+      # orgamendments_temp <- data.frame(
+      #   parcel_ID = parcel_names[i], 
+      #   scenario = year_str, 
+      #   source = "Other Cattle", # AN UNFOLDING LIST OF MANURE TYPE MIGHT HAVE TO BE ADDED TO UI
+      #   quantity_t_ha = manureApplication,
+      #   imported_frac = percentManureImported/100,
+      #   remaining_frac = 1
+      # )
+      # orgamendments_inputs <- rbind(orgamendments_inputs, orgamendments_temp)
+      # 
+      # # Compost
+      # orgamendments_temp <- data.frame(
+      #   parcel_ID = parcel_names[i], 
+      #   scenario = year_str, 
+      #   source = "Green compost",
+      #   quantity_t_ha = compostApplication,
+      #   imported_frac = percentCompostImported/100,
+      #   remaining_frac = 1
+      # )
+      # orgamendments_inputs <- rbind(orgamendments_inputs, orgamendments_temp)
+      # 
+      # # Hay. Warning: this used as the value for bale hay/fodder. Should be changed to straw amendments and fodder done separately
+      # orgamendments_temp <- data.frame(
+      #   parcel_ID = parcel_names[i], 
+      #   scenario = year_str, 
+      #   source = "Hay",
+      #   quantity_t_ha = hayStrawApplication,
+      #   imported_frac = percentHayStrawImported/100,
+      #   remaining_frac = ifelse(isBaleGrazing, baleResidue/100, 1)
+      # )
+      # orgamendments_inputs <- rbind(orgamendments_inputs, orgamendments_temp)
       
-      # Compost
-      orgamendments_temp <- data.frame(
-        parcel_ID = parcel_names[i], 
-        scenario = year_str, 
-        source = "Green compost",
-        quantity_t_ha = compostApplication,
-        imported_frac = percentCompostImported/100,
-        remaining_frac = 1
-      )
-      orgamendments_inputs <- rbind(orgamendments_inputs, orgamendments_temp)
-      
-      # Hay. Warning: this used as the value for bale hay/fodder. Should be changed to straw amendments and fodder done separately
-      orgamendments_temp <- data.frame(
-        parcel_ID = parcel_names[i], 
-        scenario = year_str, 
-        source = "Hay",
-        quantity_t_ha = hayStrawApplication,
-        imported_frac = percentHayStrawImported/100,
-        remaining_frac = ifelse(isBaleGrazing, baleResidue/100, 1)
-      )
-      orgamendments_inputs <- rbind(orgamendments_inputs, orgamendments_temp)
-      
-    }
-    
-  }
-  
-  orgamendments_inputs <- rbind(orgamendments_inputs, orgamendments_inputs%>%
-                                  filter(scenario=='year0')%>%
-                                  mutate(scenario='baseline')) # Manure addition baseline is based on previous years
-  return(orgamendments_inputs)
+  #   }
+  #   
+  # }
+  # 
+  # orgamendments_inputs <- rbind(orgamendments_inputs, orgamendments_inputs%>%
+  #                                 filter(scenario=='year0')%>%
+  #                                 mutate(scenario='baseline')) # Manure addition baseline is based on previous years
+  # return(orgamendments_inputs)
 }
 
 
@@ -968,7 +971,7 @@ get_fuel_inputs_direct = function(monitoringData, scenarios){
   )
   
   # For loop to extract fuel inputs
-  for (year in monitoringData[[1]]$yearlyFarmData) {
+  for (year in monitoringData$yearlyFarmData) {
     for (fuel_index in 1: length(year$fuelUsage$direct)) {
       fuel_inputs_direct <- rbind(fuel_inputs_direct, data.frame(
         year          = year$year, 
@@ -997,7 +1000,7 @@ get_fuel_inputs_indirect = function(monitoringData, scenarios) {
   )
   
   # For loop to extract fuel inputs
-  for (year in monitoringData[[1]]$yearlyFarmData) {
+  for (year in monitoringData$yearlyFarmData) {
     for (service in year$fuelUsage$indirect) {
       fuel_inputs_indirect <- rbind(fuel_inputs_indirect, data.frame(
         year             = year$year, 
@@ -1041,10 +1044,10 @@ get_land_use_type <- function(landUseSummaryOrPractices, parcel_inputs){
 
 get_fixed_farm_inputs <- function(monitoringData) {
   
-  fixed_farm_inputs <- data.frame(farm_Id            = monitoringData[[1]]$farmId,
-                                  email              = monitoringData[[1]]$email,
-                                  unique_CF_farm_Id  = monitoringData[[1]]$uniqueCfFarmId,
-                                  project_start_year = monitoringData[[1]]$projectStartYear)
+  fixed_farm_inputs <- data.frame(farm_Id            = monitoringData$farmId,
+                                  email              = monitoringData$email,
+                                  unique_CF_farm_Id  = monitoringData$uniqueCfFarmId,
+                                  project_start_year = monitoringData$projectStartYear)
   return(fixed_farm_inputs)
   
 }
@@ -1067,7 +1070,7 @@ get_fixed_parcel_inputs <- function(monitoringData) {
   )
   
   # Loop through parcels and extract fixed parcel inputs
-  for (parcel in monitoringData[[1]]$yearlyFarmData[[1]]$parcelLevelData) {
+  for (parcel in monitoringData$yearlyFarmData[[1]]$parcelLevelData) {
     fixed_parcel_inputs <- rbind(fixed_parcel_inputs, data.frame(
       parcel_name      = parcel$parcelFixedValues$parcelName,
       parcel_ID        = parcel$parcelFixedValues$parcelID,
@@ -1114,7 +1117,7 @@ get_scenarios <- function(monitoringData, project_start_year) {
     year     = c()
   )
   
-  for (year in monitoringData[[1]]$yearlyFarmData) {
+  for (year in monitoringData$yearlyFarmData) {
     if (year$year >= project_start_year - 3) {
       scenarios <- rbind(scenarios, data.frame(
         scenario = ifelse (year$year < project_start_year, "baseline", "project"),

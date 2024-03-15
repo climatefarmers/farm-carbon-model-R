@@ -67,7 +67,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   ## Get the farm data from the JSON file or MongoDB ---------------------------
   # !!CODE STILL NEEDS TO BE ADAPTED TO NEW DB SCHEMA!!
   
-  monitoringData <- fromJSON(file = jsonfile)
+  monitoringData <- fromJSON(file = jsonfile_example_farm)
   
   ## Check that only one source of farm data was provided
   # if(!is.na(farmId) & !is.na(JSONfile)){
@@ -125,7 +125,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   ## Fetching pedo-climatic zone -----------------------------------------------
   # !!CODE STILL NEEDS TO BE ADAPTED TO NEW DB SCHEMA!!
   
-  farm_EnZ <- "Mediterranean south"
+  farm_EnZ <- "Mediterranean north"
   
   # farm_parameters <- mongo(collection="farmparameters",
   #                          db="carbonplus_production_db",
