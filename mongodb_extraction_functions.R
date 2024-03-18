@@ -431,7 +431,47 @@ get_bulk_density <- function(soilAnalysis, soilMapsData){
 ### GET INPUT FUNCTIONS
 get_orgamendments_inputs = function(monitoringData, scenarios) {
 
-  # Data frame for added organic matter
+  # Data frame for all OM subtypes to ensure data availability for all years and parcels
+  OM_subtypes <- data.frame(
+    type = c("biochar", 
+             "manure", "manure", "manure", "manure", "manure", "manure", 
+             "compost", "compost", "compost", "compost",
+             "mulch", "mulch", "mulch", "mulch",
+             "slurry", "slurry", "slurry",
+             "other",
+             "fodder"),
+    sub_type = c("-", 
+                 "cattle manure", "chicken manure", "horse manure", "pig manure", "sheep manure", "-", 
+                 "green/plant-based compost", "manure-based compost", "mushroom compost", "-",
+                 "hay/straw", "leaves", "wood bark/wood chips", "-",
+                 "cattle slurry", "pig slurry", "-",
+                 "-",
+                 "-")
+  )
+  
+  # Data frame for fianl OM inputs
+  final_OM_inputs <- data.frame(
+    year = c(),
+    parcel_name = c(),
+    parcel_ID = c(), # Do we need the parcel ID?
+    type = c(),
+    sub_type = c(),
+    other = c(),
+    amount = c(),
+    units = c(),
+    imported_percent = c(),
+    imported_frac = c()
+  )
+  
+  # Data frame for imported OM inputs
+  imported_OM_inputs <- data.frame(
+    year = c(),
+    type = c(),
+    imported_percent = c(),
+    imported_frac = c()
+  )
+  
+  # Data frame for added OM inputs
   added_OM_inputs <- data.frame(
     year = c(),
     parcel_name = c(),
@@ -442,15 +482,7 @@ get_orgamendments_inputs = function(monitoringData, scenarios) {
     amount = c(),
     units = c()
   )
-  
-  # Data frame for imported organic matter
-  imported_OM_inputs <- data.frame(
-    year = c(),
-    type = c(),
-    imported_percent = c(),
-    imported_frac = c()
-  )
-  
+    
   for (year in monitoringData$yearlyFarmData) {
     for (amendment in year$importedOrganicMatter) {
       imported_OM_inputs = rbind(imported_OM_inputs, data.frame(
@@ -473,15 +505,24 @@ get_orgamendments_inputs = function(monitoringData, scenarios) {
           units = amendment$units
         ))
       }
+      for (i in 1:length(OM_subtypes$sub_type)) {
+        final_OM_inputs <- rbind(final_OM_inputs, data.frame(
+          year = year$year,
+          parcel_name = parcel$parcelFixedValues$parcelName,
+          parcel_ID = parcel$parcelFixedValues$parcelID,
+          type = OM_subtypes$type[i],
+          sub_type = OM_subtypes$sub_type[i]
+        ))
+      }
     }
   }
   
-  added_OM_inputs <- left_join(added_OM_inputs, imported_OM_inputs, by = c("year","type"))
-  added_OM_inputs <- left_join(added_OM_inputs, scenarios, by = "year")
+  final_OM_inputs <- left_join(final_OM_inputs, added_OM_inputs, by = c("year", "parcel_name", "parcel_ID", "type", "sub_type")) %>% mutate(amount = ifelse(is.na(amount), 0, amount))
+  final_OM_inputs <- left_join(final_OM_inputs, imported_OM_inputs, by = c("year", "type"))
+  final_OM_inputs <- left_join(final_OM_inputs, scenarios, by = c("year"))
   
-  return(added_OM_inputs)
+  return(final_OM_inputs)
     
-  
   
   # parcel_names <- landUseSummaryOrPractices[[1]]$parcelName
   # orgamendments_inputs = data.frame(parcel_ID = c(), scenario = c(), source = c(), 
