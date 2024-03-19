@@ -226,6 +226,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   # GHG reductions
   fuel_inputs_direct <- get_fuel_inputs_direct(monitoringData, scenarios) 
   fuel_inputs_indirect <- get_fuel_inputs_indirect(monitoringData, scenarios)
+  fertilizer_inputs <- get_fertilizer_inputs(monitoringData, scenarios)
   
   ## Yearly parcel inputs
   orgamendments_inputs <- get_orgamendments_inputs(monitoringData, scenarios) 
@@ -239,7 +240,6 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   animal_inputs <- get_animal_inputs(grazing_yearly, livestock_inputs, parcel_inputs)  # Animal manure
   crop_inputs <- get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, grazing_yearly, grazing_monthly)  # Crops and residues
   pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, pasture_factors, farm_EnZ, grazing_yearly, grazing_monthly, my_logger, parcel_inputs)
-  fertilizer_inputs <- get_fertilizer_inputs(landUseSummaryOrPractices)
   tree_inputs <- get_tree_inputs(landUseSummaryOrPractices)
   bare_field_inputs <- get_bareground_inputs(landUseSummaryOrPractices, soil_cover_factors, farm_EnZ, settings$bare_bl_type)
   tilling_inputs <- get_tilling_inputs(landUseSummaryOrPractices, tilling_factors, farm_EnZ)

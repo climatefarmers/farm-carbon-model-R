@@ -451,73 +451,76 @@ get_orgamendments_inputs = function(monitoringData, scenarios) {
   
   # Data frame for fianl OM inputs
   final_OM_inputs <- data.frame(
-    year = c(),
-    parcel_name = c(),
-    parcel_ID = c(), # Do we need the parcel ID?
-    type = c(),
-    sub_type = c(),
-    other = c(),
-    amount = c(),
-    units = c(),
+    year             = c(),
+    parcel_name      = c(),
+    parcel_ID        = c(), # Do we need the parcel ID?
+    type             = c(),
+    sub_type         = c(),
+    other            = c(),
+    amount           = c(),
+    units            = c(),
     imported_percent = c(),
-    imported_frac = c()
+    imported_frac    = c()
   )
   
   # Data frame for imported OM inputs
   imported_OM_inputs <- data.frame(
-    year = c(),
-    type = c(),
+    year             = c(),
+    type             = c(),
     imported_percent = c(),
-    imported_frac = c()
+    imported_frac    = c()
   )
   
   # Data frame for added OM inputs
   added_OM_inputs <- data.frame(
-    year = c(),
+    year        = c(),
     parcel_name = c(),
-    parcel_ID = c(), # Do we need the parcel ID?
-    type = c(),
-    sub_type = c(),
-    other = c(),
-    amount = c(),
-    units = c()
+    parcel_ID   = c(), # Do we need the parcel ID?
+    type        = c(),
+    sub_type    = c(),
+    other       = c(),
+    amount      = c(),
+    units       = c()
   )
     
   for (year in monitoringData$yearlyFarmData) {
     for (amendment in year$importedOrganicMatter) {
       imported_OM_inputs = rbind(imported_OM_inputs, data.frame(
-        year = year$year,
-        type = amendment$type,
+        year             = year$year,
+        type             = amendment$type,
         imported_percent = amendment$percentImported,
-        imported_frac = amendment$percentImported/100
+        imported_frac    = amendment$percentImported/100
       ))
     }
     for (parcel in year$parcelLevelData) {
       for (amendment in parcel$yearParcelData$addedOrganicMatter) {
         added_OM_inputs = rbind(added_OM_inputs, data.frame(
-          year = year$year,
+          year        = year$year,
           parcel_name = parcel$parcelFixedValues$parcelName,
-          parcel_ID = parcel$parcelFixedValues$parcelID,
-          type = amendment$type,
-          sub_type = amendment$subType,
-          other = amendment$other,
-          amount = amendment$amount,
-          units = amendment$units
+          parcel_ID   = parcel$parcelFixedValues$parcelID,
+          type        = amendment$type,
+          sub_type    = ifelse (is_null(amendment$subType), "-", amendment$subType),
+          other       = ifelse (is_null(amendment$other), "-", amendment$other),
+          amount      = amendment$amount,
+          units       = amendment$units
         ))
       }
       for (i in 1:length(OM_subtypes$sub_type)) {
         final_OM_inputs <- rbind(final_OM_inputs, data.frame(
-          year = year$year,
+          year        = year$year,
           parcel_name = parcel$parcelFixedValues$parcelName,
-          parcel_ID = parcel$parcelFixedValues$parcelID,
-          type = OM_subtypes$type[i],
-          sub_type = OM_subtypes$sub_type[i]
+          parcel_ID   = parcel$parcelFixedValues$parcelID,
+          type        = OM_subtypes$type[i],
+          sub_type    = OM_subtypes$sub_type[i]
         ))
       }
     }
   }
   
-  final_OM_inputs <- left_join(final_OM_inputs, added_OM_inputs, by = c("year", "parcel_name", "parcel_ID", "type", "sub_type")) %>% mutate(amount = ifelse(is.na(amount), 0, amount))
+  final_OM_inputs <- left_join(final_OM_inputs, added_OM_inputs, by = c("year", "parcel_name", "parcel_ID", "type", "sub_type")) %>% 
+    mutate(amount = ifelse(is.na(amount), 0, amount)) %>% 
+    mutate(other = ifelse(is.na(other), "-", other)) %>% 
+    mutate(units = ifelse(is.na(units), "-", units))
   final_OM_inputs <- left_join(final_OM_inputs, imported_OM_inputs, by = c("year", "type"))
   final_OM_inputs <- left_join(final_OM_inputs, scenarios, by = c("year"))
   
@@ -932,72 +935,90 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
 # }
 
 
-get_fertilizer_inputs = function(landUseSummaryOrPractices){
-  # takes landUseSummaryOrPractices from farms collection
-  # extracts fertilizer inputs dataframe 
-  fertilizer_inputs = data.frame(parcel_ID = c(), field_area = c(), scenario = c(), usage_boolean=c(), 
-                                 fertilizer_type=c(), quantity_t_ha=c(), n_content_perc=c())
-  list_missing_data = c()
+get_fertilizer_inputs = function(monitoringData, scenarios) {
+
+  # Data frame for fertilzer inputs
+  fertilizer_inputs = data.frame(
+    year      = c(),
+    amount    = c(), 
+    units     = c(),
+    percent_n = c()
+    )
   
-  for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
-    for (j in c(0:10)){
-      
-      parcel_id <- landUseSummaryOrPractices[[1]]$parcelName[i]
-      year_str <- paste0('year',j)
-      
-      # Determine the field area depending on input source
-      use_manual_area <- landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea[i]
-      if(is.na(use_manual_area) |  is.null(use_manual_area) | !use_manual_area) {
-        field_area <- missing_to_zero(landUseSummaryOrPractices[[1]]$area[i])/10000 # if no corrected value was provided by the farmer
-      } else {
-        field_area <- missing_to_zero(landUseSummaryOrPractices[[1]]$manuallyEnteredArea[i])/10000 # add a verification of consistency here?
-      }
-      
-      year_chosen = landUseSummaryOrPractices[[1]][[year_str]]
-      
-      fertilizer_temp <- data.frame(
-        parcel_ID = parcel_id, 
-        field_area = field_area,
-        scenario = year_str,
-        usage_boolean = year_chosen$syntheticFertilizer$usage[i],
-        fertilizer_type = "synthetic", # here gathering data from the synthetic fertilizer dashboard entry
-        quantity_t_ha = ifelse(year_chosen$syntheticFertilizer$usage[i]==TRUE, missing_to_zero(year_chosen$syntheticFertilizer$tonsPerYear[i]),0),
-        n_content_perc=ifelse(year_chosen$syntheticFertilizer$usage[i]==TRUE, missing_to_zero(year_chosen$syntheticFertilizer$percentOfNitrogen[i]),0)
-      )
-      fertilizer_inputs <- rbind(fertilizer_inputs, fertilizer_temp)
-      
-      if (j==0){
-        fertilizer_inputs <- rbind(fertilizer_inputs,data.frame(
-          parcel_ID = parcel_id, 
-          field_area = ifelse(is.null(landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea[i]),
-                              c(missing_to_zero(landUseSummaryOrPractices[[1]]$area[i])/10000),
-                              ifelse(is.na(landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea[i]) |
-                                       landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea[i] == FALSE, # means that no corrected value was provided by the farmer
-                                     c(missing_to_zero(landUseSummaryOrPractices[[1]]$area[i])/10000),
-                                     c(missing_to_zero(landUseSummaryOrPractices[[1]]$manuallyEnteredArea[i])/10000))), # add a verification of consistence here
-          scenario = c("baseline"),
-          usage_boolean = year_chosen$syntheticFertilizer$usage[i],
-          fertilizer_type = "synthetic", # here gathering data from the synthetic fertilizer dashboard entry
-          quantity_t_ha = ifelse(year_chosen$syntheticFertilizer$usage[i]==TRUE, missing_to_zero(year_chosen$syntheticFertilizer$tonsPerYear[i]),0),
-          n_content_perc=ifelse(year_chosen$syntheticFertilizer$usage[i]==TRUE, missing_to_zero(year_chosen$syntheticFertilizer$percentOfNitrogen[i]),0)))
-      }
-      last_index = nrow(fertilizer_inputs)
-      if (fertilizer_inputs$usage_boolean[last_index]==TRUE){
-        if (fertilizer_inputs$quantity_t_ha[last_index]==0){
-          list_missing_data = c(list_missing_data,paste(fertilizer_inputs$parcel_ID[last_index],
-                                                        ' (year',j,"): quantity_t_ha missing", sep=""))
-        }
-        if (fertilizer_inputs$n_content_perc[last_index]==0){
-          list_missing_data = c(list_missing_data,paste(fertilizer_inputs$parcel_ID[last_index],
-                                                        ' (year',j,"): n_content_perc missing", sep=""))
-        }
-      }
+  for (year in monitoringData$yearlyFarmData) {
+    for (entry in year$fertilizerUsage) {
+      fertilizer_inputs = rbind(fertilizer_inputs, data.frame(
+        year      = year$year,
+        amount    = ifelse(entry$amount == -9999, 0, entry$amount),
+        units     = ifelse(is_null(entry$units), "-", entry$units),
+        percent_n = ifelse(entry$percentN == -9999, 0, entry$percentN)
+      ))
     }
   }
-  if (length(list_missing_data)>0){
-    log4r::error(my_logger, paste('WARNING: Fertilizer data: ',list(list_missing_data),'.', paste=''))
-  }
-  return(fertilizer_inputs)
+  
+  fertilizer_inputs <- left_join(fertilizer_inputs, scenarios, by = "year")
+  
+  return (fertilizer_inputs)
+  
+  # for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
+  #   for (j in c(0:10)){
+  #     
+  #     parcel_id <- landUseSummaryOrPractices[[1]]$parcelName[i]
+  #     year_str <- paste0('year',j)
+  #     
+  #     # Determine the field area depending on input source
+  #     use_manual_area <- landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea[i]
+  #     if(is.na(use_manual_area) |  is.null(use_manual_area) | !use_manual_area) {
+  #       field_area <- missing_to_zero(landUseSummaryOrPractices[[1]]$area[i])/10000 # if no corrected value was provided by the farmer
+  #     } else {
+  #       field_area <- missing_to_zero(landUseSummaryOrPractices[[1]]$manuallyEnteredArea[i])/10000 # add a verification of consistency here?
+  #     }
+  #     
+  #     year_chosen = landUseSummaryOrPractices[[1]][[year_str]]
+  #     
+  #     fertilizer_temp <- data.frame(
+  #       parcel_ID = parcel_id, 
+  #       field_area = field_area,
+  #       scenario = year_str,
+  #       usage_boolean = year_chosen$syntheticFertilizer$usage[i],
+  #       fertilizer_type = "synthetic", # here gathering data from the synthetic fertilizer dashboard entry
+  #       quantity_t_ha = ifelse(year_chosen$syntheticFertilizer$usage[i]==TRUE, missing_to_zero(year_chosen$syntheticFertilizer$tonsPerYear[i]),0),
+  #       n_content_perc=ifelse(year_chosen$syntheticFertilizer$usage[i]==TRUE, missing_to_zero(year_chosen$syntheticFertilizer$percentOfNitrogen[i]),0)
+  #     )
+  #     fertilizer_inputs <- rbind(fertilizer_inputs, fertilizer_temp)
+  #     
+  #     if (j==0){
+  #       fertilizer_inputs <- rbind(fertilizer_inputs,data.frame(
+  #         parcel_ID = parcel_id, 
+  #         field_area = ifelse(is.null(landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea[i]),
+  #                             c(missing_to_zero(landUseSummaryOrPractices[[1]]$area[i])/10000),
+  #                             ifelse(is.na(landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea[i]) |
+  #                                      landUseSummaryOrPractices[[1]]$usingManuallyEnteredArea[i] == FALSE, # means that no corrected value was provided by the farmer
+  #                                    c(missing_to_zero(landUseSummaryOrPractices[[1]]$area[i])/10000),
+  #                                    c(missing_to_zero(landUseSummaryOrPractices[[1]]$manuallyEnteredArea[i])/10000))), # add a verification of consistence here
+  #         scenario = c("baseline"),
+  #         usage_boolean = year_chosen$syntheticFertilizer$usage[i],
+  #         fertilizer_type = "synthetic", # here gathering data from the synthetic fertilizer dashboard entry
+  #         quantity_t_ha = ifelse(year_chosen$syntheticFertilizer$usage[i]==TRUE, missing_to_zero(year_chosen$syntheticFertilizer$tonsPerYear[i]),0),
+  #         n_content_perc=ifelse(year_chosen$syntheticFertilizer$usage[i]==TRUE, missing_to_zero(year_chosen$syntheticFertilizer$percentOfNitrogen[i]),0)))
+  #     }
+  #     last_index = nrow(fertilizer_inputs)
+  #     if (fertilizer_inputs$usage_boolean[last_index]==TRUE){
+  #       if (fertilizer_inputs$quantity_t_ha[last_index]==0){
+  #         list_missing_data = c(list_missing_data,paste(fertilizer_inputs$parcel_ID[last_index],
+  #                                                       ' (year',j,"): quantity_t_ha missing", sep=""))
+  #       }
+  #       if (fertilizer_inputs$n_content_perc[last_index]==0){
+  #         list_missing_data = c(list_missing_data,paste(fertilizer_inputs$parcel_ID[last_index],
+  #                                                       ' (year',j,"): n_content_perc missing", sep=""))
+  #       }
+  #     }
+  #   }
+  # }
+  # if (length(list_missing_data)>0){
+  #   log4r::error(my_logger, paste('WARNING: Fertilizer data: ',list(list_missing_data),'.', paste=''))
+  # }
+  # return(fertilizer_inputs)
 }
 
 
@@ -1012,6 +1033,7 @@ get_fuel_inputs_direct = function(monitoringData, scenarios){
   )
   
   # For loop to extract fuel inputs
+  # Data entry mandatory. That's why is_null request is not necessary.
   for (year in monitoringData$yearlyFarmData) {
     for (fuel_index in 1: length(year$fuelUsage$direct)) {
       fuel_inputs_direct <- rbind(fuel_inputs_direct, data.frame(
@@ -1045,11 +1067,11 @@ get_fuel_inputs_indirect = function(monitoringData, scenarios) {
     for (service in year$fuelUsage$indirect) {
       fuel_inputs_indirect <- rbind(fuel_inputs_indirect, data.frame(
         year             = year$year, 
-        service          = service$service,
-        area             = service$area$amount,
-        units            = service$area$units,
-        servie_detail    = service$serviceDetail,
-        service_category = service$serviceCategory
+        service          = ifelse (is_null(service$service), "-", service$service),
+        area             = ifelse (service$area$amount == -9999, 0, service$area$amount),
+        units            = ifelse (is_null(service$area$units), "-", service$area$units),
+        servie_detail    = ifelse (is_null(service$serviceDetail), "-", service$serviceDetail),
+        service_category = ifelse (is_null(service$serviceCategory), "-", service$serviceCategory)
       ))
     }
   }
@@ -1113,17 +1135,19 @@ get_fixed_parcel_inputs <- function(monitoringData) {
   # Loop through parcels and extract fixed parcel inputs
   for (parcel in monitoringData$yearlyFarmData[[1]]$parcelLevelData) {
     fixed_parcel_inputs <- rbind(fixed_parcel_inputs, data.frame(
-      parcel_name      = parcel$parcelFixedValues$parcelName,
-      parcel_ID        = parcel$parcelFixedValues$parcelID,
-      area_geo         = parcel$parcelFixedValues$areaGeoFile$area, # missing_to_zero(landUseSummaryOrPractices[[1]]$area) --> missing_to_zero needed?
-      area_geo_unit    = parcel$parcelFixedValues$areaGeoFile$units,
-      area_manual      = parcel$parcelFixedValues$areaManualEntry$area, 
-      area_manual_unit = parcel$parcelFixedValues$areaManualEntry$units,
+      parcel_name      = parcel$parcelFixedValues$parcelName, # mandatory entry
+      parcel_ID        = parcel$parcelFixedValues$parcelID, # mandatory entry
+      area_geo         = parcel$parcelFixedValues$areaGeoFile$area, #"mandatory" entry
+      area_geo_unit    = parcel$parcelFixedValues$areaGeoFile$units, #"mandatory" entry
+      area_manual      = parcel$parcelFixedValues$areaManualEntry$area, # not mandatory entry; default = -9999
+      area_manual_unit = ifelse(is_null(parcel$parcelFixedValues$areaManualEntry$units), "-", parcel$parcelFixedValues$areaManualEntry$units), # not mandatory
       use_manual_area  = ifelse(parcel$parcelFixedValues$areaManualEntry$area != -9999, TRUE, FALSE),
       area             = ifelse(parcel$parcelFixedValues$areaManualEntry$area != -9999, 
                                 parcel$parcelFixedValues$areaManualEntry$area/1000, 
                                 parcel$parcelFixedValues$areaGeoFile$area/1000), 
-      area_unit        = "ha",
+      area_unit        = ifelse(parcel$parcelFixedValues$areaManualEntry$area != -9999, 
+                                parcel$parcelFixedValues$areaManualEntry$units, 
+                                parcel$parcelFixedValues$areaGeoFile$units),
       longitude        = get_mean_longitude(parcel$parcelFixedValues$coordinates), 
       latitude         = get_mean_latitude(parcel$parcelFixedValues$coordinates)
     ))

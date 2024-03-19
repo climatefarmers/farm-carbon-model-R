@@ -24,8 +24,8 @@
                             "amount": 15.8,
                             "units": "hectares"
                         },
-                        "serviceDetail": "",
-                        "serviceCategory": ""
+                        "serviceDetail": null,
+                        "serviceCategory": null
                     }
                 ]
             },
@@ -34,6 +34,11 @@
                     "amount": 11,
                     "units": "tonnes",
                     "percentN": 55
+                },
+                {
+                    "amount": 8,
+                    "units": "tonnes",
+                    "percentN": 12
                 }
             ],
             "importedOrganicMatter": [
@@ -64,7 +69,7 @@
                     },
                     {
                     "type": "fodder",
-                    "percentImported": 0,
+                    "percentImported": 12,
                     "_id": "65f45322d58468470ba00208"
                     }
             ],
@@ -274,20 +279,28 @@
                     },
                     "yearParcelData": {
                         "primaryLandUse": "Arablecrops",
-                        "secondaryLandUse": "",
+                        "secondaryLandUse": null,
                         "addedOrganicMatter": [ 
                             {
                                 "id": "compost_01",
                                 "type": "compost",
                                 "subType": "green/plant-based compost",
-                                "other": "",
+                                "other": null,
                                 "amount": 79,
+                                "units": "tonnes"
+                            },
+                            {
+                                "id": "other_01",
+                                "type": "other",
+                                "subType": null,
+                                "other": "example-OM",
+                                "amount": 30,
                                 "units": "tonnes"
                             }
                         ],
                         "animalFodder": { 
                             "amount": -9999,
-                            "units": ""
+                            "units": null
                         },
                         "grazingMonthlyEvent": [
                             false,
@@ -318,43 +331,43 @@
                         "irrigation": true,
                         "treeFelling": [
                             {
-                                "species": "",
-                                "other": "",
+                                "species": null,
+                                "other": null,
                                 "treeNumber": -9999,
                                 "DBHmean": {
                                     "diameter": -9999,
-                                    "units": ""
+                                    "units": null
                                 }
                             }
                         ],
                         "perennialCrops": [
                             {
-                                "cohortID": "",
-                                "species": "",
-                                "other": "",
-                                "plantingYear": "",
+                                "cohortID": null,
+                                "species": null,
+                                "other": null,
+                                "plantingYear": null,
                                 "treeNumber": -9999,
                                 "DBHmean": {
                                     "diameter": -9999,
-                                    "units": ""
+                                    "units": null
                                 },
                                 "hasRotation": false,
                                 "rotationYears": -9999,
                                 "harvest": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -363,7 +376,7 @@
                         "annualCrops": [
                             {
                                 "species": "sorghum",
-                                "other": "",
+                                "other": null,
                                 "sowingDate": "2018-03-01",
                                 "harvestDate": "2018-05-01",
                                 "harvest": [
@@ -378,16 +391,16 @@
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
                             },
                             {
                                 "species": "rye",
-                                "other": "",
+                                "other": null,
                                 "sowingDate": "2018-05-01",
                                 "harvestDate": "2018-10-01",
                                 "harvest": [
@@ -402,9 +415,9 @@
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -415,19 +428,19 @@
                                 "percentArea": -9999, 
                                 "productivity": [
                                     {
-                                        "date": "",
-                                        "type": "",
+                                        "date": null,
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "harvest": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -451,9 +464,9 @@
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -465,19 +478,19 @@
                                 "endDate": "2018-12-01",
                                 "harvest": [
                                     {
-                                        "date": "",
-                                        "type": "",
+                                        "date": null,
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -558,19 +571,19 @@
                     },
                     "yearParcelData": {
                         "primaryLandUse": "Silvopasture",
-                        "secondaryLandUse": "",
+                        "secondaryLandUse": null,
                         "addedOrganicMatter": [ 
                             {
-                                "type": "",
-                                "subType": "",
-                                "other": "",
-                                "amount": -9999,
-                                "units": ""
+                                "type": "fodder",
+                                "subType": null,
+                                "other": null,
+                                "amount": 15,
+                                "units": "tonnes"
                             }
                         ],
                         "animalFodder": { 
                             "amount": -9999,
-                            "units": ""
+                            "units": null
                         },
                         "grazingMonthlyEvent": [
                             false,
@@ -588,20 +601,20 @@
                         ],
                         "tillage": [
                             {
-                                "type": "",
-                                "date": "", 
+                                "type": null,
+                                "date": null, 
                                 "percent": -9999
                             }
                         ],
                         "irrigation": false,
                         "treeFelling": [
                             {
-                                "species": "",
-                                "other": "",
+                                "species": null,
+                                "other": null,
                                 "treeNumber": -9999,
                                 "DBHmean": {
                                     "diameter": -9999,
-                                    "units": ""
+                                    "units": null
                                 }
                             }
                         ],
@@ -609,7 +622,7 @@
                             {
                                 "cohortID": "pistachio-01",
                                 "species": "pistachio",
-                                "other": "",
+                                "other": null,
                                 "plantingYear": "before 2018",
                                 "treeNumber": 0,
                                 "DBHmean": {
@@ -640,25 +653,25 @@
                         ],
                         "annualCrops": [
                             {
-                                "species": "",
-                                "other": "",
+                                "species": null,
+                                "other": null,
                                 "sowingDate": -9999,
                                 "harvestDate": -9999,
                                 "harvest": [ 
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999, 
-                                        "units": "",
+                                        "units": null,
                                         "dry": true
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -670,7 +683,7 @@
                                 "productivity": [
                                     {
                                         "date": "2018-09-01",
-                                        "type": "",
+                                        "type": null,
                                         "amount": 0.06, 
                                         "units": "kg/sqm",
                                         "dry": true
@@ -689,25 +702,25 @@
                         ],
                         "fallow": [
                             {
-                                "type": "",
+                                "type": null,
                                 "percentArea": -9999,
-                                "startDate": "",
-                                "endDate": "",
+                                "startDate": null,
+                                "endDate": null,
                                 "harvest": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -737,8 +750,8 @@
                             "amount": 15.8,
                             "units": "hectares"
                         },
-                        "serviceDetail": "",
-                        "serviceCategory": ""
+                        "serviceDetail": null,
+                        "serviceCategory": null
                     }
                 ]
             },
@@ -747,6 +760,11 @@
                     "amount": 11,
                     "units": "tonnes",
                     "percentN": 55
+                },
+                {
+                    "amount": 8,
+                    "units": "tonnes",
+                    "percentN": 12
                 }
             ],
             "importedOrganicMatter": [
@@ -777,7 +795,7 @@
                     },
                     {
                     "type": "fodder",
-                    "percentImported": 0,
+                    "percentImported": 12,
                     "_id": "65f45322d58468470ba00208"
                     }
             ],
@@ -986,20 +1004,20 @@
                     },
                     "yearParcelData": {
                         "primaryLandUse": "Arablecrops",
-                        "secondaryLandUse": "",
+                        "secondaryLandUse": null,
                         "addedOrganicMatter": [ 
                             {
                                 "id": "compost_01",
                                 "type": "compost",
                                 "subType": "green/plant-based compost",
-                                "other": "",
+                                "other": null,
                                 "amount": 79,
                                 "units": "tonnes"
                             }
                         ],
                         "animalFodder": { 
                             "amount": -9999,
-                            "units": ""
+                            "units": null
                         },
                         "grazingMonthlyEvent": [
                             false,
@@ -1030,43 +1048,43 @@
                         "irrigation": true,
                         "treeFelling": [
                             {
-                                "species": "",
-                                "other": "",
+                                "species": null,
+                                "other": null,
                                 "treeNumber": -9999,
                                 "DBHmean": {
                                     "diameter": -9999,
-                                    "units": ""
+                                    "units": null
                                 }
                             }
                         ],
                         "perennialCrops": [
                             {
-                                "cohortID": "",
-                                "species": "",
-                                "other": "",
-                                "plantingYear": "",
+                                "cohortID": null,
+                                "species": null,
+                                "other": null,
+                                "plantingYear": null,
                                 "treeNumber": -9999,
                                 "DBHmean": {
                                     "diameter": -9999,
-                                    "units": ""
+                                    "units": null
                                 },
                                 "hasRotation": false,
                                 "rotationYears": -9999,
                                 "harvest": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -1075,7 +1093,7 @@
                         "annualCrops": [
                             {
                                 "species": "sorghum",
-                                "other": "",
+                                "other": null,
                                 "sowingDate": "2019-03-01",
                                 "harvestDate": "2019-05-01",
                                 "harvest": [
@@ -1090,16 +1108,16 @@
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
                             },
                             {
                                 "species": "rye",
-                                "other": "",
+                                "other": null,
                                 "sowingDate": "2019-05-01",
                                 "harvestDate": "2019-10-01",
                                 "harvest": [
@@ -1114,9 +1132,9 @@
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -1127,19 +1145,19 @@
                                 "percentArea": -9999, 
                                 "productivity": [
                                     {
-                                        "date": "",
-                                        "type": "",
+                                        "date": null,
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "harvest": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -1163,9 +1181,9 @@
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -1178,18 +1196,18 @@
                                 "harvest": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -1272,19 +1290,19 @@
                     },
                     "yearParcelData": {
                         "primaryLandUse": "Silvopasture",
-                        "secondaryLandUse": "",
+                        "secondaryLandUse": null,
                         "addedOrganicMatter": [ 
                             {
-                                "type": "",
-                                "subType": "",
-                                "other": "",
-                                "amount": -9999,
-                                "units": ""
+                                "type": "fodder",
+                                "subType": null,
+                                "other": null,
+                                "amount": 15,
+                                "units": "tonnes"
                             }
                         ],
                         "animalFodder": { 
                             "amount": -9999,
-                            "units": ""
+                            "units": null
                         },
                         "grazingMonthlyEvent": [
                             false,
@@ -1302,20 +1320,20 @@
                         ],
                         "tillage": [
                             {
-                                "type": "",
-                                "date": "", 
+                                "type": null,
+                                "date": null, 
                                 "percent": -9999
                             }
                         ],
                         "irrigation": false,
                         "treeFelling": [
                             {
-                                "species": "",
-                                "other": "",
+                                "species": null,
+                                "other": null,
                                 "treeNumber": -9999,
                                 "DBHmean": {
                                     "diameter": -9999,
-                                    "units": ""
+                                    "units": null
                                 }
                             }
                         ],
@@ -1323,7 +1341,7 @@
                             {
                                 "cohortID": "pistachio-01",
                                 "species": "pistachio",
-                                "other": "",
+                                "other": null,
                                 "plantingYear": "before 2018",
                                 "treeNumber": 0,
                                 "DBHmean": {
@@ -1354,25 +1372,25 @@
                         ],
                         "annualCrops": [
                             {
-                                "species": "",
-                                "other": "",
+                                "species": null,
+                                "other": null,
                                 "sowingDate": -9999,
                                 "harvestDate": -9999,
                                 "harvest": [ 
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999, 
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -1384,7 +1402,7 @@
                                 "productivity": [
                                     {
                                         "date": "2019-09-01",
-                                        "type": "",
+                                        "type": null,
                                         "amount": 0.06, 
                                         "units": "kg/sqm",
                                         "dry": true
@@ -1403,25 +1421,25 @@
                         ],
                         "fallow": [
                             {
-                                "type": "",
+                                "type": null,
                                 "percentArea": -9999,
-                                "startDate": "",
-                                "endDate": "",
+                                "startDate": null,
+                                "endDate": null,
                                 "harvest": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -1451,8 +1469,8 @@
                             "amount": 15.8,
                             "units": "hectares"
                         },
-                        "serviceDetail": "",
-                        "serviceCategory": ""
+                        "serviceDetail": null,
+                        "serviceCategory": null
                     }
                 ]
             },
@@ -1491,7 +1509,7 @@
                     },
                     {
                     "type": "fodder",
-                    "percentImported": 0,
+                    "percentImported": 12,
                     "_id": "65f45322d58468470ba00208"
                     }
             ],
@@ -1700,20 +1718,20 @@
                     },
                     "yearParcelData": {
                         "primaryLandUse": "Arablecrops",
-                        "secondaryLandUse": "",
+                        "secondaryLandUse": null,
                         "addedOrganicMatter": [ 
                             {
                                 "id": "compost_01",
                                 "type": "compost",
                                 "subType": "green/plant-based compost",
-                                "other": "",
+                                "other": null,
                                 "amount": 79,
                                 "units": "tonnes"
                             }
                         ],
                         "animalFodder": { 
                             "amount": -9999,
-                            "units": ""
+                            "units": null
                         },
                         "grazingMonthlyEvent": [
                             false,
@@ -1744,43 +1762,43 @@
                         "irrigation": true,
                         "treeFelling": [
                             {
-                                "species": "",
-                                "other": "",
+                                "species": null,
+                                "other": null,
                                 "treeNumber": -9999,
                                 "DBHmean": {
                                     "diameter": -9999,
-                                    "units": ""
+                                    "units": null
                                 }
                             }
                         ],
                         "perennialCrops": [
                             {
-                                "cohortID": "",
-                                "species": "",
-                                "other": "",
-                                "plantingYear": "",
+                                "cohortID": null,
+                                "species": null,
+                                "other": null,
+                                "plantingYear": null,
                                 "treeNumber": -9999,
                                 "DBHmean": {
                                     "diameter": -9999,
-                                    "units": ""
+                                    "units": null
                                 },
                                 "hasRotation": false,
                                 "rotationYears": -9999,
                                 "harvest": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -1789,7 +1807,7 @@
                         "annualCrops": [
                             {
                                 "species": "sorghum",
-                                "other": "",
+                                "other": null,
                                 "sowingDate": "2020-03-01",
                                 "harvestDate": "2020-05-01",
                                 "harvest": [
@@ -1804,16 +1822,16 @@
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
                             },
                             {
                                 "species": "rye",
-                                "other": "",
+                                "other": null,
                                 "sowingDate": "2020-05-01",
                                 "harvestDate": "2020-10-01",
                                 "harvest": [
@@ -1828,9 +1846,9 @@
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -1841,19 +1859,19 @@
                                 "percentArea": -9999, 
                                 "productivity": [
                                     {
-                                        "date": "",
-                                        "type": "",
+                                        "date": null,
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "harvest": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -1877,9 +1895,9 @@
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -1892,18 +1910,18 @@
                                 "harvest": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -1986,20 +2004,19 @@
                     },
                     "yearParcelData": {
                         "primaryLandUse": "Silvopasture",
-                        "secondaryLandUse": "",
+                        "secondaryLandUse": null,
                         "addedOrganicMatter": [ 
                             {
-                                "id": "compost_01",
-                                "type": "",
-                                "subType": "",
-                                "other": "",
-                                "amount": -9999,
-                                "units": ""
+                                "type": "fodder",
+                                "subType": null,
+                                "other": null,
+                                "amount": 15,
+                                "units": "tonnes"
                             }
                         ],
                         "animalFodder": { 
                             "amount": -9999,
-                            "units": ""
+                            "units": null
                         },
                         "grazingMonthlyEvent": [
                             false,
@@ -2017,20 +2034,20 @@
                         ],
                         "tillage": [
                             {
-                                "type": "",
-                                "date": "", 
+                                "type": null,
+                                "date": null, 
                                 "percent": -9999
                             }
                         ],
                         "irrigation": false,
                         "treeFelling": [
                             {
-                                "species": "",
-                                "other": "",
+                                "species": null,
+                                "other": null,
                                 "treeNumber": -9999,
                                 "DBHmean": {
                                     "diameter": -9999,
-                                    "units": ""
+                                    "units": null
                                 }
                             }
                         ],
@@ -2038,7 +2055,7 @@
                             {
                                 "cohortID": "pistachio-01",
                                 "species": "pistachio",
-                                "other": "",
+                                "other": null,
                                 "plantingYear": "before 2018",
                                 "treeNumber": 0,
                                 "DBHmean": {
@@ -2069,25 +2086,25 @@
                         ],
                         "annualCrops": [
                             {
-                                "species": "",
-                                "other": "",
+                                "species": null,
+                                "other": null,
                                 "sowingDate": -9999,
                                 "harvestDate": -9999,
                                 "harvest": [ 
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999, 
-                                        "units": "",
+                                        "units": null,
                                         "dry": true
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -2099,7 +2116,7 @@
                                 "productivity": [
                                     {
                                         "date": "2020-09-01",
-                                        "type": "",
+                                        "type": null,
                                         "amount": 0.06, 
                                         "units": "kg/sqm",
                                         "dry": true
@@ -2118,25 +2135,25 @@
                         ],
                         "fallow": [
                             {
-                                "type": "",
+                                "type": null,
                                 "percentArea": -9999,
-                                "startDate": "",
-                                "endDate": "",
+                                "startDate": null,
+                                "endDate": null,
                                 "harvest": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -2161,25 +2178,25 @@
                 },
                 "indirect": [
                     {
-                        "service": "",
+                        "service": null,
                         "area": {
                             "amount": -9999,
-                            "units": ""
+                            "units": null
                         },
-                        "serviceDetail": "",
-                        "serviceCategory": ""
+                        "serviceDetail": null,
+                        "serviceCategory": null
                     }
                 ]
             },
             "fertilizerUsage": [
                 {
                     "amount": -9999,
-                    "units": "",
+                    "units": null,
                     "percentN": -9999
                 }
             ],
             "importedOrganicMatter": [
-                {
+                    {
                     "type": "biochar",
                     "percentImported": 0,
                     "_id": "65f45322d58468470ba00203"
@@ -2206,7 +2223,7 @@
                     },
                     {
                     "type": "fodder",
-                    "percentImported": 0,
+                    "percentImported": 12,
                     "_id": "65f45322d58468470ba00208"
                     }
             ],
@@ -2415,13 +2432,13 @@
                     },
                     "yearParcelData": {
                         "primaryLandUse": "Arablecrops",
-                        "secondaryLandUse": "",
+                        "secondaryLandUse": null,
                         "addedOrganicMatter": [ 
                             {
                                 "id": "compost_01",
                                 "type": "compost",
                                 "subType": "green/plant-based compost",
-                                "other": "",
+                                "other": null,
                                 "amount": 79,
                                 "units": "tonnes"
                             },
@@ -2430,14 +2447,14 @@
                                 "id": "manure_01",
                                 "type": "manure",
                                 "subType": "cattle manure",
-                                "other": "",
+                                "other": null,
                                 "amount": 20,
                                 "units": "tonnes"
                             }
                         ],
                         "animalFodder": { 
                             "amount": -9999,
-                            "units": ""
+                            "units": null
                         },
                         "grazingMonthlyEvent": [
                             false,
@@ -2455,51 +2472,51 @@
                         ],
                         "tillage": [
                             {
-                                "type": "",
-                                "date": "", 
+                                "type": null,
+                                "date": null, 
                                 "percent": -9999
                             }
                         ],
                         "irrigation": true,
                         "treeFelling": [
                             {
-                                "species": "",
-                                "other": "",
+                                "species": null,
+                                "other": null,
                                 "treeNumber": -9999,
                                 "DBHmean": {
                                     "diameter": -9999,
-                                    "units": ""
+                                    "units": null
                                 }
                             }
                         ],
                         "perennialCrops": [
                             {
-                                "cohortID": "",
-                                "species": "",
-                                "other": "",
-                                "plantingYear": "",
+                                "cohortID": null,
+                                "species": null,
+                                "other": null,
+                                "plantingYear": null,
                                 "treeNumber": -9999,
                                 "DBHmean": {
                                     "diameter": -9999,
-                                    "units": ""
+                                    "units": null
                                 },
                                 "hasRotation": false,
                                 "rotationYears": -9999,
                                 "harvest": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -2508,7 +2525,7 @@
                         "annualCrops": [
                             {
                                 "species": "cover crops - mix of grass and legumes", 
-                                "other": "",
+                                "other": null,
                                 "sowingDate": "2020-10-01",
                                 "harvestDate": "2021-05-01",
                                 "harvest": [
@@ -2532,7 +2549,7 @@
                             },
                             {
                                 "species": "cover crops - mix of grass and legumes",
-                                "other": "",
+                                "other": null,
                                 "sowingDate": "2021-06-01",
                                 "harvestDate": "2021-09-01",
                                 "harvest": [
@@ -2548,7 +2565,7 @@
                                         "date": "2021-09-01", 
                                         "type": "forage",
                                         "amount": 7.9, 
-                                        "units": "",
+                                        "units": null,
                                         "dry": true
                                     }
                                 ]
@@ -2559,19 +2576,19 @@
                                 "percentArea": -9999, 
                                 "productivity": [
                                     {
-                                        "date": "",
-                                        "type": "",
+                                        "date": null,
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "harvest": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -2579,25 +2596,25 @@
                         ],
                         "fallow": [
                             {
-                                "type": "",
+                                "type": null,
                                 "percentArea": -9999,
-                                "startDate": "",
-                                "endDate": "",
+                                "startDate": null,
+                                "endDate": null,
                                 "harvest": [
                                     {
-                                        "date": "",
+                                        "date": null,
                                         "type": -9999,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -2680,19 +2697,19 @@
                     },
                     "yearParcelData": {
                         "primaryLandUse": "Silvopasture",
-                        "secondaryLandUse": "",
+                        "secondaryLandUse": null,
                         "addedOrganicMatter": [ 
                             {
-                                "type": "",
-                                "subType": "",
-                                "other": "",
-                                "amount": -9999,
-                                "units": ""
+                                "type": "fodder",
+                                "subType": null,
+                                "other": null,
+                                "amount": 20,
+                                "units": "tonnes"
                             }
                         ],
                         "animalFodder": { 
                             "amount": -9999,
-                            "units": ""
+                            "units": null
                         },
                         "grazingMonthlyEvent": [
                             false,
@@ -2710,20 +2727,20 @@
                         ],
                         "tillage": [
                             {
-                                "type": "",
-                                "date": "", 
+                                "type": null,
+                                "date": null, 
                                 "percent": -9999
                             }
                         ],
                         "irrigation": false,
                         "treeFelling": [
                             {
-                                "species": "",
-                                "other": "",
+                                "species": null,
+                                "other": null,
                                 "treeNumber": -9999,
                                 "DBHmean": {
                                     "diameter": -9999,
-                                    "units": ""
+                                    "units": null
                                 }
                             }
                         ],
@@ -2731,7 +2748,7 @@
                             {
                                 "cohortID": "pistachio-01",
                                 "species": "pistachio",
-                                "other": "",
+                                "other": null,
                                 "plantingYear": "before 2018",
                                 "treeNumber": 0,
                                 "DBHmean": {
@@ -2762,30 +2779,30 @@
                             {
                                 "cohortID": "pistachio-02",
                                 "species": "pistachio",
-                                "other": "",
+                                "other": null,
                                 "plantingYear": "2021",
                                 "treeNumber": 20,
                                 "DBHmean": {
                                     "diameter": -9999,
-                                    "units": ""
+                                    "units": null
                                 },
                                 "hasRotation": true,
                                 "rotationYears": 10,
                                 "harvest": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -2793,30 +2810,30 @@
                             {
                                 "cohortID": "olive-tree01",
                                 "species": "olive tree",
-                                "other": "",
+                                "other": null,
                                 "plantingYear": "2021",
                                 "treeNumber": 30,
                                 "DBHmean": {
                                     "diameter": -9999,
-                                    "units": ""
+                                    "units": null
                                 },
                                 "hasRotation": false,
                                 "rotationYears": -9999,
                                 "harvest": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -2824,25 +2841,25 @@
                         ],
                         "annualCrops": [
                             {
-                                "species": "",
-                                "other": "",
+                                "species": null,
+                                "other": null,
                                 "sowingDate": -9999,
                                 "harvestDate": -9999,
                                 "harvest": [ 
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999, 
-                                        "units": "",
+                                        "units": null,
                                         "dry": true
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -2854,7 +2871,7 @@
                                 "productivity": [
                                     {
                                         "date": "2021-09-01",
-                                        "type": "",
+                                        "type": null,
                                         "amount": 0.08, 
                                         "units": "kg/sqm",
                                         "dry": true
@@ -2873,25 +2890,25 @@
                         ],
                         "fallow": [
                             {
-                                "type": "",
+                                "type": null,
                                 "percentArea": -9999,
-                                "startDate": "",
-                                "endDate": "",
+                                "startDate": null,
+                                "endDate": null,
                                 "harvest": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -2916,20 +2933,20 @@
                 },
                 "indirect": [
                     {
-                        "service": "",
+                        "service": null,
                         "area": {
                             "amount": -9999,
-                            "units": ""
+                            "units": null
                         },
-                        "serviceDetail": "",
-                        "serviceCategory": ""
+                        "serviceDetail": null,
+                        "serviceCategory": null
                     }
                 ]
             },
             "fertilizerUsage": [
                 {
                     "amount": -9999,
-                    "units": "",
+                    "units": null,
                     "percentN": -9999
                 }
             ],
@@ -2961,7 +2978,7 @@
                     },
                     {
                     "type": "fodder",
-                    "percentImported": 0,
+                    "percentImported": 12,
                     "_id": "65f45322d58468470ba00208"
                     }
             ],
@@ -3176,13 +3193,13 @@
                     },
                     "yearParcelData": {
                         "primaryLandUse": "Arablecrops",
-                        "secondaryLandUse": "",
+                        "secondaryLandUse": null,
                         "addedOrganicMatter": [ 
                             {
                                 "id": "compost_01",
                                 "type": "compost",
                                 "subType": "green/plant-based compost",
-                                "other": "",
+                                "other": null,
                                 "amount": 79,
                                 "units": "tonnes"
                             },
@@ -3190,7 +3207,7 @@
                                 "id": "manure_01",
                                 "type": "manure",
                                 "subType": "cattle manure",
-                                "other": "",
+                                "other": null,
                                 "amount": 20,
                                 "units": "tonnes"
                             }
@@ -3215,51 +3232,51 @@
                         ],
                         "tillage": [
                             {
-                                "type": "",
-                                "date": "", 
+                                "type": null,
+                                "date": null, 
                                 "percent": -9999
                             }
                         ],
                         "irrigation": true,
                         "treeFelling": [
                             {
-                                "species": "",
-                                "other": "",
+                                "species": null,
+                                "other": null,
                                 "treeNumber": -9999,
                                 "DBHmean": {
                                     "diameter": -9999,
-                                    "units": ""
+                                    "units": null
                                 }
                             }
                         ],
                         "perennialCrops": [
                             {
-                                "cohortID": "",
-                                "species": "",
-                                "other": "",
-                                "plantingYear": "",
+                                "cohortID": null,
+                                "species": null,
+                                "other": null,
+                                "plantingYear": null,
                                 "treeNumber": -9999,
                                 "DBHmean": {
                                     "diameter": -9999,
-                                    "units": ""
+                                    "units": null
                                 },
                                 "hasRotation": false,
                                 "rotationYears": -9999,
                                 "harvest": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -3268,7 +3285,7 @@
                         "annualCrops": [
                             {
                                 "species": "cover crops - mix of grass and legumes",
-                                "other": "",
+                                "other": null,
                                 "sowingDate": "2022-06-01",
                                 "harvestDate": "2022-09-01",
                                 "harvest": [
@@ -3284,14 +3301,14 @@
                                         "date": "2022-09-01", 
                                         "type": "forage",
                                         "amount": 12.64, 
-                                        "units": "",
+                                        "units": null,
                                         "dry": true
                                     }
                                 ]
                             },
                             {
                                 "species": "cover crops - multispecies cover crop", 
-                                "other": "",
+                                "other": null,
                                 "sowingDate": "2021-10-01",
                                 "harvestDate": "2022-05-01",
                                 "harvest": [
@@ -3319,19 +3336,19 @@
                                 "percentArea": -9999, 
                                 "productivity": [
                                     {
-                                        "date": "",
-                                        "type": "",
+                                        "date": null,
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "harvest": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -3355,9 +3372,9 @@
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -3440,19 +3457,19 @@
                     },
                     "yearParcelData": {
                         "primaryLandUse": "Silvopasture",
-                        "secondaryLandUse": "",
+                        "secondaryLandUse": null,
                         "addedOrganicMatter": [ 
                             {
-                                "type": "",
-                                "subType": "",
-                                "other": "",
-                                "amount": -9999,
-                                "units": ""
+                                "type": "fodder",
+                                "subType": null,
+                                "other": null,
+                                "amount": 20,
+                                "units": "tonnes"
                             }
                         ],
                         "animalFodder": { 
                             "amount": -9999,
-                            "units": ""
+                            "units": null
                         },
                         "grazingMonthlyEvent": [
                             false,
@@ -3470,20 +3487,20 @@
                         ],
                         "tillage": [
                             {
-                                "type": "",
-                                "date": "", 
+                                "type": null,
+                                "date": null, 
                                 "percent": -9999
                             }
                         ],
                         "irrigation": false,
                         "treeFelling": [
                             {
-                                "species": "",
-                                "other": "",
+                                "species": null,
+                                "other": null,
                                 "treeNumber": -9999,
                                 "DBHmean": {
                                     "diameter": -9999,
-                                    "units": ""
+                                    "units": null
                                 }
                             }
                         ],
@@ -3491,7 +3508,7 @@
                             {
                                 "cohortID": "pistachio-01",
                                 "species": "pistachio",
-                                "other": "",
+                                "other": null,
                                 "plantingYear": "before 2018",
                                 "treeNumber": 0,
                                 "DBHmean": {
@@ -3503,18 +3520,18 @@
                                 "harvest": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -3522,30 +3539,30 @@
                             {
                                 "cohortID": "pistachio-02",
                                 "species": "pistachio",
-                                "other": "",
+                                "other": null,
                                 "plantingYear": "2021",
                                 "treeNumber": 15,
                                 "DBHmean": {
                                     "diameter": -9999,
-                                    "units": ""
+                                    "units": null
                                 },
                                 "hasRotation": true,
                                 "rotationYears": 10,
                                 "harvest": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -3553,30 +3570,30 @@
                             {
                                 "cohortID": "olive-tree01",
                                 "species": "olive tree",
-                                "other": "",
+                                "other": null,
                                 "plantingYear": "2021",
                                 "treeNumber": 28,
                                 "DBHmean": {
                                     "diameter": -9999,
-                                    "units": ""
+                                    "units": null
                                 },
                                 "hasRotation": false,
                                 "rotationYears": -9999,
                                 "harvest": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -3584,30 +3601,30 @@
                             {
                                 "cohortID": "olive-tree02",
                                 "species": "olive tree",
-                                "other": "",
+                                "other": null,
                                 "plantingYear": "2022",
                                 "treeNumber": 20,
                                 "DBHmean": {
                                     "diameter": -9999,
-                                    "units": ""
+                                    "units": null
                                 },
                                 "hasRotation": false,
                                 "rotationYears": -9999,
                                 "harvest": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -3615,25 +3632,25 @@
                         ],
                         "annualCrops": [
                             {
-                                "species": "",
-                                "other": "",
+                                "species": null,
+                                "other": null,
                                 "sowingDate": -9999,
                                 "harvestDate": -9999,
                                 "harvest": [ 
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999, 
-                                        "units": "",
+                                        "units": null,
                                         "dry": true
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
@@ -3645,7 +3662,7 @@
                                 "productivity": [
                                     {
                                         "date": "2022-09-01",
-                                        "type": "",
+                                        "type": null,
                                         "amount": 0.08, 
                                         "units": "kg/sqm",
                                         "dry": true
@@ -3664,25 +3681,25 @@
                         ],
                         "fallow": [
                             {
-                                "type": "",
+                                "type": null,
                                 "percentArea": -9999,
-                                "startDate": "",
-                                "endDate": "",
+                                "startDate": null,
+                                "endDate": null,
                                 "harvest": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ],
                                 "residue": [
                                     {
                                         "date": -9999,
-                                        "type": "",
+                                        "type": null,
                                         "amount": -9999,
-                                        "units": "",
+                                        "units": null,
                                         "dry": false
                                     }
                                 ]
