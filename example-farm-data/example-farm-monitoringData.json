@@ -144,7 +144,7 @@
                                 "amount": -9999
                             },
                             {
-                                "name": "goad kids (< 1 year)", 
+                                "name": "goat kids (< 1 year)", 
                                 "amount": 15
                             }
                         ]
@@ -172,7 +172,7 @@
                     {
                         "species": "chicken",
                         "grazingDays": -9999,
-                        "manureTreatment": null,
+                        "manureTreatment": "daily spread",
                         "fertilityRate": -9999,
                         "category": [
                             {
@@ -195,9 +195,9 @@
                 ],
                 "outFarm": [
                     {
-                        "species": "cattle",
-                        "amount": 20,
-                        "grazingDays": 60
+                        "species": null,
+                        "amount": -9999,
+                        "grazingDays": -9999
                     }
                 ]
             },
@@ -869,7 +869,7 @@
                                 "amount": -9999
                             },
                             {
-                                "name": "goad kids (< 1 year)", 
+                                "name": "goat kids (< 1 year)", 
                                 "amount": 15
                             }
                         ]
@@ -897,7 +897,7 @@
                     {
                         "species": "chicken",
                         "grazingDays": -9999,
-                        "manureTreatment": null,
+                        "manureTreatment": "daily spread",
                         "fertilityRate": -9999,
                         "category": [
                             {
@@ -1583,7 +1583,7 @@
                                 "amount": -9999
                             },
                             {
-                                "name": "goad kids (< 1 year)", 
+                                "name": "goat kids (< 1 year)", 
                                 "amount": 15
                             }
                         ]
@@ -1611,7 +1611,7 @@
                     {
                         "species": "chicken",
                         "grazingDays": -9999,
-                        "manureTreatment": null,
+                        "manureTreatment": "daily spread",
                         "fertilityRate": -9999,
                         "category": [
                             {
@@ -2297,7 +2297,7 @@
                                 "amount": -9999
                             },
                             {
-                                "name": "goad kids (< 1 year)", 
+                                "name": "goat kids (< 1 year)", 
                                 "amount": 19
                             }
                         ]
@@ -2325,7 +2325,7 @@
                     {
                         "species": "chicken",
                         "grazingDays": -9999,
-                        "manureTreatment": null,
+                        "manureTreatment": "daily spread",
                         "fertilityRate": -9999,
                         "category": [
                             {
@@ -3052,7 +3052,7 @@
                                 "amount": -9999
                             },
                             {
-                                "name": "goad kids (< 1 year)", 
+                                "name": "goat kids (< 1 year)", 
                                 "amount": 34
                             }
                         ]
@@ -3080,7 +3080,7 @@
                     {
                         "species": "chicken",
                         "grazingDays": -9999,
-                        "manureTreatment": null,
+                        "manureTreatment": "daily spread",
                         "fertilityRate": -9999,
                         "category": [
                             {

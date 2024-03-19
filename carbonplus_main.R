@@ -177,8 +177,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   # }
   
   ## Reading in calculation factors from csv files
-  animal_factors <- read_csv(file.path("data", "carbon_share_manure.csv"), show_col_types = FALSE) %>%
-    filter(type=="manure") %>% mutate(species = source)
+  animal_factors <- read_csv(file.path("data", "animal_factors.csv"), show_col_types = FALSE)
   crop_factors <- read_csv(file.path("data", "crop_factors.csv"), show_col_types = FALSE)
   grazing_factors <- read_csv(file.path("data", "grazing_factors.csv"), show_col_types = FALSE)
   manure_factors <- read_csv(file.path("data", "carbon_share_manure.csv"), show_col_types = FALSE)
@@ -222,11 +221,11 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   scenarios <- get_scenarios(monitoringData, fixed_farm_inputs$project_start_year) # defines project and baseline years based on the given project start year
   
   ## Yearly farm inputs
-  # GHG removals
-  # GHG reductions
   fuel_inputs_direct <- get_fuel_inputs_direct(monitoringData, scenarios) 
   fuel_inputs_indirect <- get_fuel_inputs_indirect(monitoringData, scenarios)
   fertilizer_inputs <- get_fertilizer_inputs(monitoringData, scenarios)
+  in_farm_livestock_inputs <- get_in_farm_livestock_inputs(monitoringData, scenarios, animal_factors)
+  out_farm_livestock_inputs <- get_out_farm_livestock_inputs(monitoringData, scenarios, animal_factors)
   
   ## Yearly parcel inputs
   orgamendments_inputs <- get_orgamendments_inputs(monitoringData, scenarios) 
@@ -240,7 +239,9 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   animal_inputs <- get_animal_inputs(grazing_yearly, livestock_inputs, parcel_inputs)  # Animal manure
   crop_inputs <- get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, grazing_yearly, grazing_monthly)  # Crops and residues
   pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, pasture_factors, farm_EnZ, grazing_yearly, grazing_monthly, my_logger, parcel_inputs)
+  
   tree_inputs <- get_tree_inputs(landUseSummaryOrPractices)
+  
   bare_field_inputs <- get_bareground_inputs(landUseSummaryOrPractices, soil_cover_factors, farm_EnZ, settings$bare_bl_type)
   tilling_inputs <- get_tilling_inputs(landUseSummaryOrPractices, tilling_factors, farm_EnZ)
   

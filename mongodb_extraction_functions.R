@@ -91,46 +91,125 @@ get_mean_latitude <- function(coordinates) {
   return(mean(latitude))
 }
 
-get_livestock_table <- function(livestock, animal_factors) {
+get_in_farm_livestock_inputs <- function(monitoringData, scenarios, animal_factors) {
   
-  year_strings <- paste0("year", 0:10)
+  # Data frame for livestock inputs
   
-  animals = expand.grid(
-    scenario = year_strings, 
-    species = animal_factors$species, 
-    n_animals = 0, 
-    grazing_days = 0
+  in_farm_livestock_inputs <- data.frame(
+    year               = c(),
+    species            = c(),
+    category           = c(),
+    fertilityRate      = c(),
+    grazing_days       = c(),
+    grazing_management = c(),
+    manure_treatment.  = c()
   )
   
-  for (y in c(0:10)){
-    year_str <- year_strings[y+1]
-    if(y == 0) {
-      livestock_scenario = livestock[["currentManagement"]][[1]]
-    } else {
-      livestock_scenario = livestock[["futureManagement"]][[1]][[year_str]] 
-    }
-    n_animals <- missing_to_zero(livestock_scenario$numberOfHeads)
-    grazing_days <- missing_to_zero(livestock_scenario$grazingOrPasturedDaysPerYear)
-    for (k in c(1:nrow(livestock_scenario))){
-      species <- livestock_scenario$species[k]
-      if (is.na(species)) {next}  # This line should not be needed if data is input correctly. Consider eventual removal.
-      ind <- animals$scenario == year_str & animals$species == species
-      animals$n_animals[ind] <- animals$n_animals[ind] + n_animals[k]  # adding to deal with current situation that same species can be given more than once.
-      animals$grazing_days[ind] <- max(animals$grazing_days[ind], grazing_days[k])  # This line doesn't work well with mutliple entries of same species with different days grazing. Using max otherwise entries with 0 nulify all.
+  for (year in monitoringData$yearlyFarmData) {
+    for (species in year$livestock$inFarm) {
+      for (category in species$category) {
+        in_farm_livestock_inputs <- rbind(in_farm_livestock_inputs, data.frame(
+          year               = year$year,
+          species            = species$species, #mandatory, no null values
+          category           = category$name, #mandatory, no null values
+          amount             = ifelse (category$amount == -9999,0,category$amount), 
+          fertilityRate      = ifelse(species$fertilityRate == -9999, 0, species$fertilityRate), 
+          grazing_days       = ifelse (species$grazingDays == -9999, 0, species$grazingDays),
+          grazing_management = year$livestock$grazingManagement, #mandatory, no null values
+          manure_treatment   = species$manureTreatment #mandatory, no null values
+        ))
+      }
     }
   }
-  animals <- animals[animals$n_animals!=0, ] # removing all rows that do not apply.
   
-  # Limit the grazing days to not be higher than days on farm (this should be dealt with at dashboard level)
-  animals <- merge(animals, animal_factors[,c('species', 'days_on_farm_per_year')])
-  ind <- animals$grazing_days > animals$days_on_farm_per_year
-  animals$grazing_days[ind] <- animals$days_on_farm_per_year[ind] 
+  in_farm_livestock_inputs <- left_join(in_farm_livestock_inputs, animal_factors, by = c("species", "category")) %>% 
+    mutate(grazing_days = ifelse(grazing_days > days_on_farm_per_year, days_on_farm_per_year, grazing_days))
   
-  return(animals)
+  # TO-DO: Write error message with logr4
+  if (sum(is.na(in_farm_livestock_inputs)) > 0) {
+    stop("Error: there are NA values in in_Farm_livestocck_inputs")
+  }
+  in_farm_livestock_inputs <- left_join(in_farm_livestock_inputs, scenarios, by = "year")
+  
+  return(in_farm_livestock_inputs)
+  # year_strings <- paste0("year", 0:10)
+  # 
+  # animals = expand.grid(
+  #   scenario = year_strings, 
+  #   species = animal_factors$species, 
+  #   n_animals = 0, 
+  #   grazing_days = 0
+  # )
+  # 
+  # for (y in c(0:10)){
+  #   year_str <- year_strings[y+1]
+  #   if(y == 0) {
+  #     livestock_scenario = livestock[["currentManagement"]][[1]]
+  #   } else {
+  #     livestock_scenario = livestock[["futureManagement"]][[1]][[year_str]] 
+  #   }
+  #   n_animals <- missing_to_zero(livestock_scenario$numberOfHeads)
+  #   grazing_days <- missing_to_zero(livestock_scenario$grazingOrPasturedDaysPerYear)
+  #   for (k in c(1:nrow(livestock_scenario))){
+  #     species <- livestock_scenario$species[k]
+  #     if (is.na(species)) {next}  # This line should not be needed if data is input correctly. Consider eventual removal.
+  #     ind <- animals$scenario == year_str & animals$species == species
+  #     animals$n_animals[ind] <- animals$n_animals[ind] + n_animals[k]  # adding to deal with current situation that same species can be given more than once.
+  #     animals$grazing_days[ind] <- max(animals$grazing_days[ind], grazing_days[k])  # This line doesn't work well with mutliple entries of same species with different days grazing. Using max otherwise entries with 0 nulify all.
+  #   }
+  # }
+  # animals <- animals[animals$n_animals!=0, ] # removing all rows that do not apply.
+  # 
+  # # Limit the grazing days to not be higher than days on farm (this should be dealt with at dashboard level)
+  # animals <- merge(animals, animal_factors[,c('species', 'days_on_farm_per_year')])
+  # ind <- animals$grazing_days > animals$days_on_farm_per_year
+  # animals$grazing_days[ind] <- animals$days_on_farm_per_year[ind] 
+  # 
+  # return(animals)
 }
 
+get_out_farm_livestock_inputs <- function(monitoringData, scenarios, animal_factors) {
+  
+  # Species
+  species <- data.frame(
+    year = c(),
+    species = c()
+  )
+  
+  # Data frame for out farm livestock inputs
+  out_farm_livestock_inputs <- data.frame(
+    year         = c(),
+    species      = c(),
+    amount       = c(),
+    grazing_days = c(),
+    grazing_management = c()
+  )
+  # For not full data set
+  for (year in monitoringData$yearlyFarmData) {
+    for (type in unique(animal_factors$species)) {
+      species <- rbind(species, data.frame(
+        year    = year$year,
+        species = type
+      ))
+    }
+    for (out_farm_species in year$livestock$outFarm) {
+    out_farm_livestock_inputs <- rbind(out_farm_livestock_inputs, data.frame(
+      year         = year$year,
+      species      = ifelse (is_null(out_farm_species$species), "-", out_farm_species$species),
+      amount       = ifelse (out_farm_species$amount == -9999, 0, out_farm_species$amount),
+      grazing_days = ifelse (out_farm_species$grazingDays == -9999, 0, out_farm_species$grazingDays),
+      grazing_management = year$livestock$grazingManagement
+    ))
+    }
+  }
+  out_farm_livestock_inputs <- right_join(out_farm_livestock_inputs, species, by = c("year", "species")) %>%
+    mutate(amount = ifelse (is.na(amount), 0, amount)) %>%
+    mutate(grazing_days = ifelse (is.na(grazing_days), 0, grazing_days)) %>%
+    mutate(grazing_management = ifelse (is.na(grazing_management), "-", grazing_management))
+  return(out_farm_livestock_inputs)
+}
 
-## Helper function to extract total grazing and bale grazing yield from the whole farm over all years
+## Helper function to extract total g^razing and bale grazing yield from the whole farm over all years
 get_grazing_amounts <- function(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs, livestock_inputs, grazing_used){
   # Extracts the overall grazing and fodder (bale) grazing from the whole farm
   
