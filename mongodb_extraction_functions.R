@@ -537,6 +537,9 @@ get_orgamendments_inputs = function(monitoringData, scenarios) {
     other            = c(),
     amount           = c(),
     units            = c(),
+    area             = c(),
+    amount_ha        = c(),
+    units_ha         = c(),
     imported_percent = c(),
     imported_frac    = c()
   )
@@ -558,9 +561,12 @@ get_orgamendments_inputs = function(monitoringData, scenarios) {
     sub_type    = c(),
     other       = c(),
     amount      = c(),
-    units       = c()
+    units       = c(),
+    area        = c(),
+    amount_ha   = c(),
+    units_ha    = c()
   )
-    
+  
   for (year in monitoringData$yearlyFarmData) {
     for (amendment in year$importedOrganicMatter) {
       imported_OM_inputs = rbind(imported_OM_inputs, data.frame(
@@ -581,7 +587,10 @@ get_orgamendments_inputs = function(monitoringData, scenarios) {
           sub_type    = ifelse (is_null(amendment$subType), "-", amendment$subType),
           other       = ifelse (is_null(amendment$other), "-", amendment$other),
           amount      = ifelse (amendment$amount < 0, "0", amendment$amount),
-          units       = ifelse (is_null (amendment$units), "-", amendment$units)
+          units       = ifelse (is_null (amendment$units), "-", amendment$units),
+          area        = fixed_parcel_inputs$area[fixed_parcel_inputs$parcel_name == parcel$parcelFixedValues$parcelName],
+          amount_ha   = ifelse (amendment$amount < 0, "0", amendment$amount/fixed_parcel_inputs$area[fixed_parcel_inputs$parcel_name == parcel$parcelFixedValues$parcelName]),
+          units_ha    = ifelse (is_null (amendment$units), "-", paste0(amendment$units, "/hectares"))
         ))
       }
       
@@ -1224,10 +1233,8 @@ get_fixed_parcel_inputs <- function(monitoringData) {
       use_manual_area  = ifelse(parcel$parcelFixedValues$areaManualEntry$area != -9999, TRUE, FALSE),
       area             = ifelse(parcel$parcelFixedValues$areaManualEntry$area != -9999, 
                                 parcel$parcelFixedValues$areaManualEntry$area/1000, 
-                                parcel$parcelFixedValues$areaGeoFile$area/1000), 
-      area_unit        = ifelse(parcel$parcelFixedValues$areaManualEntry$area != -9999, 
-                                parcel$parcelFixedValues$areaManualEntry$units, 
-                                parcel$parcelFixedValues$areaGeoFile$units),
+                                parcel$parcelFixedValues$areaGeoFile$area/1000), # To-DO: Integrate unit check?
+      area_unit        = "hectares",
       longitude        = get_mean_longitude(parcel$parcelFixedValues$coordinates), 
       latitude         = get_mean_latitude(parcel$parcelFixedValues$coordinates)
     ))
