@@ -195,9 +195,9 @@ get_out_farm_livestock_inputs <- function(monitoringData, scenarios, animal_fact
     for (out_farm_species in year$livestock$outFarm) {
     out_farm_livestock_inputs <- rbind(out_farm_livestock_inputs, data.frame(
       year         = year$year,
-      species      = ifelse (is_null(out_farm_species$species), "-", out_farm_species$species),
-      amount       = ifelse (out_farm_species$amount == -9999, 0, out_farm_species$amount),
-      grazing_days = ifelse (out_farm_species$grazingDays == -9999, 0, out_farm_species$grazingDays),
+      species      = ifelse (is_null(out_farm_species$species), "-", out_farm_species$species), # not mandatory
+      amount       = ifelse (out_farm_species$amount == -9999, 0, out_farm_species$amount), # not mandatory
+      grazing_days = ifelse (out_farm_species$grazingDays == -9999, 0, out_farm_species$grazingDays), # not mandatory
       grazing_management = year$livestock$grazingManagement
     ))
     }
@@ -259,7 +259,6 @@ get_grazing_amounts <- function(landUseSummaryOrPractices, livestock, animal_fac
       landUseType <- year_chosen$landUseType[i]
       
       # Add to total bale grazed after subtracting residues left on field 
-      
       fodder_eaten_parcel <- fodder_parcel * (1 - baleResidue)
       fodder_residue_parcel <- fodder_parcel * baleResidue
       grazing_parcel <- 0
@@ -571,19 +570,21 @@ get_orgamendments_inputs = function(monitoringData, scenarios) {
         imported_frac    = amendment$percentImported/100
       ))
     }
+    
     for (parcel in year$parcelLevelData) {
       for (amendment in parcel$yearParcelData$addedOrganicMatter) {
         added_OM_inputs = rbind(added_OM_inputs, data.frame(
           year        = year$year,
           parcel_name = parcel$parcelFixedValues$parcelName,
           parcel_ID   = parcel$parcelFixedValues$parcelID,
-          type        = amendment$type,
+          type        = ifelse (is_null (amendment$type), "-", amendment$type),
           sub_type    = ifelse (is_null(amendment$subType), "-", amendment$subType),
           other       = ifelse (is_null(amendment$other), "-", amendment$other),
-          amount      = amendment$amount,
-          units       = amendment$units
+          amount      = ifelse (amendment$amount < 0, "0", amendment$amount),
+          units       = ifelse (is_null (amendment$units), "-", amendment$units)
         ))
       }
+      
       for (i in 1:length(OM_subtypes$sub_type)) {
         final_OM_inputs <- rbind(final_OM_inputs, data.frame(
           year        = year$year,
