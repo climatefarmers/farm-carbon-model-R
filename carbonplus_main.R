@@ -98,7 +98,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   #   farms_collection = mongo(collection="farms", db=db, url=connection_string) # farms_collection = mongo(collection="farms_backups", db=db, url=connection_string) 
   #   farms_everything = farms_collection$find(paste('{"farmInfo.farmId":"',farmId,'"}',sep=""))
   # }
-  
+
   
   # # Checking correctness and unicity of farmIds
   # if (is.null(farms_everything$farmInfo)){ # Can this be TRUE? Because already used above to select the data. Move to above?
@@ -159,10 +159,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   
   source("mongodb_extraction_functions.R", local = TRUE)
   
-  ## Extracting livestock, landUseSummaryOrPractices !!DELETE!!
-  # livestock <- farms_everything$liveStock
-  # landUseSummaryOrPractices <- farms_everything$landUse$landUseSummaryOrPractices
-  
+  # To delete? We need to evaluate the need to create projections by copying data to future years.
   ## If set, copy data from a specific year to following years (disabled for monitoring / credit issuance runs!)
   
   # if (settings$copy_year_currmonit_to_future){
