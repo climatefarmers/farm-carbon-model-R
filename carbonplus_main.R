@@ -226,13 +226,13 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   out_farm_livestock_inputs <- get_out_farm_livestock_inputs(monitoringData, periods, animal_factors)
   
   ## Yearly parcel inputs
-  orgamendments_inputs <- get_orgamendments_inputs(monitoringData, periods) 
+  orgamendments_inputs <- get_orgamendments_inputs(monitoringData, periods)
+  grazing_inputs <- get_grazing_inputs(monitoringData, periods, parcel_inputs, in_farm_livestock_inputs, out_farm_livestock_inputs, orgamendments_inputs)  # grazing data
+  grazing_monthly <- grazing_inputs[[1]]
+  grazing_yearly <- grazing_inputs[[2]] 
   
   
   landUseType <- get_land_use_type(landUseSummaryOrPractices, parcel_inputs)
-  grazing_tables <- get_grazing_amounts(landUseSummaryOrPractices, livestock, animal_factors, parcel_inputs, livestock_inputs, settings$grazing_used)  # grazing data
-  grazing_monthly <- grazing_tables[[1]]
-  grazing_yearly <- grazing_tables[[2]]
   animal_inputs <- get_animal_inputs(grazing_yearly, livestock_inputs, parcel_inputs)  # Animal manure
   crop_inputs <- get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, grazing_yearly, grazing_monthly)  # Crops and residues
   pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, pasture_factors, farm_EnZ, grazing_yearly, grazing_monthly, my_logger, parcel_inputs)
