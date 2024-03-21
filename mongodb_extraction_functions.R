@@ -91,7 +91,7 @@ get_mean_latitude <- function(coordinates) {
   return(mean(latitude))
 }
 
-get_in_farm_livestock_inputs <- function(monitoringData, scenarios, animal_factors) {
+get_in_farm_livestock_inputs <- function(monitoringData, periods, animal_factors) {
   
   # Data frame for livestock inputs
   
@@ -129,7 +129,7 @@ get_in_farm_livestock_inputs <- function(monitoringData, scenarios, animal_facto
   if (sum(is.na(in_farm_livestock_inputs)) > 0) {
     stop("Error: there are NA values in in_Farm_livestocck_inputs")
   }
-  in_farm_livestock_inputs <- left_join(in_farm_livestock_inputs, scenarios, by = "year")
+  in_farm_livestock_inputs <- left_join(in_farm_livestock_inputs, periods, by = "year")
   
   return(in_farm_livestock_inputs)
   # year_strings <- paste0("year", 0:10)
@@ -168,7 +168,7 @@ get_in_farm_livestock_inputs <- function(monitoringData, scenarios, animal_facto
   # return(animals)
 }
 
-get_out_farm_livestock_inputs <- function(monitoringData, scenarios, animal_factors) {
+get_out_farm_livestock_inputs <- function(monitoringData, periods, animal_factors) {
   
   # Species
   species <- data.frame(
@@ -214,7 +214,7 @@ get_out_farm_livestock_inputs <- function(monitoringData, scenarios, animal_fact
 }
 
 ## Helper function to extract total g^razing and bale grazing yield from the whole farm over all years
-get_grazing_inputs <- function(monitoringData, scenarios, parcel_inputs, livestock_inputs, orgamendments_inputs){
+get_grazing_inputs <- function(monitoringData, periods, parcel_inputs, livestock_inputs, orgamendments_inputs){
   # Extracts the overall grazing and fodder (bale) grazing from the whole farm
   
   #year_strings = paste0("year", 0:10)
@@ -275,19 +275,21 @@ get_grazing_inputs <- function(monitoringData, scenarios, parcel_inputs, livesto
                                               orgamendments_inputs$year == year$year]
       fodder_eaten <- fodder * (1 - 0.15)  # 15% assumed residue left of fodder on field
       fodder_residue <- fodder * 0.15
-      fodder_units <- orgamendments_inputs$units[orgamendments_inputs$type == "fodder" & 
+      units_fodder <- orgamendments_inputs$units[orgamendments_inputs$type == "fodder" & 
                                                    orgamendments_inputs$parcel_name == parcel_name &
                                                    orgamendments_inputs$year == year$year]
       
       # Data extraction for monthly grazing information
+      was_grazed_parcel <- 0
       for (month in c(1:12)){
-        was_grazed_month <- ifelse(parcel$yearParcelData$grazingMonthlyEvent[month] == TRUE, TRUE, FALSE)
+        was_grazed_month <- ifelse(parcel$yearParcelData$grazingMonthlyEvent[month] == TRUE, 1, 0)
         grazing_monthly_temp <- data.frame(
           year = year$year,
           parcel = parcel_name,
           month = month,
           was_grazed_month = was_grazed_month
         )
+        was_grazed_parcel <- any(grazing_monthly_temp$was_grazed_month == 1)
         grazing_monthly <- bind_rows(grazing_monthly, grazing_monthly_temp)
       }
       # Correct for moisture content
@@ -303,7 +305,8 @@ get_grazing_inputs <- function(monitoringData, scenarios, parcel_inputs, livesto
         fodder = fodder,
         fodder_eaten = fodder_eaten,
         fodder_residue = fodder_residue,
-        units_fodder = fodder_units
+        units_fodder = units_fodder,
+        was_grazed_parcel = was_grazed_parcel
       )
       grazing_yearly <- bind_rows(grazing_yearly, grazing_yearly_temp)
     }
@@ -319,75 +322,96 @@ get_grazing_inputs <- function(monitoringData, scenarios, parcel_inputs, livesto
     summarise(in_farm_yearly_grazing_needs = sum(yearly_grazing_needs_tDM)) # 0.025 is the 2.5% of animal mass required as feed every day
   
   out_farm_yearly_grazing_needs <- out_farm_livestock_inputs %>%
-    select(year, category, amount, grazing_days, mass_kg_per_animal) %>%
+    select(year, species, amount, grazing_days, mass_kg_per_animal) %>%
     mutate(yearly_grazing_needs_tDM = amount * mass_kg_per_animal / 1000 * 0.025 * grazing_days) %>%
     group_by(year) %>%
     summarise(out_farm_yearly_grazing_needs = sum(yearly_grazing_needs_tDM)) # 0.025 is the 2.5% of animal mass required as feed every day
   
   # Sum up the calculated grazing of all animal types for each year
-  grazing_yearly <- in_farm_yearly_grazing_needs  %>% 
+  yearly_grazing_needs <- in_farm_yearly_grazing_needs  %>% 
     mutate(out_farm_yearly_grazing_needs = out_farm_yearly_grazing_needs$out_farm_yearly_grazing_needs) %>%
-    mutate(yearly_grazing_needs = in_farm_yearly_grazing_needs + out_farm_yearly_grazing_needs) %>%
-    mutate(units_grazing = "tonnes")
+    mutate(yearly_grazing_needs = in_farm_yearly_grazing_needs + out_farm_yearly_grazing_needs)
   
   ## Distribute the yearly calculated grazing to the different parcels
-  for(y in 0:10) {
-    year_str <- paste0('year', y)
-    grazing_calc_year <- sum(grazing_yearly_calc$grazing_yearly_calc[grazing_yearly_calc$scenario==year_str])
-    grazing_rep_year <- sum(grazing_yearly$grazing_rep[grazing_yearly$year==y])
-    if(grazing_rep_year == 0) {
-      # In years with no reported grazing distribute calculated grazing among parcels weighted by area
-      for(i in 1:length(parcel_names)) {
-        parcel <- parcel_names[i]
-        area_parcel <- parcel_inputs$area[parcel_inputs$parcel_ID == parcel]
-        area_total <- sum(parcel_inputs$area)
-        ind <- (grazing_yearly$year == y & grazing_yearly$parcel == parcel)
-        grazing_yearly$grazing_calc[ind] <- grazing_calc_year * area_parcel / area_total
-      }
-    } else {
-      # In years with reported grazing, distribute calculated grazing to proportionally match the reported grazing
-      ind <- grazing_yearly$year == y
-      grazing_yearly$grazing_calc[ind] <- grazing_calc_year * grazing_yearly$grazing_rep[ind] / grazing_rep_year
-    }
-  }
+  # Calculate the total area of all grazed parcels and the respective fraction of a parcel per year.
+  # Note that only grazed parcels are considered here. A grazed parcel is defined as a parcel that had at least one grazing event in a respective year.
+  grazing_area <- grazing_yearly %>%
+    filter(was_grazed_parcel == 1) %>%
+    group_by(year) %>%
+    distinct(parcel, .keep_all = TRUE) %>%
+    mutate(area_grazed_total = sum(area)) %>%
+    mutate(area_grazed_frac = area / area_grazed_total) %>%
+    select(parcel, area, area_grazed_total, area_grazed_frac)
   
-  grazing_yearly$scenario <- paste0("year",grazing_yearly$year)
+  grazing_yearly <- left_join(grazing_yearly, select(grazing_area, c("year", "parcel", "area_grazed_total", "area_grazed_frac")), by = c("year","parcel")) %>%
+    left_join(yearly_grazing_needs, by = "year") %>%
+    mutate(grazing = yearly_grazing_needs * area_grazed_frac) %>%
+    mutate(units_grazing = "tonnes") %>%
+    mutate(forage = grazing - fodder_eaten) %>%
+    mutate(units_forage = "tonnes") %>%
+    mutate(grazing_ha = grazing / area) %>%
+    mutate(forage_ha = forage / area) %>%
+    mutate(fodder_residue_ha = fodder_residue / area)
+  
+  ## Distribute the yearly calculated grazing to the different parcels
+  # for(y in 0:10) {
+  #   year_str <- paste0('year', y)
+  #   grazing_calc_year <- sum(grazing_yearly_calc$grazing_yearly_calc[grazing_yearly_calc$scenario==year_str])
+  #   grazing_rep_year <- sum(grazing_yearly$grazing_rep[grazing_yearly$year==y])
+  #   if(grazing_rep_year == 0) {
+  #     # In years with no reported grazing distribute calculated grazing among parcels weighted by area
+  #     for(i in 1:length(parcel_names)) {
+  #       parcel <- parcel_names[i]
+  #       area_parcel <- parcel_inputs$area[parcel_inputs$parcel_ID == parcel]
+  #       area_total <- sum(parcel_inputs$area)
+  #       ind <- (grazing_yearly$year == y & grazing_yearly$parcel == parcel)
+  #       grazing_yearly$grazing_calc[ind] <- grazing_calc_year * area_parcel / area_total
+  #     }
+  #   } else {
+  #     # In years with reported grazing, distribute calculated grazing to proportionally match the reported grazing
+  #     ind <- grazing_yearly$year == y
+  #     grazing_yearly$grazing_calc[ind] <- grazing_calc_year * grazing_yearly$grazing_rep[ind] / grazing_rep_year
+  #   }
+  # }
+  # 
+  # grazing_yearly$scenario <- paste0("year",grazing_yearly$year)
   
   # Choose what grazing estimates are used.
-  if(grazing_used == 'rep') {
-    grazing_yearly$grazing_final <- grazing_yearly$grazing_rep
-  } else if (grazing_used == 'calc') {
-    grazing_yearly$grazing_final <- grazing_yearly$grazing_calc
-  } else if(grazing_used == 'min') {
-    grazing_yearly$grazing_final <- pmin(grazing_yearly$grazing_calc, grazing_yearly$grazing_rep) 
-  } else {stop("Wrong grazing_used value provided.")}
-  
-  grazing_yearly <- grazing_yearly %>% 
-    mutate(forage = grazing_final - fodder_eaten)
-  
-  # Calculate the values per hectare
-  grazing_yearly <- merge(grazing_yearly, parcel_inputs %>% select(parcel_ID, area), by.x = "parcel", by.y = "parcel_ID")
-  # grazing_yearly$grazing_calc_ha <- grazing_yearly$grazing_calc / grazing_yearly$area
-  grazing_yearly$grazing_rep_ha <- grazing_yearly$grazing_rep / grazing_yearly$area
-  grazing_yearly$grazing_final_ha <- grazing_yearly$grazing_final / grazing_yearly$area
-  grazing_yearly$forage_ha <- grazing_yearly$forage / grazing_yearly$area
-  grazing_yearly$fodder_residue_ha <- grazing_yearly$fodder_residue / grazing_yearly$area
+  # if(grazing_used == 'rep') {
+  #   grazing_yearly$grazing_final <- grazing_yearly$grazing_rep
+  # } else if (grazing_used == 'calc') {
+  #   grazing_yearly$grazing_final <- grazing_yearly$grazing_calc
+  # } else if(grazing_used == 'min') {
+  #   grazing_yearly$grazing_final <- pmin(grazing_yearly$grazing_calc, grazing_yearly$grazing_rep) 
+  # } else {stop("Wrong grazing_used value provided.")}
+  # 
+  # grazing_yearly <- grazing_yearly %>% 
+  #   mutate(forage = grazing_final - fodder_eaten)
+  # 
+  # # Calculate the values per hectare
+  # grazing_yearly <- merge(grazing_yearly, parcel_inputs %>% select(parcel_ID, area), by.x = "parcel", by.y = "parcel_ID")
+  # # grazing_yearly$grazing_calc_ha <- grazing_yearly$grazing_calc / grazing_yearly$area
+  # grazing_yearly$grazing_rep_ha <- grazing_yearly$grazing_rep / grazing_yearly$area
+  # grazing_yearly$grazing_final_ha <- grazing_yearly$grazing_final / grazing_yearly$area
+  # grazing_yearly$forage_ha <- grazing_yearly$forage / grazing_yearly$area
+  # grazing_yearly$fodder_residue_ha <- grazing_yearly$fodder_residue / grazing_yearly$area
   
   # Obtain monthly grazing by scaling the reported monthly grazing according to the grazing_final
   # Monthly GRAZING DATA PER PARCEL NEEDED
-  grazing_monthly <- merge(
-    grazing_monthly, 
-    grazing_yearly %>% select(parcel, year, grazing_final_yearly = grazing_final_ha, grazing_rep_yearly = grazing_rep_ha),
-    by = c("parcel", "year")
-  )
-  grazing_monthly <- grazing_monthly %>% mutate(
-    grazing_final = grazing_rep / grazing_rep_yearly * grazing_final_yearly
-  )
-  grazing_monthly$grazing_final[is.nan(grazing_monthly$grazing_final)] <- 0 # Correct NaN from 0 divisions to 0 
+  #number_grazing_months <- grazing_monthly %>% group_by(year, parcel) %>% mutate (number_grazing_months = sum(was_grazed_month))
+  grazing_monthly_test <- grazing_monthly %>% 
+    group_by(year, parcel) %>% 
+    mutate (number_grazing_months = sum(was_grazed_month)) %>%
+    merge(grazing_yearly %>% select(parcel, year, grazing_ha), by = c("parcel", "year")) %>%
+    mutate(grazing_monthly_ha = ifelse(was_grazed_month == 1, grazing_ha / number_grazing_months, 0))
+  # grazing_monthly <- grazing_monthly %>% mutate(
+  #   grazing_final = grazing_rep / grazing_rep_yearly * grazing_final_yearly
+  # )
+  # grazing_monthly$grazing_final[is.nan(grazing_monthly$grazing_final)] <- 0 # Correct NaN from 0 divisions to 0 
   
   return(list(grazing_monthly=grazing_monthly, grazing_yearly=grazing_yearly))
 }
-}
+
 
 
 # Helper function that extracts crop type per month per parcel:
@@ -540,7 +564,7 @@ get_bulk_density <- function(soilAnalysis, soilMapsData){
 
 
 ### GET INPUT FUNCTIONS
-get_orgamendments_inputs = function(monitoringData, scenarios) {
+get_orgamendments_inputs = function(monitoringData, periods) {
 
   # Data frame for all OM subtypes to ensure data availability for all years and parcels
   OM_subtypes <- data.frame(
@@ -642,7 +666,7 @@ get_orgamendments_inputs = function(monitoringData, scenarios) {
   final_OM_inputs <- left_join(final_OM_inputs, added_OM_inputs, by = c("year", "parcel_name", "parcel_ID", "type", "sub_type")) %>% 
     mutate(amount = ifelse(is.na(amount), 0, amount))
   final_OM_inputs <- left_join(final_OM_inputs, imported_OM_inputs, by = c("year", "type"))
-  final_OM_inputs <- left_join(final_OM_inputs, scenarios, by = c("year"))
+  final_OM_inputs <- left_join(final_OM_inputs, periods, by = c("year"))
   
   return(final_OM_inputs)
     
@@ -1055,7 +1079,7 @@ get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_facto
 # }
 
 
-get_fertilizer_inputs = function(monitoringData, scenarios) {
+get_fertilizer_inputs = function(monitoringData, periods) {
 
   # Data frame for fertilzer inputs
   fertilizer_inputs = data.frame(
@@ -1076,7 +1100,7 @@ get_fertilizer_inputs = function(monitoringData, scenarios) {
     }
   }
   
-  fertilizer_inputs <- left_join(fertilizer_inputs, scenarios, by = "year")
+  fertilizer_inputs <- left_join(fertilizer_inputs, periods, by = "year")
   
   return (fertilizer_inputs)
   
@@ -1142,7 +1166,7 @@ get_fertilizer_inputs = function(monitoringData, scenarios) {
 }
 
 
-get_fuel_inputs_direct = function(monitoringData, scenarios){
+get_fuel_inputs_direct = function(monitoringData, periods){
   
   # Data frame for direct fuel inputs
   fuel_inputs_direct <- data.frame(
@@ -1165,12 +1189,12 @@ get_fuel_inputs_direct = function(monitoringData, scenarios){
     }
   }
   
-  fuel_inputs_direct <- left_join(fuel_inputs_direct, scenarios, by = "year")
+  fuel_inputs_direct <- left_join(fuel_inputs_direct, periods, by = "year")
   
   return(fuel_inputs_direct)
 }
 
-get_fuel_inputs_indirect = function(monitoringData, scenarios) {
+get_fuel_inputs_indirect = function(monitoringData, periods) {
   
   # Indirect fuel inputs data frame 
   fuel_inputs_indirect <- data.frame()
@@ -1179,20 +1203,20 @@ get_fuel_inputs_indirect = function(monitoringData, scenarios) {
   for (year in monitoringData$yearlyFarmData) {
     for (service in year$fuelUsage$indirect) {
       
-      year <- year$year
-      service <- ifelse (is_null(service$service), NA, service$service) # not mandatory 
-      area <- ifelse (service$area$amount == -9999, 0, service$area$amount) # not mandatory
-      units <- ifelse (is_null(service$area$units), NA, service$area$units) # not mandatory
-      servie_detail <- ifelse (is_null(service$serviceDetail), NA, service$serviceDetail) # not mandatory
-      service_category <- ifelse (is_null(service$serviceCategory), NA, service$serviceCategory) # not mandatory
+      year_temp <- year$year
+      service_temp <- ifelse (is_null(service$service), NA, service$service) # not mandatory 
+      area_temp <- ifelse (service$area$amount == -9999, 0, service$area$amount) # not mandatory
+      units_temp <- ifelse (is_null(service$area$units), NA, service$area$units) # not mandatory
+      service_detail_temp <- ifelse (is_null(service$serviceDetail), NA, service$serviceDetail) # not mandatory
+      service_category_temp <- ifelse (is_null(service$serviceCategory), NA, service$serviceCategory) # not mandatory
       
       fuel_inputs_indirect_temp <- data.frame(
-        year             = year, 
-        service          = service,
-        area             = area,
-        units            = units,
-        servie_detail    = servie_detail,
-        service_category = service_category
+        year             = year_temp, 
+        service          = service_temp,
+        area             = area_temp,
+        units            = units_temp,
+        servie_detail    = service_detail_temp,
+        service_category = service_category_temp
       )
       
       fuel_inputs_indirect <- bind_rows(fuel_inputs_indirect, fuel_inputs_indirect_temp)
@@ -1295,7 +1319,6 @@ get_fixed_parcel_inputs <- function(monitoringData) {
 get_periods <- function(monitoringData, project_start_year) {
   
   periods <- data.frame()
-  project_start_year = 2021
   
   count_baseline_years <- -3
   count_project_years <- 1
@@ -1314,14 +1337,14 @@ get_periods <- function(monitoringData, project_start_year) {
         count_project_years = count_project_years + 1
       }
       periods_temp <- data.frame(
-        year <- year,
-        period <- period
+        year = year,
+        period = period
       )
       periods <- bind_rows(periods, periods_temp)
     }
   }
   
-  return(scenarios)
+  return(periods)
 }
 
 

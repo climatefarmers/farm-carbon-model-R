@@ -218,15 +218,15 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   periods <- get_periods(monitoringData, fixed_farm_inputs$project_start_year) # defines project and baseline years based on the given project start year
   
   ## Yearly farm inputs
-  fuel_inputs_direct <- get_fuel_inputs_direct(monitoringData, scenarios) 
-  fuel_inputs_indirect <- get_fuel_inputs_indirect(monitoringData, scenarios)
-  fertilizer_inputs <- get_fertilizer_inputs(monitoringData, scenarios)
+  fuel_inputs_direct <- get_fuel_inputs_direct(monitoringData, periods) 
+  fuel_inputs_indirect <- get_fuel_inputs_indirect(monitoringData, periods)
+  fertilizer_inputs <- get_fertilizer_inputs(monitoringData, periods)
   
-  in_farm_livestock_inputs <- get_in_farm_livestock_inputs(monitoringData, scenarios, animal_factors)
-  out_farm_livestock_inputs <- get_out_farm_livestock_inputs(monitoringData, scenarios, animal_factors)
+  in_farm_livestock_inputs <- get_in_farm_livestock_inputs(monitoringData, periods, animal_factors)
+  out_farm_livestock_inputs <- get_out_farm_livestock_inputs(monitoringData, periods, animal_factors)
   
   ## Yearly parcel inputs
-  orgamendments_inputs <- get_orgamendments_inputs(monitoringData, scenarios) 
+  orgamendments_inputs <- get_orgamendments_inputs(monitoringData, periods) 
   
   
   landUseType <- get_land_use_type(landUseSummaryOrPractices, parcel_inputs)
