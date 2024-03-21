@@ -91,11 +91,11 @@ get_mean_latitude <- function(coordinates) {
   return(mean(latitude))
 }
 
-get_in_farm_livestock_inputs <- function(monitoringData, periods, animal_factors) {
+get_in_farm_livestock_table<- function(monitoringData, periods, animal_factors) {
   
   # Data frame for livestock inputs
   
-  in_farm_livestock_inputs <- data.frame(
+  in_farm_livestock_table <- data.frame(
     year               = c(),
     species            = c(),
     category           = c(),
@@ -108,7 +108,7 @@ get_in_farm_livestock_inputs <- function(monitoringData, periods, animal_factors
   for (year in monitoringData$yearlyFarmData) {
     for (species in year$livestock$inFarm) {
       for (category in species$category) {
-        in_farm_livestock_inputs <- rbind(in_farm_livestock_inputs, data.frame(
+        in_farm_livestock_table <- rbind(in_farm_livestock_table, data.frame(
           year               = year$year,
           species            = species$species, #mandatory, no null values
           category           = category$name, #mandatory, no null values
@@ -122,16 +122,16 @@ get_in_farm_livestock_inputs <- function(monitoringData, periods, animal_factors
     }
   }
   
-  in_farm_livestock_inputs <- left_join(in_farm_livestock_inputs, animal_factors, by = c("species", "category")) %>% 
+  in_farm_livestock_table <- left_join(in_farm_livestock_table, animal_factors, by = c("species", "category")) %>% 
     mutate(grazing_days = ifelse(grazing_days > days_on_farm_per_year, days_on_farm_per_year, grazing_days))
   
   # TO-DO: Write error message with logr4
-  if (sum(is.na(in_farm_livestock_inputs)) > 0) {
+  if (sum(is.na(in_farm_livestock_table)) > 0) {
     stop("Error: there are NA values in in_Farm_livestocck_inputs")
   }
-  in_farm_livestock_inputs <- left_join(in_farm_livestock_inputs, periods, by = "year")
+  in_farm_livestock_table <- left_join(in_farm_livestock_table, periods, by = "year")
   
-  return(in_farm_livestock_inputs)
+  return(in_farm_livestock_table)
   # year_strings <- paste0("year", 0:10)
   # 
   # animals = expand.grid(
@@ -168,7 +168,7 @@ get_in_farm_livestock_inputs <- function(monitoringData, periods, animal_factors
   # return(animals)
 }
 
-get_out_farm_livestock_inputs <- function(monitoringData, periods, animal_factors) {
+get_out_farm_livestock_table <- function(monitoringData, periods, animal_factors) {
   
   # Species
   species <- data.frame(
@@ -177,7 +177,7 @@ get_out_farm_livestock_inputs <- function(monitoringData, periods, animal_factor
   )
   
   # Data frame for out farm livestock inputs
-  out_farm_livestock_inputs <- data.frame(
+  out_farm_livestock_table <- data.frame(
     year         = c(),
     species      = c(),
     amount       = c(),
@@ -193,7 +193,7 @@ get_out_farm_livestock_inputs <- function(monitoringData, periods, animal_factor
       ))
     }
     for (out_farm_species in year$livestock$outFarm) {
-      out_farm_livestock_inputs <- rbind(out_farm_livestock_inputs, data.frame(
+      out_farm_livestock_table <- rbind(out_farm_livestock_table, data.frame(
         year         = year$year,
         species      = ifelse (is_null(out_farm_species$species), "-", out_farm_species$species), # not mandatory
         amount       = ifelse (out_farm_species$amount == -9999, 0, out_farm_species$amount), # not mandatory
@@ -204,13 +204,13 @@ get_out_farm_livestock_inputs <- function(monitoringData, periods, animal_factor
   }
   out_farm_animal_factors <- animal_factors %>%
     filter(category == "general")
-  out_farm_livestock_inputs <- right_join(out_farm_livestock_inputs, species, by = c("year", "species")) %>%
+  out_farm_livestock_table <- right_join(out_farm_livestock_table, species, by = c("year", "species")) %>%
     mutate(amount = ifelse (is.na(amount), 0, amount)) %>%
     mutate(grazing_days = ifelse (is.na(grazing_days), 0, grazing_days)) %>%
     mutate(grazing_management = ifelse (is.na(grazing_management), "-", grazing_management))
-  out_farm_livestock_inputs <- left_join(out_farm_livestock_inputs, out_farm_animal_factors, by = "species")
+  out_farm_livestock_table <- left_join(out_farm_livestock_table, out_farm_animal_factors, by = "species")
   
-  return(out_farm_livestock_inputs)
+  return(out_farm_livestock_table)
 }
 
 ## Function to extract expected grazing from livestock and fodder from the whole farm over all years
@@ -218,7 +218,7 @@ get_out_farm_livestock_inputs <- function(monitoringData, periods, animal_factor
 # Fodder: hay and straw that was additionally applied to the parcel to feed animals
 # Grazing: amount of biomass that is eaten by animals
 # forage: amount of growing biomass (on the parcel) that is eaten by the animals
-get_grazing_inputs <- function(monitoringData, periods, parcel_inputs, in_farm_livestock_inputs, out_farm_livestock_inputs, orgamendments_inputs){
+get_grazing_table <- function(monitoringData, periods, parcel_inputs, in_farm_livestock_table, out_farm_livestock_table, orgamendments_inputs){
 
   # Data frame for yearly grazing inputs
   grazing_yearly <- data.frame()
@@ -271,13 +271,13 @@ get_grazing_inputs <- function(monitoringData, periods, parcel_inputs, in_farm_l
   }
   
   ## Calculate total grazing needs for in and out farm animals based on animal amounts and grazing days
-  in_farm_yearly_grazing_needs <- in_farm_livestock_inputs %>%
+  in_farm_yearly_grazing_needs <- in_farm_livestock_table %>%
     select(year, category, amount, grazing_days, mass_kg_per_animal) %>%
     mutate(yearly_grazing_needs_tDM = amount * mass_kg_per_animal / 1000 * 0.025 * grazing_days) %>%
     group_by(year) %>%
     summarise(in_farm_yearly_grazing_needs = sum(yearly_grazing_needs_tDM)) # 0.025 is the 2.5% of animal mass required as feed every day
   
-  out_farm_yearly_grazing_needs <- out_farm_livestock_inputs %>%
+  out_farm_yearly_grazing_needs <- out_farm_livestock_table %>%
     select(year, species, amount, grazing_days, mass_kg_per_animal) %>%
     mutate(yearly_grazing_needs_tDM = amount * mass_kg_per_animal / 1000 * 0.025 * grazing_days) %>%
     group_by(year) %>%
@@ -721,51 +721,43 @@ get_tree_inputs = function(landUseSummaryOrPractices){
 }
 
 
-get_animal_inputs = function(grazing_yearly, livestock_inputs, parcel_inputs){
+get_animal_inputs = function(grazing_yearly, in_farm_livestock_table, out_farm_livestock_table, periods){
   # takes landUseSummaryOrPractices & livestock from farms collection
   # extracts animal inputs dataframe
   
-  parcel_names <- parcel_inputs$parcel_ID
-  animal_inputs = data.frame()
+  # Data farme for animal inputs from manure
+  animal_inputs <- data.frame()
   
-  for (i in c(1:length(parcel_names))){
-    
-    parcel <- parcel_names[i]
-    
-    for (y in c(0:10)){
-      
-      year_str <- paste0('year', y)
-      
-      grazing_year <- grazing_yearly %>% filter(scenario == year_str) %>% select(grazing_final, parcel)
-      grazing_year_total <- sum(grazing_year$grazing)
-      grazing_year_parcel <- grazing_year$grazing[grazing_year$parcel == parcel_names[i]]
-      
-      livestock_temp <- livestock_inputs %>% filter(scenario == year_str)
-      
-      if(nrow(livestock_temp) > 0) {
-        for (k in 1:nrow(livestock_temp)){
-          
-          n_animals <- livestock_temp$n_animals[k]
-          n_animals_parcel <- ifelse(grazing_year_total == 0, 0, n_animals * grazing_year_parcel / grazing_year_total)
-          
-          animal_inputs_temp <- data.frame(
-            parcel_ID = parcel_names[i], 
-            scenario = year_str, 
-            species = livestock_temp$species[[k]],
-            n_animals = n_animals_parcel,  # n_animal is the total number of animal from a farm weighted by grazing fraction of the parcel
-            grazing_days = livestock_temp$grazing_days[k], 
-            area = parcel_inputs$area[i],
-            grazing_management = "Daily Spread", 
-            productivity = "Low Productivity"
-          )
-          animal_inputs <- rbind(animal_inputs, animal_inputs_temp)
-        }
-      }
-    }
-  }
+  # Full data frame for in farm animal inputs
+  in_farm_animal_inputs_temp <- in_farm_livestock_inputs %>%
+    select(year, species, category, amount, grazing_days, grazing_management, manure_treatment, c_kg_per_year_per_animal) %>%
+    merge(select(grazing_yearly,c("year", "parcel", "area", "yearly_grazing_needs", "grazing")), by = "year") %>%
+    rename(grazing_total = yearly_grazing_needs, grazing_parcel = grazing) %>%
+    # Number of animals weighted by grazing per parcel
+    mutate(amount_animals_parcel = amount * grazing_parcel / grazing_total) %>%
+    select(1,2,3,4,9,12,11,13,5,6,7,8,9,10)
   
-  # Set baseline to be equal to year0
-  animal_inputs <- rbind(animal_inputs, animal_inputs %>% filter(scenario=='year0') %>% mutate(scenario='baseline'))
+  # Reduced data frame for in farm animal inputs
+  in_farm_animal_inputs <- in_farm_animal_inputs_temp %>%
+    select(year, parcel, species, category, amount_animals_parcel, grazing_days, grazing_management, manure_treatment, c_kg_per_year_per_animal, area)
+  
+  # Full data frame for out farm animal inputs
+  out_farm_animal_inputs_temp <- out_farm_livestock_inputs %>%
+    select(year, species, amount, grazing_days, grazing_management, c_kg_per_year_per_animal) %>%
+    merge(select(grazing_yearly,c("year", "parcel", "area", "yearly_grazing_needs", "grazing")), by = "year") %>%
+    # Number of animals weighted by grazing per parcel
+    rename(grazing_total = yearly_grazing_needs, grazing_parcel = grazing) %>%
+    mutate(amount_animals_parcel = amount * grazing_parcel / grazing_total)  
+  
+  # Reduced data frame for out farm animal inputs
+  out_farm_animal_inputs <- out_farm_animal_inputs_temp %>%
+    select(year, parcel, species, amount_animals_parcel, grazing_days, grazing_management, c_kg_per_year_per_animal, area)
+  
+  # Combine in farm and out farm animal inputs
+  animal_inputs <- bind_rows(in_farm_animal_inputs, out_farm_animal_inputs) %>%
+    mutate(category = ifelse(is.na(category), "general", category)) %>%
+    left_join(periods, by = "year")
+
   return(animal_inputs)
 }
 

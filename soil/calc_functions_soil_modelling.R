@@ -18,14 +18,15 @@ get_monthly_Cinputs_orgamendments <- function (orgamendments_inputs, orgamendmen
 
 ### Calculation of animal input: Carbon input due to manure daily spreading over a grazed field
 # YEARLY
-get_monthly_Cinputs_animals <- function (animal_inputs, animal_factors, scenario_chosen, parcel){
+# TO-DO: I think we can get rid of the for loop. So far I just changed some variable names and excluded animal_factors from the function
+# as the necessary factor c_kg_per_year_per_animal is already in the animal_inputs table. 
+get_yearly_Cinputs_animals <- function (animal_inputs, scenario_chosen, parcel){
   
-  animal_inputs = filter(animal_inputs, scenario == scenario_chosen & parcel_ID == parcel & n_animals > 0)
+  animal_inputs <- filter(animal_inputs, scenario == scenario_chosen & parcel_name == parcel & amount > 0)
   
   if(nrow(animal_inputs)==0){return(0)}
   
-  animals = merge(x = animal_inputs, y = animal_factors, by = "species", all.x = TRUE) %>% 
-    mutate (C_inputs_manure_kg_per_ha_per_year = n_animals*c_kg_per_year_per_animal / area * grazing_days / 365)
+  animals <- mutate (C_inputs_manure_kg_per_ha_per_year = amount*c_kg_per_year_per_animal / area * grazing_days / 365)
   
   tC_inputs_per_ha_per_year = sum(animals$C_inputs_manure_kg_per_ha_per_year) * 1e-3
   
