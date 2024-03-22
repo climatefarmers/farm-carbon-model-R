@@ -228,16 +228,19 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   ## Yearly parcel inputs
   orgamendments_inputs <- get_orgamendments_inputs(monitoringData, periods)
   grazing_table <- get_grazing_table(monitoringData, periods, parcel_inputs, in_farm_livestock_inputs, out_farm_livestock_inputs, orgamendments_inputs)  # grazing data
-  grazing_monthly <- grazing_inputs[[1]]
-  grazing_yearly <- grazing_inputs[[2]] 
-  animal_inputs <- get_animal_inputs(grazing_yearly, in_farm_livestock_table, out_farm_livestock_table, periods)  # Animal manure
+  grazing_monthly <- grazing_table[[1]]
+  grazing_yearly <- grazing_table[[2]] 
+  animal_inputs <- get_animal_inputs(grazing_yearly, in_farm_livestock_table, out_farm_livestock_table, periods)
+  tilling_inputs <- get_tilling_inputs(landUseSummaryOrPractices, tilling_factors, farm_EnZ)
   
   
-  landUseType <- get_land_use_type(landUseSummaryOrPractices, parcel_inputs)
-  crop_inputs <- get_crop_inputs(landUseSummaryOrPractices, parcel_inputs, crop_factors, grazing_yearly, grazing_monthly)  # Crops and residues
+  #landUseType <- get_land_use_type(landUseSummaryOrPractices, parcel_inputs)
+  annual_crop_inputs <- get_annual_crop_inputs(monitoringData, parcel_inputs, crop_factors, grazing_yearly, grazing_monthly, periods)  # Crops and residues
+  
   pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, pasture_factors, farm_EnZ, grazing_yearly, grazing_monthly, my_logger, parcel_inputs)
   
-  tree_inputs <- get_tree_inputs(landUseSummaryOrPractices)
+  tree_inputs <- get_tree_inputs(landUseSummaryOrPractices) #TO-DO
+  perennial_crop_inputs <- get_perennial_crop_inputs(monitoringData, fixed_parcel_inputs, periods)
   
   bare_field_inputs <- get_bareground_inputs(landUseSummaryOrPractices, soil_cover_factors, farm_EnZ, settings$bare_bl_type)
   tilling_inputs <- get_tilling_inputs(landUseSummaryOrPractices, tilling_factors, farm_EnZ)

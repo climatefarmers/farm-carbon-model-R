@@ -313,13 +313,17 @@ get_grazing_table <- function(monitoringData, periods, parcel_inputs, in_farm_li
     mutate(area_grazed_frac = ifelse(is.na(area_grazed_frac), 0, area_grazed_frac)) %>%
     # Grazing per parcel
     mutate(grazing = yearly_grazing_needs * area_grazed_frac) %>%
+    mutate(grazing_residue = grazing * 0.15) %>%
     mutate(units_grazing = "tonnes") %>%
     # Forage
     mutate(forage = grazing - fodder_eaten) %>%
+    mutate(forage_residue = forage * 0.15) %>%
     mutate(units_forage = "tonnes") %>%
     # Values per hecatre
     mutate(grazing_ha = grazing / area) %>%
+    mutate(grazing_residue_ha = grazing_residue / area) %>%
     mutate(forage_ha = forage / area) %>%
+    mutate(forage_residue_ha = forage_residue / area) %>%
     mutate(fodder_residue_ha = fodder_residue / area)
   
   ## Distribute yeary grazing per hectare to the respective months per parcel per year
@@ -819,7 +823,7 @@ get_bareground_inputs = function(landUseSummaryOrPractices, soil_cover_data, far
 }
 
 
-get_crop_inputs <- function(landUseSummaryOrPractices, parcel_inputs, crop_factors, grazing_yearly, grazing_monthly){
+get_crop_inputs <- function(monitoringData, parcel_inputs, crop_factors, grazing_yearly, grazing_monthly, periods){
   
   year_strings <- paste0("year", 0:10)
   parcel_names <- parcel_inputs$parcel_ID

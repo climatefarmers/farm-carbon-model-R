@@ -115,7 +115,7 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
       if(year == 0) scenario <- baseline_chosen
       orgamendments_Cinputs <- get_monthly_Cinputs_orgamendments(inputs$orgamendments_inputs, factors$manure_factors, scenario, parcel)
       agroforestry_Cinputs <- 0 # get_monthly_Cinputs_agroforestry(inputs$tree_inputs, factors$agroforestry_factors, scenario, parcel, lat_farmer) # TREES NOT COUNTED BEFORE GOOD CHECK OF DATA QUALITY
-      animal_Cinputs <- get_yearlyy_Cinputs_animals(inputs$animal_inputs, scenario, parcel)
+      animal_Cinputs <- get_yearly_Cinputs_animals(inputs$animal_inputs, scenario, parcel)
       crop_Cinputs <- get_monthly_Cinputs_crop(inputs$crop_inputs, factors$crop_factors, scenario, parcel, farm_EnZ)
       pasture_Cinputs <- get_monthly_Cinputs_pasture(inputs$pasture_inputs, factors$pasture_factors, scenario, parcel, year, settings)
       
