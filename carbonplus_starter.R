@@ -106,7 +106,7 @@ settings <- settings_testing
 # }
 
 ## Run with example json
-jsonfile_json_format = here("example-farm-data","json_format.json")
+# jsonfile_json_format = here("example-farm-data","json_format.json")
 jsonfile_example_farm = here("example-farm-data","example-farm-monitoringData.json")
 
-out <- carbonplus_main(init_file=init_file, settings=settings, JSONfile = jsonfile)
+#out <- carbonplus_main(init_file=init_file, settings=settings, JSONfile = jsonfile)
