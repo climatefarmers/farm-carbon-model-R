@@ -1,0 +1,3 @@
+grass,pasture_type,n_ag,n_bg,dry,r_s_ratio,dry_c,ag_turnover,bg_turnover
+generic grasses,perennial,0.015,0.012,0.9,0.8,0.45,0.38,0.34
+generic grasses,annual,0.015,0.012,0.9,0.8,0.45,1,1

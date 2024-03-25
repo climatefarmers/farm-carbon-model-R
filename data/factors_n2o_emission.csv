@@ -1,4 +1,4 @@
-Name,Value,Definition
+name,value,definition
 n_n2o,1.57,N to N2O  conversion factor
 ef_3_n2o_wet,0.006,Emission factor in direct N2O from manure calculation (n2o_manure_deposition_direct)
 ef_3_n2o_dry,0.002,Emission factor in direct N2O from manure calculation (n2o_manure_deposition_direct)

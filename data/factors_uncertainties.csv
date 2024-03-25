@@ -1,0 +1,5 @@
+input,standard error
+sterr_c_inputs,0.1
+sterr_soil,0.025
+sterr_climate,0.025
+sterr_tillage,0.025

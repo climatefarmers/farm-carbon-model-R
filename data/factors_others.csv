@@ -1,0 +1,18 @@
+name,value,definition
+amec,0.025,Animal Maintenance Energy Coefficient: proportion of animal weight required as feed each day (for normal maintenance) 
+t2kg,1000,Tonne to kilograms conversion factor
+frf,0.15,Fodder residue fraction: assumed fraction of fodder left on field after grazing
+ha2msq,10000,hectares to squared meters conversion factor
+grf,0.15,Grazing residue fraction: assumed fraction of plant left after grazing
+hrf,0.05,Harvest resdue fraction: assumed fraction of plant left on field after harvest
+amp_te,3,amp tillage effect: years of amp effect lost by tillage
+amp_mte,1,amp minimal tillage effect: years of amp effect lost by minimal tillage
+amp_ec,-0.36,AMP grazing efficiency coefficient.
+perc2frac,100,percent to fraction conversion factor
+dpy,365,Days per year
+op2ept,0.75,open-pan evaporation to potential evapotranspitation ratio
+frac_om2soc,0.12,Fraction of OM considered to become SOC for leakage calculations
+c_co2,3.67,C to CO2 conversion factor
+frac_leak_imp_manure,1,Fraction of imported manure considered leakge
+frac_leak_imp_compost,1,Fraction of imported compost considered leakge
+frac_leak_imp_hay,1,Fraction of imported hay considered leakge

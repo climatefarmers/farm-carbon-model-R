@@ -1,0 +1,27 @@
+type,category,mass_kg_per_animal,ef_enteric_fermentation_kg_head,n_excretion_rate_kg_1000am,c_kg_per_year_per_animal,vs_kg_per_tonne_per_day,days_on_farm_per_year,description
+dairy cows,general,600,126,0.54,975.5,8.4,365,general for type
+dairy cows,mature females,600,126,0.54,975.5,8.4,365,> 2 years
+cattle,general,405,52,0.42,446.8,5.7,365,general for type
+cattle,mature females,405,52,0.42,446.8,5.7,365,> 2 years
+cattle,mature males,405,52,0.42,446.8,5.7,365,> 2 years
+cattle,growing cattle,405,52,0.42,446.8,5.7,365,6 - 24 months (dairy or beef)
+cattle,calves,230,52,0.42,253.8,5.7,180,< 6 months
+swine,general,76,1.5,0.76,78,5.3,90,general for type
+swine,sows,190,1.5,0.38,88.3,2.4,365,adult reproductive females
+swine,boars,190,1.5,0.38,88.3,2.4,365,adult males
+swine,finishers,76,1.5,0.76,78,5.3,90,non reproductive swine used for meet: 3-6 months
+swine,piglets,30,1,0.65,26.1,4.5,90,< 3 months or < 20 kg
+swine,other swine,76,1.5,0.76,78,5.3,90,general category for adult swine > 3 months
+chicken,general,1.4,0,0.99,3.3,12.3,365,general for type
+chicken,layer hens,1.9,0,0.87,3.2,8.6,365,egg laying chicken
+chicken,broilers,1.4,0,0.99,3.3,12.3,365,chicken for meat
+chicken,other chicken,1.4,0,0.99,3.3,12.3,365,generic chicken
+turkey,general,6.8,0,0.74,13.6,10.3,365,all turkeys
+turkey,turkey,6.8,0,0.74,13.6,10.3,365,all turkeys
+sheep,general,40,9,0.36,63.5,8.2,365,general for type
+sheep,mature females,40,9,0.36,63.5,8.2,365,female adult sheep: > 1 year
+sheep,mature males,40,9,0.36,63.5,8.2,365,male adult sheep: > 1 year
+sheep,lambs,20,9,0.36,31.7,8.2,365,< 1 year
+goats,general,40,9,0.46,69.7,9,365,general for type
+goats,mature females,40,9,0.46,69.7,9,365,female adult goats: > 1 year
+goats,mature males,40,9,0.46,69.7,9,365,male adult goats: > 1 year

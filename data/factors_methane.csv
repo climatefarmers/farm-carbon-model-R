@@ -1,0 +1,7 @@
+species,ef_methane_manure,productivity,grazing_management,climate
+dairy cows,0.4,Low Productivity,Daily Spread,Warm Temp Dry
+cattle,0.4,Low Productivity,Daily Spread,Warm Temp Dry
+swine,1,Low Productivity,Daily Spread,Warm Temp Dry
+sheep,1.3,Low Productivity,Dry lot,Warm Temp Dry
+goats,1.3,Low Productivity,Dry lot,Warm Temp Dry
+poultry,2.4,Low Productivity,All Systems,Warm Temp Dry
