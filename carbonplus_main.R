@@ -26,8 +26,8 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   ## Loading libraries ---------------------------------------------------------
   
   library(pacman)
-  p_load('pacman', 'SoilR', 'mongolite', 'dplyr', 'tidyr', 'tidyverse',
-         'soilassessment', 'readr','aws.s3', 'log4r', 'jsonlite',
+  p_load('pacman', 'SoilR', 'mongolite', 'tidyverse',
+         'soilassessment', 'aws.s3', 'log4r', 'jsonlite',
          'httr', 'logger', 'ncdf4', 'ncdf4.helpers')
   
   
