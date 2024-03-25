@@ -1,10 +1,10 @@
 # Initial calculations all in kg -> convert to tonnes later
 
 ## Calculation: co2 fuel consumption
-co2_fuel_consumption <- function(fuel_data, fuel_factors) {
+co2_fuel_consumption <- function(fuel_data, factors_fuel) {
 
-  ef_diesel <- fuel_factors$Value[fuel_factors$Variable == "ef_diesel_kg_l"]
-  ef_petrol <- fuel_factors$Value[fuel_factors$Variable == "ef_petrol_kg_l"]
+  ef_diesel <- factors_fuel$Value[factors_fuel$Variable == "ef_diesel_kg_l"]
+  ef_petrol <- factors_fuel$Value[factors_fuel$Variable == "ef_petrol_kg_l"]
   
   if(nrow(fuel_data) > 0) {
     fuel_data$co2_fuel <- NA
@@ -48,10 +48,10 @@ ch4_manure <- function(
 
 n2o_n_fixing_species_crop <- function(
     n_fixing_species_crop,
-    n2o_emission_factors,
+    factors_n2o_emission,
     field_area = NA
 ){
-  ef_n <- n2o_emission_factors$Value[n2o_emission_factors$Name == 'ef_n_fixing']
+  ef_n <- factors_n2o_emission$Value[factors_n2o_emission$Name == 'ef_n_fixing']
   if(nrow(n_fixing_species_crop) > 0){ # add pastures and update the crop residue calc function
     n_fixing_species_crop <- n_fixing_species_crop %>% 
       mutate(agr = dry_residue, 
@@ -100,18 +100,18 @@ n2o_fertilizer <- function(fertilizer_data){
 
 n2o_manure_indirect <- function( # add non-grazing days
   animal_data,
-  n2o_emission_factors,
+  factors_n2o_emission,
   climate_wet_or_dry
 ){
   if (climate_wet_or_dry == "wet"){
-    ef_4 <- n2o_emission_factors$Value[n2o_emission_factors$Name == 'ef_4_n2o_wet']
+    ef_4 <- factors_n2o_emission$Value[factors_n2o_emission$Name == 'ef_4_n2o_wet']
     }
   if (climate_wet_or_dry == "dry"){
-    ef_4 <- n2o_emission_factors$Value[n2o_emission_factors$Name == 'ef_4_n2o_dry']
+    ef_4 <- factors_n2o_emission$Value[factors_n2o_emission$Name == 'ef_4_n2o_dry']
   }
-  frac_gasm <- n2o_emission_factors$Value[n2o_emission_factors$Name == 'n2o_frac_gasm']
-  frac_leach <- n2o_emission_factors$Value[n2o_emission_factors$Name == 'n2o_frac_leach']
-  ef_5 <- n2o_emission_factors$Value[n2o_emission_factors$Name == 'ef_5_n2o']
+  frac_gasm <- factors_n2o_emission$Value[factors_n2o_emission$Name == 'n2o_frac_gasm']
+  frac_leach <- factors_n2o_emission$Value[factors_n2o_emission$Name == 'n2o_frac_leach']
+  ef_5 <- factors_n2o_emission$Value[factors_n2o_emission$Name == 'ef_5_n2o']
   if(nrow(animal_data) > 0){
     animal_data <- animal_data %>% 
       mutate(n2o_manure_indirect = n_animals * n_excretion_rate_kg_1000am * grazing_days * mass_kg_per_animal / 1000 *
@@ -124,16 +124,16 @@ n2o_manure_indirect <- function( # add non-grazing days
 
 n2o_manure_direct <- function(
     animal_data,
-    n2o_emission_factors,
+    factors_n2o_emission,
     climate_wet_or_dry
 ){
   if (climate_wet_or_dry == "wet"){
-    ef_3_pasture <- n2o_emission_factors$Value[n2o_emission_factors$Name == 'ef_3_n2o_wet']
+    ef_3_pasture <- factors_n2o_emission$Value[factors_n2o_emission$Name == 'ef_3_n2o_wet']
     }
   if (climate_wet_or_dry == "dry"){
-    ef_3_pasture <- n2o_emission_factors$Value[n2o_emission_factors$Name == 'ef_3_n2o_dry']
+    ef_3_pasture <- factors_n2o_emission$Value[factors_n2o_emission$Name == 'ef_3_n2o_dry']
   }
-  ef_3_deep_bedding <- n2o_emission_factors$Value[n2o_emission_factors$Name == 'ef_3_deep_bedding']
+  ef_3_deep_bedding <- factors_n2o_emission$Value[factors_n2o_emission$Name == 'ef_3_deep_bedding']
   if(nrow(animal_data) > 0){
     animal_data <- animal_data %>% 
       mutate(n2o_manure_direct = n_animals * n_excretion_rate_kg_1000am * mass_kg_per_animal / 1000 * 

@@ -91,7 +91,7 @@ get_mean_latitude <- function(coordinates) {
   return(mean(latitude))
 }
 
-get_in_farm_livestock_table<- function(monitoringData, periods, animal_factors) {
+get_in_farm_livestock_table<- function(monitoringData, periods, factors_animals) {
   
   # Data frame for livestock inputs
   
@@ -117,7 +117,7 @@ get_in_farm_livestock_table<- function(monitoringData, periods, animal_factors) 
     }
   }
   
-  in_farm_livestock_table <- left_join(in_farm_livestock_table, animal_factors, by = c("species", "category")) %>% 
+  in_farm_livestock_table <- left_join(in_farm_livestock_table, factors_animals, by = c("species", "category")) %>% 
     mutate(grazing_days = ifelse(grazing_days > days_on_farm_per_year, days_on_farm_per_year, grazing_days))
   
   # TO-DO: Write error message with logr4
@@ -131,7 +131,7 @@ get_in_farm_livestock_table<- function(monitoringData, periods, animal_factors) 
   # 
   # animals = expand.grid(
   #   scenario = year_strings, 
-  #   species = animal_factors$species, 
+  #   species = factors_animals$species, 
   #   n_animals = 0, 
   #   grazing_days = 0
   # )
@@ -156,14 +156,14 @@ get_in_farm_livestock_table<- function(monitoringData, periods, animal_factors) 
   # animals <- animals[animals$n_animals!=0, ] # removing all rows that do not apply.
   # 
   # # Limit the grazing days to not be higher than days on farm (this should be dealt with at dashboard level)
-  # animals <- merge(animals, animal_factors[,c('species', 'days_on_farm_per_year')])
+  # animals <- merge(animals, factors_animals[,c('species', 'days_on_farm_per_year')])
   # ind <- animals$grazing_days > animals$days_on_farm_per_year
   # animals$grazing_days[ind] <- animals$days_on_farm_per_year[ind] 
   # 
   # return(animals)
 }
 
-get_out_farm_livestock_table <- function(monitoringData, periods, animal_factors) {
+get_out_farm_livestock_table <- function(monitoringData, periods, factors_animals) {
   
   # Data frame that only contains species, e.g. cattle, swine, chicken etc.  
   species <- data.frame()
@@ -173,7 +173,7 @@ get_out_farm_livestock_table <- function(monitoringData, periods, animal_factors
   
   # For not full data set
   for (year in monitoringData$yearlyFarmData) {
-    for (type in unique(animal_factors$species)) {
+    for (type in unique(factors_animals$species)) {
       species_temp <- data.frame(
         year    = year$year,
         species = type
@@ -191,12 +191,12 @@ get_out_farm_livestock_table <- function(monitoringData, periods, animal_factors
       out_farm_livestock_table <- bind_rows(out_farm_livestock_table, out_farm_livestock_table_temp)
     }
   }
-  out_farm_animal_factors <- animal_factors %>%
+  out_farm_factors_animals <- factors_animals %>%
     filter(category == "general")
   out_farm_livestock_table <- right_join(out_farm_livestock_table, species, by = c("year", "species")) %>%
     mutate(amount = ifelse (is.na(amount), 0, amount)) %>%
     mutate(grazing_days = ifelse (is.na(grazing_days), 0, grazing_days))
-  out_farm_livestock_table <- left_join(out_farm_livestock_table, out_farm_animal_factors, by = "species")
+  out_farm_livestock_table <- left_join(out_farm_livestock_table, out_farm_factors_animals, by = "species")
   
   return(out_farm_livestock_table)
 }
@@ -793,7 +793,7 @@ get_bareground_inputs = function(landUseSummaryOrPractices, soil_cover_data, far
 }
 
 
-get_crop_inputs <- function(monitoringData, parcel_inputs, crop_factors, grazing_yearly, grazing_monthly, periods){
+get_crop_inputs <- function(monitoringData, parcel_inputs, factors_crops, grazing_yearly, grazing_monthly, periods){
   
   year_strings <- paste0("year", 0:10)
   parcel_names <- parcel_inputs$parcel_ID
@@ -872,8 +872,8 @@ get_crop_inputs <- function(monitoringData, parcel_inputs, crop_factors, grazing
   
   # If arable parcels found, correct for dry weight
   if(length(crop_inputs) > 0) {
-    crop_inputs <- merge(x = crop_inputs, y = crop_factors %>% select(crop, dw_fresh), by = "crop", all.x = TRUE)
-    crop_inputs$dw_fresh[is.na(crop_inputs$dw_fresh)] <- crop_factors$dw_fresh[crop_factors$crop == "Other"] # Using option 'Other' if no crop match was found
+    crop_inputs <- merge(x = crop_inputs, y = factors_crops %>% select(crop, dw_fresh), by = "crop", all.x = TRUE)
+    crop_inputs$dw_fresh[is.na(crop_inputs$dw_fresh)] <- factors_crops$dw_fresh[factors_crops$crop == "Other"] # Using option 'Other' if no crop match was found
     # Select the dw correction according to dry or fresh variable.
     crop_inputs$dry_weight <- 1
     ind <- crop_inputs$dry_fresh == "Fresh"
@@ -1130,9 +1130,9 @@ get_land_use_type <- function(landUseSummaryOrPractices, parcel_inputs){
 
 get_fixed_farm_inputs <- function(monitoringData) {
   
-  fixed_farm_inputs <- data.frame(farm_Id            = monitoringData$farmId,
+  fixed_farm_inputs <- data.frame(farm_id            = monitoringData$farmId,
                                   email              = monitoringData$email,
-                                  unique_CF_farm_Id  = monitoringData$uniqueCfFarmId,
+                                  farm_id_cf         = monitoringData$uniqueCfFarmId,
                                   project_start_year = monitoringData$projectStartYear)
   return(fixed_farm_inputs)
   
@@ -1203,7 +1203,7 @@ get_periods <- function(monitoringData, project_start_year) {
 }
 
 
-get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pasture_factors, farm_EnZ, grazing_yearly, grazing_monthly, my_logger, parcel_inputs){
+get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, factors_pastures, farm_EnZ, grazing_yearly, grazing_monthly, my_logger, parcel_inputs){
   # Takes landUseSummaryOrPractices from farms collection
   # Extracts yield and residues left on site when grazing happened
   
@@ -1213,7 +1213,7 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
   
   # Dry weights
   dw_dry <- 1  # dry fraction of fully dehydrated plant material
-  dw_fresh <- (pasture_factors %>% filter(grass == 'Generic annual grasses') %>% select(dw_fresh))[[1]]  # dry fraction of harvest weight
+  dw_fresh <- (factors_pastures %>% filter(grass == 'Generic annual grasses') %>% select(dw_fresh))[[1]]  # dry fraction of harvest weight
   
   pasture_inputs = data.frame()
   
@@ -1389,12 +1389,12 @@ get_soil_inputs = function(landUseSummaryOrPractices, soilAnalysis, soilMapsData
 }
 
 
-get_tilling_inputs = function(landUseSummaryOrPractices, tilling_factors, farm_EnZ){ 
+get_tilling_inputs = function(landUseSummaryOrPractices, factors_tillage, farm_EnZ){ 
   # takes landUseSummaryOrPractices from farms collection, farm_country (from farmInfo) and tilling factors table
   # extracts tilling inputs dataframe 
   parcel_names <- landUseSummaryOrPractices[[1]]$parcelName
-  tilling_factor = (tilling_factors %>% filter(pedo_climatic_area == farm_EnZ))$tilling_factor
-  minimum_tillage_factor = (tilling_factors %>% filter(pedo_climatic_area == farm_EnZ))$minimum_tillage_factor
+  tilling_factor = (factors_tillage %>% filter(pedo_climatic_area == farm_EnZ))$tilling_factor
+  minimum_tillage_factor = (factors_tillage %>% filter(pedo_climatic_area == farm_EnZ))$minimum_tillage_factor
   tilling_inputs = data.frame(parcel_ID = c(), scenario = c(), tillage = c(), tilling_factor = c())
   for (i in c(1:length(parcel_names))){
     for (j in c(0:10)){

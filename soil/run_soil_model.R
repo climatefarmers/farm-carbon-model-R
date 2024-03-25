@@ -116,8 +116,8 @@ run_soil_model <- function(init_data, farms_everything, farm_EnZ, inputs, factor
       orgamendments_Cinputs <- get_monthly_Cinputs_orgamendments(inputs$orgamendments_inputs, factors$manure_factors, scenario, parcel)
       agroforestry_Cinputs <- 0 # get_monthly_Cinputs_agroforestry(inputs$tree_inputs, factors$agroforestry_factors, scenario, parcel, lat_farmer) # TREES NOT COUNTED BEFORE GOOD CHECK OF DATA QUALITY
       animal_Cinputs <- get_yearly_Cinputs_animals(inputs$animal_inputs, scenario, parcel)
-      crop_Cinputs <- get_monthly_Cinputs_crop(inputs$crop_inputs, factors$crop_factors, scenario, parcel, farm_EnZ)
-      pasture_Cinputs <- get_monthly_Cinputs_pasture(inputs$pasture_inputs, factors$pasture_factors, scenario, parcel, year, settings)
+      crop_Cinputs <- get_monthly_Cinputs_crop(inputs$crop_inputs, factors$factors_crops, scenario, parcel, farm_EnZ)
+      pasture_Cinputs <- get_monthly_Cinputs_pasture(inputs$pasture_inputs, factors$factors_pastures, scenario, parcel, year, settings)
       
       parcel_Cinputs_temp <- data.frame(parcel_ID = parcel, 
                                         scenario = scenario,
@@ -175,9 +175,9 @@ run_soil_model <- function(init_data, farms_everything, farm_EnZ, inputs, factor
   ################# Initialisation by making the model reach SOC of natural areas of the pedo-climatic area
   
   ## Pulling DMP/RPM ratios from different kind of land use in corresponding pedoclimatic area 
-  dr_ratio_agroforestry = unique(factors$natural_area_factors$dr_ratio_agroforestry)
-  dr_ratio_non_irrigated = unique(factors$natural_area_factors$dr_ratio_non_irrigated)
-  dr_ratio_irrigated = unique(factors$natural_area_factors$dr_ratio_irrigated)
+  dr_ratio_agroforestry = unique(factors$factors_natural_area$dr_ratio_agroforestry)
+  dr_ratio_non_irrigated = unique(factors$factors_natural_area$dr_ratio_non_irrigated)
+  dr_ratio_irrigated = unique(factors$factors_natural_area$dr_ratio_irrigated)
   
   ## Building a mean input dataframe to feed RothC
   # Mean value for each model input parameter

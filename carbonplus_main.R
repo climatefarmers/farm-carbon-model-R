@@ -1,4 +1,4 @@
-carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
+carbonplus_main <- function(init_file, settings, db_farmId=NA, JSONfile=NA){
   
   ####################################################################
   # This script has the following functions:
@@ -38,13 +38,12 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   dir.create(file.path("logs", "inputs"))
   dir.create(file.path("logs", "outputs"))
   
-  my_logfile = file.path('logs', paste(farmId,'__', str_replace_all(Sys.time(), c(" "="__", ":"="_")),'.log',sep=""))
+  my_logfile = file.path('logs', paste('out', str_replace_all(Sys.time(), c(" "="__", ":"="_")),'.log',sep=""))
   my_console_appender = console_appender(layout = default_log_layout())
   my_file_appender = file_appender(my_logfile, append = TRUE, 
                                    layout = default_log_layout())
   my_logger <- log4r::logger(threshold = "INFO", 
                              appenders= list(my_console_appender,my_file_appender))
-  log4r::info(my_logger, paste("farmId = ",farmId,sep=""))
   
   ## Checking model settings -------------------------------------------------------
   
@@ -68,21 +67,17 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   ## Get the farm data from the JSON file or MongoDB ---------------------------
 
   # Check that only one source of farm data was provided
-  if(!is.na(farmId) & !is.na(JSONfile)){
+  if(!is.na(db_farmId) & !is.na(JSONfile)){
     stop("Both farmId AND JSON files were passed to the model. Please choose only one.")
   }
 
-  if(is.na(farmId) & is.na(JSONfile)){
+  if(is.na(db_farmId) & is.na(JSONfile)){
     stop("Both farmId AND JSON files are missing. One must be passed.")
   }
 
   if(!is.na(JSONfile)){
-    JSONfile_entered <- TRUE
     monitoringData <- fromJSON(JSONfile)
-    farmId <- monitoringData$farmInfo$farmId
-  }
-  
-  if(!is.na(farmId)) {
+  } else {
     if(settings$server == "prod") {
       connection_string = init_data$connection_string_prod
       db <- "carbonplus_production_db"
@@ -94,8 +89,11 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
       db <- "test_server_db"
     } else {stop("Wrong value for variable: server")}
     farm_collection = mongo(collection="farms", db=db, url=connection_string) # farm_collection = mongo(collection="farms_backups", db=db, url=connection_string)
-    monitoringData = farm_collection$find(paste0('{"farmId":"',farmId,'"}'))
+    monitoringData = farm_collection$find(paste0('{"farmId":"',db_farmId,'"}'))
   }
+  
+  farmId <- monitoringData$farmInfo$farmId
+  log4r::info(my_logger, paste("farmId = ",farmId,sep=""))
   
   # Check if data has been loaded and that there is only one instance with the corresponding farm Id:
   # TO BE COMPLETED!
@@ -126,46 +124,40 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   #   DO SOMETHING HERE
   #   log4r::info(my_logger, SOME MESSAGE)
   # }
-  
+
   ## Reading in calculation factors from csv files
-  animal_factors <- read_csv(file.path("data", "animal_factors.csv"), show_col_types = FALSE)
-  crop_factors <- read_csv(file.path("data", "crop_factors.csv"), show_col_types = FALSE)
-  grazing_factors <- read_csv(file.path("data", "grazing_factors.csv"), show_col_types = FALSE)
-  manure_factors <- read_csv(file.path("data", "carbon_share_manure.csv"), show_col_types = FALSE)
-  natural_area_factors <- read_csv(file.path( "data", "natural_area_factors.csv"), show_col_types = FALSE) %>% 
+  factors_animals <- read_csv(file.path("data", "factors_animals.csv"), show_col_types = FALSE)
+  factors_crops <- read_csv(file.path("data", "factors_crops.csv"), show_col_types = FALSE)
+  factors_natural_area <- read_csv(file.path( "data", "factors_natural_area.csv"), show_col_types = FALSE) %>% 
     filter(pedo_climatic_area==farm_EnZ)
-  pasture_factors <- read_csv(file.path("data", "pasture_factors.csv"), show_col_types = FALSE)
-  tilling_factors <- read_csv(file.path("data", "tilling_factors.csv"), show_col_types = FALSE)
-  soil_cover_factors <- read_csv(file.path("data", "soil_cover_factors.csv"), show_col_types = FALSE)
-  agroforestry_factors <- read_csv(file.path("data", "agroforestry_factors.csv"), show_col_types = FALSE) 
-  co2eq_factors <- read_csv(file.path("data", "co2eq_factors.csv"), show_col_types = FALSE)
-  fertilizer_factors <- read_csv(file.path("data", "fertilizer_factors.csv"), show_col_types = FALSE)
-  fuel_factors <- read_csv(file.path("data", "fuel_factors.csv"), show_col_types = FALSE)
-  tree_factors <- read_csv(file.path("data", "agroforestry_factors.csv"), show_col_types = FALSE)
-  methane_factors <- read_csv(file.path("data", "methane_emission_factors.csv"), show_col_types = FALSE) %>%
-    filter(climate == natural_area_factors$climate_zone) %>% select(-climate)
-  n2o_emission_factors <- read_csv(file.path("data", "n2o_emission_factors.csv"), show_col_types = FALSE)
+  factors_pastures <- read_csv(file.path("data", "factors_pastures.csv"), show_col_types = FALSE)
+  factors_tillage <- read_csv(file.path("data", "factors_tillage.csv"), show_col_types = FALSE)
+  factors_co2eq <- read_csv(file.path("data", "factors_co2eq.csv"), show_col_types = FALSE)
+  factors_fertilizer <- read_csv(file.path("data", "factors_fertilizer.csv"), show_col_types = FALSE)
+  factors_fuel <- read_csv(file.path("data", "factors_fuel.csv"), show_col_types = FALSE)
+  factors_trees <- read_csv(file.path("data", "factors_trees.csv"), show_col_types = FALSE)
+  factors_methane <- read_csv(file.path("data", "factors_methane.csv"), show_col_types = FALSE) %>%
+    filter(climate == factors_natural_area$climate_zone) %>% select(-climate)
+  factors_n2o_emission <- read_csv(file.path("data", "factors_n2o_emission.csv"), show_col_types = FALSE)
+  factors_others <- read_csv(file.path("data", "factors_others.csv"), show_col_types = FALSE)
   
   print("Finished reading factors.")
-  
+
   factors <- list(
-    animal_factors = animal_factors,
-    crop_factors = crop_factors,
-    grazing_factors = grazing_factors,
-    manure_factors = manure_factors,
-    natural_area_factors = natural_area_factors,
-    pasture_factors = pasture_factors,
-    tilling_factors = tilling_factors,
-    soil_cover_factors = soil_cover_factors,
-    agroforestry_factors = agroforestry_factors,
-    co2eq_factors = co2eq_factors,
-    fertilizer_factors = fertilizer_factors,
-    fuel_factors = fuel_factors,
-    tree_factors = tree_factors,
-    methane_factors = methane_factors,
-    n2o_emission_factors = n2o_emission_factors
+    factors_animals = factors_animals,
+    factors_crops = factors_crops,
+    factors_natural_area = factors_natural_area,
+    factors_pastures = factors_pastures,
+    factors_tillage = factors_tillage,
+    factors_co2eq = factors_co2eq,
+    factors_fertilizer = factors_fertilizer,
+    factors_fuel = factors_fuel,
+    factors_trees = factors_trees,
+    factors_methane = factors_methane,
+    factors_n2o_emission = factors_n2o_emission,
+    factors_others = factors_others
   )
-  
+  browser()
   ## Fixed farm and parcel inputs
   fixed_farm_inputs <- get_fixed_farm_inputs(monitoringData)
   fixed_parcel_inputs <- get_fixed_parcel_inputs(monitoringData)
@@ -176,8 +168,8 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   fuel_inputs_indirect <- get_fuel_inputs_indirect(monitoringData, periods)
   fertilizer_inputs <- get_fertilizer_inputs(monitoringData, periods)
   
-  in_farm_livestock_table <- get_in_farm_livestock_table(monitoringData, periods, animal_factors)
-  out_farm_livestock_table <- get_out_farm_livestock_table(monitoringData, periods, animal_factors)
+  in_farm_livestock_table <- get_in_farm_livestock_table(monitoringData, periods, factors_animals)
+  out_farm_livestock_table <- get_out_farm_livestock_table(monitoringData, periods, factors_animals)
   
   ## Yearly parcel inputs
   orgamendments_inputs <- get_orgamendments_inputs(monitoringData, periods)
@@ -189,20 +181,20 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   
   ## TO-DO
   #landUseType <- get_land_use_type(landUseSummaryOrPractices, parcel_inputs)
-  annual_crop_inputs <- get_annual_crop_inputs(monitoringData, parcel_inputs, crop_factors, grazing_yearly, grazing_monthly, periods)  # Crops and residues
-  pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, grazing_factors, pasture_factors, farm_EnZ, grazing_yearly, grazing_monthly, my_logger, parcel_inputs)
+  annual_crop_inputs <- get_annual_crop_inputs(monitoringData, parcel_inputs, factors_crops, grazing_yearly, grazing_monthly, periods)  # Crops and residues
+  pasture_inputs <- get_pasture_inputs(landUseSummaryOrPractices, factors_pastures, farm_EnZ, grazing_yearly, grazing_monthly, my_logger, parcel_inputs)
   tree_inputs <- get_tree_inputs(landUseSummaryOrPractices) #TO-DO
   perennial_crop_inputs <- get_perennial_crop_inputs(monitoringData, fixed_parcel_inputs, periods)
   
   bare_field_inputs <- get_bareground_inputs(landUseSummaryOrPractices, soil_cover_factors, farm_EnZ, settings$bare_bl_type)
-  tilling_inputs <- get_tilling_inputs(landUseSummaryOrPractices, tilling_factors, farm_EnZ)
+  tilling_inputs <- get_tilling_inputs(landUseSummaryOrPractices, factors_tillage, farm_EnZ)
   
   # Deactivated. If active should lead to errors and not warnings.
   # # Check input data for validity
-  # check_animal_data(animal_inputs, animal_factors)
-  # check_crop_data(crop_inputs, crop_factors)
-  # check_fertilizer_data(fertilizer_inputs, fertilizer_factors)
-  # check_fuel_data(fuel_inputs, fuel_factors)
+  # check_animal_data(animal_inputs, factors_animals)
+  # check_crop_data(crop_inputs, factors_crops)
+  # check_fertilizer_data(fertilizer_inputs, factors_fertilizer)
+  # check_fuel_data(fuel_inputs, factors_fuel)
   # check_manure_data(orgamendments_inputs, manure_factors)  
   
   # Collect inputs as list

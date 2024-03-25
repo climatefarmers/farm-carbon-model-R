@@ -26,7 +26,7 @@ productivity_crops <- function(crop_inputs, scenario_selected, farm_EnZ, parcel_
   crops <- merge(x = filter(crop_inputs,scenario==scenario_selected), 
                  y = parcel_inputs, by = "parcel_ID", all.x = TRUE)
   crops <- merge(x = crops, 
-                 y = filter(crop_factors,pedo_climatic_area==farm_EnZ | is.na(pedo_climatic_area)==TRUE), by = "crop", all.x = TRUE)
+                 y = filter(factors_crops,pedo_climatic_area==farm_EnZ | is.na(pedo_climatic_area)==TRUE), by = "crop", all.x = TRUE)
   crops <- crops %>% mutate(productivity = (dry_harvest + dry_grazing * area * dry_c))
   farm_productivity = sum(crops$productivity) * 44/12
   return(farm_productivity)
@@ -42,7 +42,7 @@ get_yearly_productivity_table <- function(productivity_table, crop_inputs, scena
   crops <- merge(x = filter(crop_inputs,scenario==scenario_selected), 
                  y = parcel_inputs, by = "parcel_ID", all.x = TRUE)
   crops <- merge(x = crops, 
-                 y = filter(crop_factors, pedo_climatic_area==farm_EnZ | is.na(pedo_climatic_area)==TRUE), by = "crop", all.x = TRUE)
+                 y = filter(factors_crops, pedo_climatic_area==farm_EnZ | is.na(pedo_climatic_area)==TRUE), by = "crop", all.x = TRUE)
   if(nrow(crops)==0){
     productivity_table = data.frame(year = c(), crop = c(), productivity = c())
     return(productivity_table)

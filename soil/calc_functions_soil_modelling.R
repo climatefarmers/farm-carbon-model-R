@@ -18,7 +18,7 @@ get_monthly_Cinputs_orgamendments <- function (orgamendments_inputs, orgamendmen
 
 ### Calculation of animal input: Carbon input due to manure daily spreading over a grazed field
 # YEARLY
-# TO-DO: I think we can get rid of the for loop. So far I just changed some variable names and excluded animal_factors from the function
+# TO-DO: I think we can get rid of the for loop. So far I just changed some variable names and excluded factors_animals from the function
 # as the necessary factor c_kg_per_year_per_animal is already in the animal_inputs table. 
 get_yearly_Cinputs_animals <- function (animal_inputs, scenario_chosen, parcel){
   
@@ -59,14 +59,14 @@ get_monthly_Cinputs_agroforestry <- function (tree_inputs, agroforestry_factors,
 
 ### Calculation of pasture input: Carbon input from pasture biomass turnover
 # YEARLY
-get_monthly_Cinputs_pasture <- function (pasture_inputs, pasture_factors, scenario_chosen, parcel, year, settings){
+get_monthly_Cinputs_pasture <- function (pasture_inputs, factors_pastures, scenario_chosen, parcel, year, settings){
 
   pasture <- pasture_inputs %>% filter(scenario==scenario_chosen & parcel_ID==parcel)
   
   if(nrow(pasture)==0){ return(0) }
 
-  annual_factors <- pasture_factors %>% filter(grass == 'Generic grasses', pasture_type == "annual")
-  perennial_factors <- pasture_factors %>% filter(grass == 'Generic grasses', pasture_type == "perennial")
+  annual_factors <- factors_pastures %>% filter(grass == 'Generic grasses', pasture_type == "annual")
+  perennial_factors <- factors_pastures %>% filter(grass == 'Generic grasses', pasture_type == "perennial")
 
   if(year > settings$curr_monit_year & settings$predict_amp_effect) {
     annual_pastures <- 
@@ -102,13 +102,13 @@ get_monthly_Cinputs_pasture <- function (pasture_inputs, pasture_factors, scenar
 
 ### Calculation of crop input: Carbon input from cash crops and cover crops biomass turnover rates
 # YEARLY
-get_monthly_Cinputs_crop <- function (crop_inputs, crop_factors, scenario_chosen, parcel, farm_EnZ){
+get_monthly_Cinputs_crop <- function (crop_inputs, factors_crops, scenario_chosen, parcel, farm_EnZ){
   
   crops <- filter(crop_inputs, scenario == scenario_chosen & parcel_ID == parcel)
   
   if(nrow(crops)==0) { return(0) }
   
-  factors <- filter(crop_factors, pedo_climatic_area == farm_EnZ | is.na(pedo_climatic_area) == TRUE)
+  factors <- filter(factors_crops, pedo_climatic_area == farm_EnZ | is.na(pedo_climatic_area) == TRUE)
 
   crops <- merge(x = crops, 
                  y = factors,

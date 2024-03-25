@@ -1,36 +1,36 @@
 # tests
 
 
-check_animal_data <- function(animal_data, animal_factors){
+check_animal_data <- function(animal_data, factors_animals){
   
-  animals <- unique(animal_factors$species)
+  animals <- unique(factors_animals$species)
   missing_animals <- setdiff(animal_data$species, animals)
   
   if(length(missing_animals) > 0){warning(paste(missing_animals, " not in the database "))}  
     
 }
 
-check_crop_data <- function(crop_data, crop_factors){
+check_crop_data <- function(crop_data, factors_crops){
   
-  crops <- unique(crop_factors$crop)
+  crops <- unique(factors_crops$crop)
   missing_crops <- setdiff(crop_data$crop, crops)
   
   if(length(missing_crops) > 0){warning(paste(missing_crops, " not in the database "))}  
   
 }
 
-check_fertilizer_data <- function(fertilizer_data, fertilizer_factors){
+check_fertilizer_data <- function(fertilizer_data, factors_fertilizer){
   
-  fertilizers <- unique(fertilizer_factors$fertilizer_type)
+  fertilizers <- unique(factors_fertilizer$fertilizer_type)
   missing_fertilizers <- setdiff(fertilizer_data$fertilizer_type, fertilizers)
   
   if(length(missing_fertilizers) > 0){warning(paste(missing_fertilizers, " not in the database "))}  
   
 }
 
-check_fuel_data <- function(fuel_data, fuel_factors){
+check_fuel_data <- function(fuel_data, factors_fuel){
   
-  fuels <- unique(fuel_factors$fuel_type)
+  fuels <- unique(factors_fuel$fuel_type)
   missing_fuels <- setdiff(fuel_data$fuel_type, fuels)
   
   if(length(missing_fuels) > 0){warning(paste(missing_fuels, " not in the database "))}  
