@@ -4,15 +4,15 @@
 #### TO DO: include pastures and compst ?? to n2o_n_fixing
 #### TO DO LATER: include n2o_n_fixing & compost import to leakage
 
-call_lca <- function(init_file, farm_EnZ, inputs, factors){
+call_lca <- function(init_data, farm_EnZ, inputs, factors){
   ## This life cycle analysis function for getting the farm emissions
-  ## is meant to be called by passing it the init_file and farm data directly.
+  ## is meant to be called by passing it the init_data and farm data directly.
 
   ## Log start running messages
   log4r::info(my_logger, "run_lca.R started running for all scenario.")
   
   ## Define paths
-  climatic_zone_loc <- init_file$climatic_zone_loc
+  climatic_zone_loc <- init_data$climatic_zone_loc
   
   source(file.path("emissions_leakage", "calc_functions.R"), local = TRUE)
   source(file.path("emissions_leakage", "results_functions.R"), local = TRUE)

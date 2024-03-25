@@ -57,14 +57,14 @@ settings <- settings_testing
 ## Run with mongoDB data -------------------------------------------------------
 
 # farmId <- 
-# out <- carbonplus_main(init_file=init_file, settings=settings, farmId=farmId)
+# out <- carbonplus_main(init_file=init_file, settings=settings, db_farmId=farmId)
 
 # farmIds <- c(
 # list of farm_IDs
 # )
 # 
 # for (farmId in farmIds){
-#   carbonplus_main(init_file=init_file, settings=settings, farmId=farmId)
+#   carbonplus_main(init_file=init_file, settings=settings, db_farmId=farmId)
 # }
 
 

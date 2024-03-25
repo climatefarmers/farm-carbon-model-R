@@ -4,18 +4,18 @@ p_load('pacman', 'mongolite', 'dplyr', 'tidyverse',
 
 sensitive_data_loc <- "../sensitive-data"
 
-init_file <- fromJSON(file.path(sensitive_data_loc,"init_file.json"))
+init_data <- fromJSON(file.path(sensitive_data_loc,"init_file.json"))
 
 server <- "dev"
 
 if(server == "prod") {
-  connection_string = init_file$connection_string_prod
+  connection_string = init_data$connection_string_prod
   db <- "carbonplus_production_db"
 } else if(server == "dev") {
-  connection_string = init_file$connection_string_cfdev
+  connection_string = init_data$connection_string_cfdev
   db <- "carbonplusdb"
 } else if(server == "test") {
-  connection_string = init_file$connection_string_test
+  connection_string = init_data$connection_string_test
   db <- "test_server_db"
 } else {stop("Wrong value for variable: server")}
 farms_collection = mongo(collection="farms", db=db, url=connection_string)

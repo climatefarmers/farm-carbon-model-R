@@ -1,4 +1,4 @@
-run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factors, settings){ 
+run_soil_model <- function(init_data, farms_everything, farm_EnZ, inputs, factors, settings){ 
   
   ## Log starting run message
   log4r::info(my_logger, "run_soil_model.R started running")
@@ -37,12 +37,12 @@ run_soil_model <- function(init_file, farms_everything, farm_EnZ, inputs, factor
   if(settings$debug_mode | settings$use_test_climate){  # will skip fetching climate data and use dummy data if debug_mode is set
     climate_data <- read_csv(file.path("data", "climate_data_1950_2022_Alves4.csv"), show_col_types = FALSE) # For testing only
   } else {
-    climate_data <- get_past_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], "1950_2022", averaged=FALSE)
-    # weather_data <- rbind(get_past_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], "1950_2022"),
-    #                    # get_past_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], "2021"),
-    #                    # get_past_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], "2022"),
-    #                    get_future_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], scenario="rcp4.5"),
-    #                    get_future_weather_data(init_file, latlon_farm["latitude"], latlon_farm["longitude"], scenario="rcp8.5"))
+    climate_data <- get_past_weather_data(init_data, latlon_farm["latitude"], latlon_farm["longitude"], "1950_2022", averaged=FALSE)
+    # weather_data <- rbind(get_past_weather_data(init_data, latlon_farm["latitude"], latlon_farm["longitude"], "1950_2022"),
+    #                    # get_past_weather_data(init_data, latlon_farm["latitude"], latlon_farm["longitude"], "2021"),
+    #                    # get_past_weather_data(init_data, latlon_farm["latitude"], latlon_farm["longitude"], "2022"),
+    #                    get_future_weather_data(init_data, latlon_farm["latitude"], latlon_farm["longitude"], scenario="rcp4.5"),
+    #                    get_future_weather_data(init_data, latlon_farm["latitude"], latlon_farm["longitude"], scenario="rcp8.5"))
   }
   
   climate_periods <- get_climate_periods(climate_data = climate_data, proj_start_year = as.numeric(farms_everything$farmInfo$startYear))

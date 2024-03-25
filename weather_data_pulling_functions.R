@@ -5,18 +5,18 @@ library(tidyverse)
 library("ncdf4.helpers")
 library(aws.s3)
 
-get_past_weather_data <- function(init_file, lat_farmer, lon_farmer, period, averaged = TRUE){
+get_past_weather_data <- function(init_data, lat_farmer, lon_farmer, period, averaged = TRUE){
   # Period options: "1950_2021", "1950_2022"
   
   Sys.setenv(
-    "AWS_ACCESS_KEY_ID" = init_file$AWS_ACCESS_KEY_ID,
-    "AWS_SECRET_ACCESS_KEY" = init_file$AWS_SECRET_ACCESS_KEY,
-    "AWS_DEFAULT_REGION" = init_file$AWS_DEFAULT_REGION
+    "AWS_ACCESS_KEY_ID" = init_data$AWS_ACCESS_KEY_ID,
+    "AWS_SECRET_ACCESS_KEY" = init_data$AWS_SECRET_ACCESS_KEY,
+    "AWS_DEFAULT_REGION" = init_data$AWS_DEFAULT_REGION
   )
   
   # Reading the data from AWS s3
   file_name <- paste0("ERA5_Land_monthly_averaged_data_", period,".nc")
-  climate_data = s3read_using(FUN = nc_open, object = paste0(init_file$weatherDB_loc, file_name))
+  climate_data = s3read_using(FUN = nc_open, object = paste0(init_data$weatherDB_loc, file_name))
 
   # Data extraction from netcdf object
   evap <- ncvar_get(climate_data, varid = "e",
@@ -70,16 +70,16 @@ get_past_weather_data <- function(init_file, lat_farmer, lon_farmer, period, ave
   return(data_out)
 }
 
-get_future_weather_data <- function(init_file, lat_farmer, lon_farmer, scenario = "rcp4.5"){
+get_future_weather_data <- function(init_data, lat_farmer, lon_farmer, scenario = "rcp4.5"){
   Sys.setenv(
-    "AWS_ACCESS_KEY_ID" = init_file$AWS_ACCESS_KEY_ID,
-    "AWS_SECRET_ACCESS_KEY" = init_file$AWS_SECRET_ACCESS_KEY,
-    "AWS_DEFAULT_REGION" = init_file$AWS_DEFAULT_REGION
+    "AWS_ACCESS_KEY_ID" = init_data$AWS_ACCESS_KEY_ID,
+    "AWS_SECRET_ACCESS_KEY" = init_data$AWS_SECRET_ACCESS_KEY,
+    "AWS_DEFAULT_REGION" = init_data$AWS_DEFAULT_REGION
   )
   if (scenario=="rcp8.5"){
-    climate_data = s3read_using(FUN = nc_open, object = paste(init_file$weatherDB_loc,"ERA5_Land_extrapolated_future_rcp8.5.nc",sep=""))
+    climate_data = s3read_using(FUN = nc_open, object = paste(init_data$weatherDB_loc,"ERA5_Land_extrapolated_future_rcp8.5.nc",sep=""))
   } else if(scenario=="rcp4.5"){
-    climate_data = s3read_using(FUN = nc_open, object = paste(init_file$weatherDB_loc,"ERA5_Land_extrapolated_future_rcp4.5.nc",sep=""))
+    climate_data = s3read_using(FUN = nc_open, object = paste(init_data$weatherDB_loc,"ERA5_Land_extrapolated_future_rcp4.5.nc",sep=""))
   } else{stop("wrong scenario spelling")}
   
   

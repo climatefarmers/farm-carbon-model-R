@@ -38,7 +38,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   dir.create(file.path("logs", "inputs"))
   dir.create(file.path("logs", "outputs"))
   
-  my_logfile = file.path('logs', paste(farmId,'__',str_replace_all(Sys.time(), c(" "="__", ":"="_")),'.log',sep=""))
+  my_logfile = file.path('logs', paste(farmId,'__', str_replace_all(Sys.time(), c(" "="__", ":"="_")),'.log',sep=""))
   my_console_appender = console_appender(layout = default_log_layout())
   my_file_appender = file_appender(my_logfile, append = TRUE, 
                                    layout = default_log_layout())
@@ -48,129 +48,83 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   
   ## Checking model settings -------------------------------------------------------
   
-  if(settings$debug_mode & settings$save2mongoDB) {stop("Need to set debug_mode to FALSE when setting save2mongoDB to TRUE.")}
+  if(settings$debug_mode & settings$save2mongoDB) {stop("Must set debug_mode to FALSE when setting save2mongoDB to TRUE.")}
   
   ## Fetching Data -----------------------------------------------------------
   
+  init_data <- fromJSON(init_file)
+  
   # Set environmental variables for AWS 
   Sys.setenv(
-    "AWS_ACCESS_KEY_ID" = init_file$AWS_ACCESS_KEY_ID,
-    "AWS_SECRET_ACCESS_KEY" = init_file$AWS_SECRET_ACCESS_KEY,
-    "AWS_DEFAULT_REGION" = init_file$AWS_DEFAULT_REGION
+    "AWS_ACCESS_KEY_ID" = init_data$AWS_ACCESS_KEY_ID,
+    "AWS_SECRET_ACCESS_KEY" = init_data$AWS_SECRET_ACCESS_KEY,
+    "AWS_DEFAULT_REGION" = init_data$AWS_DEFAULT_REGION
   )
   
-  #init_file=fromJSON("../sensitive-data/init_file.json") #Do we need this? Rather check if init_file is passed to the function.
   source(file.path("soil","run_soil_model.R"), local = TRUE)
   source(file.path("emissions_leakage", "call_lca.R"), local = TRUE)
-  source(file.path("test_functions.R"), local = TRUE)
+  # source(file.path("test_functions.R"), local = TRUE) # Delete?
   
   ## Get the farm data from the JSON file or MongoDB ---------------------------
-  # !!CODE STILL NEEDS TO BE ADAPTED TO NEW DB SCHEMA!!
-  
-  monitoringData <- fromJSON(file = jsonfile_example_farm)
-  
-  ## Check that only one source of farm data was provided
-  # if(!is.na(farmId) & !is.na(JSONfile)){
-  #   stop("Both farmId AND JSON files were passed to the model. Please choose only one.")
-  # }
-  # 
-  # if(is.na(farmId) & is.na(JSONfile)){
-  #   stop("Both farmId AND JSON files are missing. One must be passed.")
-  # }
-  # 
-  # if(!is.na(JSONfile)){
-  #   JSONfile_entered <- TRUE
-  #   farms_everything <- fromJSON(JSONfile)
-  #   farmId <- farms_everything$farmInfo$farmId
-  # }
-  # 
-  # if(!is.na(farmId)) {
-  #   if(settings$server == "prod") {
-  #     connection_string = init_file$connection_string_prod
-  #     db <- "carbonplus_production_db"
-  #   } else if(settings$server == "dev") {
-  #     connection_string = init_file$connection_string_cfdev
-  #     db <- "carbonplusdb"
-  #   } else if(settings$server == "test") {
-  #     connection_string = init_file$connection_string_test
-  #     db <- "test_server_db"
-  #   } else {stop("Wrong value for variable: server")}
-  #   farms_collection = mongo(collection="farms", db=db, url=connection_string) # farms_collection = mongo(collection="farms_backups", db=db, url=connection_string) 
-  #   farms_everything = farms_collection$find(paste('{"farmInfo.farmId":"',farmId,'"}',sep=""))
-  # }
 
+  # Check that only one source of farm data was provided
+  if(!is.na(farmId) & !is.na(JSONfile)){
+    stop("Both farmId AND JSON files were passed to the model. Please choose only one.")
+  }
+
+  if(is.na(farmId) & is.na(JSONfile)){
+    stop("Both farmId AND JSON files are missing. One must be passed.")
+  }
+
+  if(!is.na(JSONfile)){
+    JSONfile_entered <- TRUE
+    monitoringData <- fromJSON(JSONfile)
+    farmId <- monitoringData$farmInfo$farmId
+  }
   
-  # # Checking correctness and unicity of farmIds
-  # if (is.null(farms_everything$farmInfo)){ # Can this be TRUE? Because already used above to select the data. Move to above?
-  #   log4r::error(my_logger, "farmId wasn't found.")
-  # } else if (length(farms_everything$farmInfo$farmId)>1){
-  #   log4r::error(my_logger, 
-  #                paste("Multiple identical farmIds were found. Number of farmIds matching =",
-  #                      length(farms_everything$farmInfo$farmId),".", sep="")
-  #   )
-  # } else if (farms_everything$farmInfo$farmId==farmId){
-  #   log4r::info(my_logger, paste("farm with farmId = ",farmId," has been read succesfully. 
-  #                                 \nMail adress = ",farms_everything$farmInfo$email,'.', sep=""))
-  # }
-  # 
-  # # Selecting only the first case if more than one farmId match in mongoDB
-  # if (length(farms_everything$farmInfo$farmId)>1){
-  #   farms_everything = farms_collection$find(paste('{"farmInfo.farmId":"',farmId,'"}',sep=""),
-  #                                            limit = 1)
-  #   log4r::info(my_logger,paste("After multiple matches, only the first profile with farmId = ",
-  #                               farmId," was selected.",sep=""))
-  # }
+  if(!is.na(farmId)) {
+    if(settings$server == "prod") {
+      connection_string = init_data$connection_string_prod
+      db <- "carbonplus_production_db"
+    } else if(settings$server == "dev") {
+      connection_string = init_data$connection_string_cfdev
+      db <- "carbonplusdb"
+    } else if(settings$server == "test") {
+      connection_string = init_data$connection_string_test
+      db <- "test_server_db"
+    } else {stop("Wrong value for variable: server")}
+    farm_collection = mongo(collection="farms", db=db, url=connection_string) # farm_collection = mongo(collection="farms_backups", db=db, url=connection_string)
+    monitoringData = farm_collection$find(paste0('{"farmId":"',farmId,'"}'))
+  }
   
+  # Check if data has been loaded and that there is only one instance with the corresponding farm Id:
+  # TO BE COMPLETED!
+  # if (...?){
+  #   log4r::error(my_logger, paste0("Multiple instances with farmID =, ", famId, " were found on server ", settings$server))
+  # }
   
   ## Fetching pedo-climatic zone -----------------------------------------------
-  # !!CODE STILL NEEDS TO BE ADAPTED TO NEW DB SCHEMA!!
   
-  farm_EnZ <- "Mediterranean north"
-  
-  # farm_parameters <- mongo(collection="farmparameters",
-  #                          db="carbonplus_production_db",
-  #                          url=init_file$connection_string_prod
-  # )
-  # farm_EnZ <-  farm_parameters$find(paste('{"farmId":"',farmId,'"}',sep=""))
-  # if (length(unique(farm_EnZ$enz))==1){
-  #   farm_EnZ = unique(farm_EnZ$enz)
-  #   log4r::info(
-  #     my_logger, 
-  #     paste("farmparameters collection contain unique info on EnZ for farmId", farmId, sep=" ")
-  #   )
-  # } else if (length(unique(farm_EnZ$enz))==0){
-  #   log4r::error(
-  #     my_logger, 
-  #     paste("Caution: farmparameters collection doesn't contain info on EnZ for farmId", 
-  #           farmId, 
-  #           sep=" ")
-  #   )
-  # } else if (length(unique(farm_EnZ$enz))>1){
-  #   log4r::error(
-  #     my_logger, 
-  #     paste("Caution: farmparameters collection content SEVERAL EnZ for farmId",
-  #           farmId,"leading to conflicts",
-  #           sep=" ")
+  # farm_pars_collection <- mongo(collection="farmparameters", db=db, url=connection_string)
+  # farm_parameters <-  farm_pars_collection$find(paste0('{"farmId":"',farmId,'"}'))
+  # 
+  # # Check if missing. Delete?
+  # if (length(unique(farm_parameters$enz))==0){
+  #   log4r::error(my_logger, paste0("ERROR: farmparameters collection doesn't contain info on EnZ for farmId: ", farmId)
   #   )
   # }
   
+  farm_EnZ <- "Mediterranean north" # For dev purposes only.
   
   ## Processing Inputs ------------------------------------------------------------
   
   source("mongodb_extraction_functions.R", local = TRUE)
   
-  # To delete? We need to evaluate the need to create projections by copying data to future years.
+  # To delete or modify? Possibility to create projections by copying data to future years.
   ## If set, copy data from a specific year to following years (disabled for monitoring / credit issuance runs!)
-  
   # if (settings$copy_year_currmonit_to_future){
-  #   for(i in c(settings$curr_monit_year+1:10)){
-  #     landUseSummaryOrPractices[[1]][[paste0("year", i)]] <- 
-  #       landUseSummaryOrPractices[[1]][[paste0("year", settings$curr_monit_year)]]
-  #     livestock[["futureManagement"]][[1]][[paste0("year",i)]] <-
-  #       livestock[["futureManagement"]][[1]][[paste0("year", settings$curr_monit_year)]]
-  #   }
-  #   log4r::info(my_logger, paste("MODIF: EVERY PARCELS: Data from year", settings$curr_monit_year,
-  #                                "was pasted to every following years"))
+  #   DO SOMETHING HERE
+  #   log4r::info(my_logger, SOME MESSAGE)
   # }
   
   ## Reading in calculation factors from csv files
@@ -273,7 +227,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   
   ## Running the soil model and emissions calculations -------------------------
   
-  lca_out <- call_lca(init_file=init_file,
+  lca_out <- call_lca(init_data=init_data,
                       farm_EnZ = farm_EnZ,
                       inputs = inputs,
                       factors = factors)
@@ -283,7 +237,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   emissions_parcels_yearly_animals <- lca_out[['emissions_parcels_yearly_animals']]
   productivity_table <- lca_out[['productivity_table']]
   
-  soil_results_out <- run_soil_model(init_file=init_file,
+  soil_results_out <- run_soil_model(init_data=init_data,
                                      farms_everything=farms_everything,
                                      farm_EnZ=farm_EnZ,
                                      inputs=inputs,

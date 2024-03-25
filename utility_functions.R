@@ -56,7 +56,7 @@ get_cc_data <- function(crop_inputs, parcel_inputs) {
 get_cc_yield_list <- function(farmId_list){
   
   cc_yield_list = c()
-  connection_string = init_file$connection_string_prod
+  connection_string = init_data$connection_string_prod
   farms_collection = mongo(collection="farms", db="carbonplus_production_db", url=connection_string)
   for(farmId in farmId_list){
     farms_everything = farms_collection$find(paste('{"farmInfo.farmId":"',farmId,'"}',sep=""))
