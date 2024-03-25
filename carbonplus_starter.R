@@ -6,15 +6,13 @@
 rm(list=ls())
 
 library(tidyverse)
-library(jsonlite)
-library(rjson) # for reading in the example farm data
 library(here) # for having relative a relative path
 
 source("carbonplus_main.R")
 
 # Read in init_file.json from sensitive-data folder
 
-init_file <- fromJSON(file = here("../sensitive-data", "init_file.json"))
+init_file <- here("../sensitive-data", "init_file.json")
 
 settings_testing <- list(
   n_runs = 2,
@@ -71,8 +69,7 @@ settings <- settings_testing
 
 
 ## Run with json file ----------------------------------------------------------
-
-jsonfile = here("example-farm-data","example-farm-monitoringData.json")
+jsonfile <- here("example-farm-data","example-farm-alldata.json")
 out <- carbonplus_main(init_file=init_file, settings=settings, JSONfile = jsonfile)
 
 # json_files <- c(
