@@ -52,7 +52,7 @@ carbonplus_main <- function(init_file, settings, db_farmId=NA, JSONfile=NA){
   ## Fetching Data -----------------------------------------------------------
   
   init_data <- fromJSON(init_file)
-  
+    
   # Set environmental variables for AWS 
   Sys.setenv(
     "AWS_ACCESS_KEY_ID" = init_data$AWS_ACCESS_KEY_ID,
@@ -126,48 +126,34 @@ carbonplus_main <- function(init_file, settings, db_farmId=NA, JSONfile=NA){
   # }
 
   ## Reading in calculation factors from csv files
-  factors_animals <- read_csv(file.path("data", "factors_animals.csv"), show_col_types = FALSE)
-  factors_crops <- read_csv(file.path("data", "factors_crops.csv"), show_col_types = FALSE)
-  factors_natural_area <- read_csv(file.path( "data", "factors_natural_area.csv"), show_col_types = FALSE) %>% 
+  factors <- list()
+  factors$factors_animals <- read_csv(file.path("data", "factors_animals.csv"), show_col_types = FALSE)
+  factors$factors_crops <- read_csv(file.path("data", "factors_crops.csv"), show_col_types = FALSE)
+  factors$factors_natural_area <- read_csv(file.path( "data", "factors_natural_area.csv"), show_col_types = FALSE) %>% 
     filter(pedo_climatic_area==farm_EnZ)
-  factors_pastures <- read_csv(file.path("data", "factors_pastures.csv"), show_col_types = FALSE)
-  factors_tillage <- read_csv(file.path("data", "factors_tillage.csv"), show_col_types = FALSE)
-  factors_co2eq <- read_csv(file.path("data", "factors_co2eq.csv"), show_col_types = FALSE)
-  factors_fertilizer <- read_csv(file.path("data", "factors_fertilizer.csv"), show_col_types = FALSE)
-  factors_fuel <- read_csv(file.path("data", "factors_fuel.csv"), show_col_types = FALSE)
-  factors_trees <- read_csv(file.path("data", "factors_trees.csv"), show_col_types = FALSE)
-  factors_methane <- read_csv(file.path("data", "factors_methane.csv"), show_col_types = FALSE) %>%
-    filter(climate == factors_natural_area$climate_zone) %>% select(-climate)
-  factors_n2o_emission <- read_csv(file.path("data", "factors_n2o_emission.csv"), show_col_types = FALSE)
-  factors_others <- read_csv(file.path("data", "factors_others.csv"), show_col_types = FALSE)
+  factors$factors_pastures <- read_csv(file.path("data", "factors_pastures.csv"), show_col_types = FALSE)
+  factors$factors_tillage <- read_csv(file.path("data", "factors_tillage.csv"), show_col_types = FALSE)
+  factors$factors_co2eq <- read_csv(file.path("data", "factors_co2eq.csv"), show_col_types = FALSE)
+  factors$factors_fertilizer <- read_csv(file.path("data", "factors_fertilizer.csv"), show_col_types = FALSE)
+  factors$factors_fuel <- read_csv(file.path("data", "factors_fuel.csv"), show_col_types = FALSE)
+  factors$factors_trees <- read_csv(file.path("data", "factors_trees.csv"), show_col_types = FALSE)
+  factors$factors_methane <- read_csv(file.path("data", "factors_methane.csv"), show_col_types = FALSE) %>%
+    filter(climate == factors$factors_natural_area$climate_zone) %>% select(-climate)
+  factors$factors_n2o_emission <- read_csv(file.path("data", "factors_n2o_emission.csv"), show_col_types = FALSE)
+  factors$factors_others <- read_csv(file.path("data", "factors_others.csv"), show_col_types = FALSE)
   
   print("Finished reading factors.")
-
-  factors <- list(
-    factors_animals = factors_animals,
-    factors_crops = factors_crops,
-    factors_natural_area = factors_natural_area,
-    factors_pastures = factors_pastures,
-    factors_tillage = factors_tillage,
-    factors_co2eq = factors_co2eq,
-    factors_fertilizer = factors_fertilizer,
-    factors_fuel = factors_fuel,
-    factors_trees = factors_trees,
-    factors_methane = factors_methane,
-    factors_n2o_emission = factors_n2o_emission,
-    factors_others = factors_others
-  )
 
   ## Fixed farm and parcel inputs
   fixed_farm_inputs <- get_fixed_farm_inputs(monitoringData)
   fixed_parcel_inputs <- get_fixed_parcel_inputs(monitoringData)
   periods <- get_periods(monitoringData, fixed_farm_inputs$project_start_year) # defines project and baseline years based on the given project start year
-  
+
   ## Yearly farm inputs
   fuel_inputs_direct <- get_fuel_inputs_direct(monitoringData, periods) 
   fuel_inputs_indirect <- get_fuel_inputs_indirect(monitoringData, periods)
   fertilizer_inputs <- get_fertilizer_inputs(monitoringData, periods)
-  
+
   in_farm_livestock_table <- get_in_farm_livestock_table(monitoringData, periods, factors_animals)
   out_farm_livestock_table <- get_out_farm_livestock_table(monitoringData, periods, factors_animals)
   
