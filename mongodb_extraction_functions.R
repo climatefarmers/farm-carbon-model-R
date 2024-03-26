@@ -86,26 +86,37 @@ get_mean_latitude <- function(coordinates) {
 get_in_farm_livestock_table<- function(monitoringData, periods, factors_animals) {
   
   # Data frame for livestock inputs
+  years <- monitoringData$yearlyFarmData$year
   
-  in_farm_livestock_table <- data.frame()
+  in_farm_livestock <- data.frame()
+  livestock_type_inputs <- data.frame()
   
-  for (year in monitoringData$yearlyFarmData) {
-    for (species in year$livestock$inFarm) {
-      for (category in species$category) {
-        
-        in_farm_livestock_table_temp <- data.frame(
-          year               = year$year,
-          species            = species$species, #mandatory, no null values
-          category           = category$name, #mandatory, no null values
-          amount             = ifelse (category$amount == -9999,0,category$amount), 
-          fertilityRate      = ifelse(species$fertilityRate == -9999, 0, species$fertilityRate), 
-          grazing_days       = ifelse (species$grazingDays == -9999, 0, species$grazingDays),
-          grazing_management = year$livestock$grazingManagement, #mandatory, no null values
-          manure_treatment   = species$manureTreatment #mandatory, no null values
-        )
-        
-        in_farm_livestock_table <- bind_rows(in_farm_livestock_table, in_farm_livestock_table_temp)
-      }
+  for (i in 1:length(years)) {
+    # Create a data frame for livestock type (species) data
+    livestock_year <- as.data.frame(monitoringData$yearlyFarmData$livestock$inFarm[[i]])
+    livestock_type_inputs_temp <- flatten(livestock_year) %>% select(-c("category"))
+    livestock_type_inputs_temp$year <- years[i]
+    livestock_type_inputs <- bind_rows(livestock_type_inputs, livestock_type_inputs_temp)
+    
+    # Create a data frame for livestock categories data
+    for (j in 1:nrow(livestock_year)) {
+      browser()
+      in_farm_livestock_temp <- livestock_year$category[[j]]
+      in_farm_livestock_temp$type <- livestock_year$species[j]
+      in_farm_livestock_temp$year <- years[i]
+      
+      livestock_year$species
+      in_farm_livestock_table_temp <- data.frame(
+        species            = species$species, #mandatory, no null values
+        category           = category$name, #mandatory, no null values
+        amount             = ifelse (category$amount == -9999,0,category$amount), 
+        fertilityRate      = ifelse(species$fertilityRate == -9999, 0, species$fertilityRate), 
+        grazing_days       = ifelse (species$grazingDays == -9999, 0, species$grazingDays),
+        grazing_management = year$livestock$grazingManagement, #mandatory, no null values
+        manure_treatment   = species$manureTreatment #mandatory, no null values
+      )
+      
+      in_farm_livestock_table <- bind_rows(in_farm_livestock_table, in_farm_livestock_table_temp)
     }
   }
   
@@ -961,23 +972,24 @@ get_fertilizer_inputs = function(monitoringData, periods) {
 
   # Data frame for fertilzer inputs
   fertilizer_inputs = data.frame()
+  years <- monitoringData$yearlyFarmData$year
+
+  for (i in 1:length(years)) {
+    fertilizer_year <- monitoringData$yearlyFarmData$fertilizerUsage[i]
+    fertilizer_inputs_temp <- flatten(as.data.frame(fertilizer_year))
+    fertilizer_inputs_temp$year <- years[i]
+    fertilizer_inputs <- bind_rows(fertilizer_inputs, fertilizer_inputs_temp)
+  }
+  fertilizer_inputs$percentN <- na_if(fertilizer_inputs$percentN, -9999)
+  fertilizer_inputs$amount <- na_if(fertilizer_inputs$amount, -9999)
   
-  for (year in monitoringData$yearlyFarmData) {
-    for (entry in year$fertilizerUsage) {
-      
-      fertilizer_inputs_temp <- data.frame(
-        year      = year$year,
-        amount    = ifelse(entry$amount == -9999, 0, entry$amount),
-        units     = ifelse(is_null(entry$units), "-", entry$units),
-        percent_n = ifelse(entry$percentN == -9999, 0, entry$percentN)
-      )
-      fertilizer_inputs <- bind_rows(fertilizer_inputs, fertilizer_inputs_temp)
-    }
+  # Check units
+  if (any(fertilizer_inputs$units[!is.na(fertilizer_inputs$amount)] != 'tonnes')) {
+    log4r::error(my_logger, "Fertilizer amount units are not in tonnes.")
   }
   
-  fertilizer_inputs <- left_join(fertilizer_inputs, periods, by = "year")
-  
   return (fertilizer_inputs)
+}
   
   # for (i in c(1:length(landUseSummaryOrPractices[[1]]$parcelName))){
   #   for (j in c(0:10)){
@@ -1038,64 +1050,43 @@ get_fertilizer_inputs = function(monitoringData, periods) {
   #   log4r::error(my_logger, paste('WARNING: Fertilizer data: ',list(list_missing_data),'.', paste=''))
   # }
   # return(fertilizer_inputs)
-}
+# }
 
 
 get_fuel_inputs_direct = function(monitoringData, periods){
   
   # Data frame for direct fuel inputs
-  fuel_inputs_direct <- data.frame()
-  
-  # For loop to extract fuel inputs
   # Data entry mandatory. That's why is_null request is not necessary.
-  for (year in monitoringData$yearlyFarmData) {
-    for (fuel_index in 1: length(year$fuelUsage$direct)) {
-      
-      fuel_inputs_direct_temp <- data.frame(
-        year          = year$year, 
-        typeOfFuel    = ifelse(fuel_index == 1, "diesel", "petrol"),
-        amount        = year$fuelUsage$direct[[fuel_index]]$amount,
-        units         = year$fuelUsage$direct[[fuel_index]]$units
-      )
-      fuel_inputs_direct <- bind_rows(fuel_inputs_direct, fuel_inputs_direct_temp)
-    }
-  }
   
-  fuel_inputs_direct <- left_join(fuel_inputs_direct, periods, by = "year")
+  years <- monitoringData$yearlyFarmData$year
+  
+  fuel_inputs_direct <- flatten(as.data.frame(monitoringData$yearlyFarmData$fuelUsage$direct))
+  fuel_inputs_direct$year <- years
+  
+  # Check units
+  if (any(c(fuel_inputs_direct$petrol.units, fuel_inputs_direct$diesel.units) != "litres")){
+    log4r::error(my_logger, "Fuel units are not all in litres. Expected litres.")
+  }
   
   return(fuel_inputs_direct)
 }
 
 get_fuel_inputs_indirect = function(monitoringData, periods) {
+  # Get indirect fuel inputs as data frame
   
-  # Indirect fuel inputs data frame 
   fuel_inputs_indirect <- data.frame()
-  
+  years <- monitoringData$yearlyFarmData$year
   # For loop to extract fuel inputs
-  for (year in monitoringData$yearlyFarmData) {
-    for (service in year$fuelUsage$indirect) {
-      
-      year_temp <- year$year
-      service_temp <- ifelse (is_null(service$service), NA, service$service) # not mandatory 
-      area_temp <- ifelse (service$area$amount == -9999, 0, service$area$amount) # not mandatory
-      units_temp <- ifelse (is_null(service$area$units), NA, service$area$units) # not mandatory
-      service_detail_temp <- ifelse (is_null(service$serviceDetail), NA, service$serviceDetail) # not mandatory
-      service_category_temp <- ifelse (is_null(service$serviceCategory), NA, service$serviceCategory) # not mandatory
-      
-      fuel_inputs_indirect_temp <- data.frame(
-        year             = year_temp, 
-        service          = service_temp,
-        area             = area_temp,
-        units            = units_temp,
-        servie_detail    = service_detail_temp,
-        service_category = service_category_temp
-      )
-      
-      fuel_inputs_indirect <- bind_rows(fuel_inputs_indirect, fuel_inputs_indirect_temp)
-    }
+  for (i in 1:length(years)) {
+    fuel_year <- monitoringData$yearlyFarmData$fuelUsage$indirect[i]
+    fuel_inputs_indirect_temp <- flatten(as.data.frame(fuel_year))
+    fuel_inputs_indirect_temp$year <- years[i]
+    fuel_inputs_indirect <- bind_rows(fuel_inputs_indirect, fuel_inputs_indirect_temp)
   }
+  fuel_inputs_indirect$area.amount <- na_if(fuel_inputs_indirect$area.amount, -9999) # not mandatory
+  
+  return(fuel_inputs_indirect)
 }
-
 
 
 ## Helper function to extract land use type (not used!)
@@ -1162,37 +1153,33 @@ get_fixed_parcel_inputs <- function(monitoringData) {
 }
 
 ## Function extracts baseline and project years based on the project start year
-# Function needs refinement for the following cases
-# - more than three years of data for the baseline (take only the three years right before the project start year)
-# - count for baseline and project years baseline-01, baseline-02, baseline-03, project-01, project-02, project-03, ... 
 get_periods <- function(monitoringData, project_start_year) {
-  
-  periods <- data.frame()
-  
-  count_baseline_years <- -3
-  count_project_years <- 1
-  browser()
-  for (year in monitoringData$yearlyFarmData) {
-    if (year$year >= project_start_year - 3) {
-      
-      if (count_baseline_years < 0) {
-        year <- year$year
-        period <- count_baseline_years
-        count_baseline_years = count_baseline_years + 1
 
-      } else {
-        year <- year$year
-        period <- count_project_years
-        count_project_years = count_project_years + 1
-      }
-      periods_temp <- data.frame(
-        year = year,
-        period = period
-      )
-      periods <- bind_rows(periods, periods_temp)
-    }
+  year_cal <- sort(monitoringData$yearlyFarmData$year)
+  i <- which(year_cal == project_start_year)
+  
+  # Check: is project start year in the data?
+  if (length(i) == 0) {
+    log4r::error(my_logger, "Project start year not found in the farm data.")
   }
   
+  # Check: are there at least 3 years of data before the project start year?
+  if (i < 4) {
+    log4r::error(my_logger, "Three baseline years are required but data has less than 3 years before project start year.")
+  }
+  
+  # Create vectors of project years and periods
+  year_ind <- seq(1:length(year_cal)) - (i - 1)
+  year_ind[year_ind < 1] <- year_ind[year_ind < 1] - 1  # Sets baseline years to negative values
+  periods <- data.frame(
+    year_cal = year_cal,
+    year_ind = year_ind,
+    period = ifelse(year_cal < project_start_year, "baseline", "project")
+  )
+  
+  # Filter out past years not used as baseline
+  periods <- periods %>% filter(year_cal >= project_start_year-3)
+
   return(periods)
 }
 
