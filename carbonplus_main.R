@@ -157,7 +157,7 @@ carbonplus_main <- function(init_file, settings, db_farmId=NA, JSONfile=NA){
     factors_n2o_emission = factors_n2o_emission,
     factors_others = factors_others
   )
-  browser()
+
   ## Fixed farm and parcel inputs
   fixed_farm_inputs <- get_fixed_farm_inputs(monitoringData)
   fixed_parcel_inputs <- get_fixed_parcel_inputs(monitoringData)

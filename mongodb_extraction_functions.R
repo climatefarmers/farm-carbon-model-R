@@ -76,19 +76,11 @@ extract_longitude_landUseSummaryOrPractices <- function(landUseSummaryOrPractice
 }
 
 get_mean_longitude <- function(coordinates) {
-  longitude = c()
-  for (i in coordinates){
-    longitude <- append(longitude,i[[1]][1])
-  }
-  return(mean(longitude))
+  mean(coordinates[,1])
 }
 
 get_mean_latitude <- function(coordinates) {
-  latitude = c()
-  for (i in coordinates){
-    latitude <- append(latitude,i[[2]][1])
-  }
-  return(mean(latitude))
+  mean(coordinates[,2])
 }
 
 get_in_farm_livestock_table<- function(monitoringData, periods, factors_animals) {
@@ -1139,31 +1131,33 @@ get_fixed_farm_inputs <- function(monitoringData) {
 }
 
 get_fixed_parcel_inputs <- function(monitoringData) {
-  
+
   # Data frame for fixed parcel inputs
-  fixed_parcel_inputs = data.frame()
   
-  # Loop through parcels and extract fixed parcel inputs
-  for (parcel in monitoringData$yearlyFarmData[[1]]$parcelLevelData) {
-    
-    fixed_parcel_inputs_temp <- data.frame(
-      parcel_name       = parcel$parcelFixedValues$parcelName, # mandatory entry
-      parcel_ID         = parcel$parcelFixedValues$parcelID, # mandatory entry
-      area_geo          = parcel$parcelFixedValues$areaGeoFile$area, #"mandatory" entry
-      area_geo_units    = parcel$parcelFixedValues$areaGeoFile$units, #"mandatory" entry
-      area_manual       = parcel$parcelFixedValues$areaManualEntry$area, # not mandatory entry; default = -9999
-      area_manual_units = ifelse(is_null(parcel$parcelFixedValues$areaManualEntry$units), "-", parcel$parcelFixedValues$areaManualEntry$units), # not mandatory
-      use_manual_area   = ifelse(parcel$parcelFixedValues$areaManualEntry$area != -9999, TRUE, FALSE), #TO-CHECK: Do we always use manual area if available?
-      area              = ifelse(parcel$parcelFixedValues$areaManualEntry$area != -9999, 
-                                parcel$parcelFixedValues$areaManualEntry$area/1000, 
-                                parcel$parcelFixedValues$areaGeoFile$area/1000), # To-DO: Integrate unit check?
-      area_units         = "hectares",
-      longitude         = get_mean_longitude(parcel$parcelFixedValues$coordinates), 
-      latitude          = get_mean_latitude(parcel$parcelFixedValues$coordinates)
-    )
-    
-    fixed_parcel_inputs <- bind_rows(fixed_parcel_inputs, fixed_parcel_inputs_temp)
+  # Extract values
+  df_in <- as.data.frame(monitoringData$yearlyFarmData$parcelLevelData[[1]]$parcelFixedValues)
+  fixed_parcel_inputs <- data.frame(
+    parcel_name = df_in$parcelName,
+    parcel_id = df_in$parcelID,
+    area_geo = df_in$areaGeoFile$area,
+    area_geo_units = df_in$areaGeoFile$units,
+    area_manual = df_in$areaManualEntry$area,
+    area_manual_units = df_in$areaManualEntry$units,
+    coordinates = df_in['coordinates']
+  )
+  
+  # Process values
+  fixed_parcel_inputs$area_manual <- na_if(fixed_parcel_inputs$area_manual, -9999)
+  fixed_parcel_inputs$area_units <- if_else(!is.na(fixed_parcel_inputs$area_manual), fixed_parcel_inputs$area_manual_units, fixed_parcel_inputs$area_geo_units)
+  if(any(fixed_parcel_inputs$area_units != "sqm")) {
+    log4r::error(my_logger, "Area units are not in square meters. Expected square meters.")
   }
+  fixed_parcel_inputs$area_units <- "ha"
+  fixed_parcel_inputs$area <- if_else(!is.na(fixed_parcel_inputs$area_manual), fixed_parcel_inputs$area_manual/10000, fixed_parcel_inputs$area_geo/10000)
+  fixed_parcel_inputs <- fixed_parcel_inputs %>% rowwise() %>% mutate(lon = get_mean_longitude(coordinates))
+  fixed_parcel_inputs <- fixed_parcel_inputs %>% rowwise() %>% mutate(lat = get_mean_latitude(coordinates))
+  
+
   return(fixed_parcel_inputs)
 }
 
@@ -1177,7 +1171,7 @@ get_periods <- function(monitoringData, project_start_year) {
   
   count_baseline_years <- -3
   count_project_years <- 1
-  
+  browser()
   for (year in monitoringData$yearlyFarmData) {
     if (year$year >= project_start_year - 3) {
       
