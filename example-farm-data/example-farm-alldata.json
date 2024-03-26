@@ -45,6 +45,15 @@
                         },
                         "serviceDetail": null,
                         "serviceCategory": null
+                    },
+                    {
+                        "service": "baler",
+                        "area": {
+                            "amount": 15.8,
+                            "units": "hectares"
+                        },
+                        "serviceDetail": null,
+                        "serviceCategory": null
                     }
                 ]
             },
