@@ -51,14 +51,14 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   if(settings$debug_mode & settings$save2mongoDB) {stop("Need to set debug_mode to FALSE when setting save2mongoDB to TRUE.")}
   
   ## Fetching Data -----------------------------------------------------------
-  
+
   # Set environmental variables for AWS 
   Sys.setenv(
     "AWS_ACCESS_KEY_ID" = init_file$AWS_ACCESS_KEY_ID,
     "AWS_SECRET_ACCESS_KEY" = init_file$AWS_SECRET_ACCESS_KEY,
     "AWS_DEFAULT_REGION" = init_file$AWS_DEFAULT_REGION
   )
-  
+
   init_file=fromJSON("../sensitive-data/init_file.json")
   source(file.path("soil","run_soil_model.R"), local = TRUE)
   source(file.path("emissions_leakage", "call_lca.R"), local = TRUE)
@@ -92,8 +92,9 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
       connection_string = init_file$connection_string_test
       db <- "test_server_db"
     } else {stop("Wrong value for variable: server")}
-    farms_collection = mongo(collection="farms", db=db, url=connection_string) # farms_collection = mongo(collection="farms_backups", db=db, url=connection_string) 
-    farms_everything = farms_collection$find(paste('{"farmInfo.farmId":"',farmId,'"}',sep=""))
+    farms_collection <- mongo(collection="farms", db=db, url=connection_string) # farms_collection = mongo(collection="farms_backups", db=db, url=connection_string) 
+    farms_everything <- farms_collection$find(paste('{"farmInfo.farmId":"',farmId,'"}',sep=""))
+    farm_parameters <- mongo(collection="farmparameters", db=db, url=connection_string)
   }
   
   
@@ -120,11 +121,6 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
   
   
   ## Fetching pedo-climatic zone -----------------------------------------------
-  
-  farm_parameters <- mongo(collection="farmparameters", 
-                           db="carbonplus_production_db", 
-                           url=init_file$connection_string_prod
-  )
   farm_EnZ <-  farm_parameters$find(paste('{"farmId":"',farmId,'"}',sep=""))
   if (length(unique(farm_EnZ$enz))==1){
     farm_EnZ = unique(farm_EnZ$enz)
@@ -169,7 +165,7 @@ carbonplus_main <- function(init_file, settings, farmId=NA, JSONfile=NA){
     log4r::info(my_logger, paste("MODIF: EVERY PARCELS: Data from year", settings$curr_monit_year,
                                  "was pasted to every following years"))
   }
-  
+
   ## Reading in calculation factors from csv files
   animal_factors <- read_csv(file.path("data", "carbon_share_manure.csv"), show_col_types = FALSE) %>%
     filter(type=="manure") %>% mutate(species = source)
