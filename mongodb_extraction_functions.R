@@ -993,7 +993,7 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
   parcel_names <- parcel_inputs$parcel_ID
   
   year_strings <- paste0('year', 0:10)
-  
+
   for (i in c(1:length(parcel_names))){
     
     parcel <- parcel_names[i]
@@ -1052,11 +1052,11 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
         (1-exp(-0.36*AMP_years_current))
       AMP_baseline_factor <- 1 /  # This is used later to get the baseline productivity if AMP started in the past.
         (1 + pasture_efficiency_potential_difference * (1-exp(-0.36*AMP_years_baseline)))
-      
+
       # Selecting the type of land use where grazing management affects pasture efficiency the most
       # Monthly yield and residue (to avoid double-counting we will only look at grasslands) Fernando: the condition below includes also woody crops.
       if (year_chosen$landUseType[i] == 'Arablecrops') { next }
-      
+
       # monthly yield and residue
       monthly_nonarables <- data.frame(grazing=rep(NA,12), residue=NA, harvest=NA)
       monthly_nonarables$grazing <- grazing_monthly$grazing_final[grazing_monthly$parcel == parcel & grazing_monthly$year == j]
@@ -1101,21 +1101,21 @@ get_pasture_inputs <- function(landUseSummaryOrPractices, grazing_factors, pastu
       pasture_inputs <- rbind(pasture_inputs, pasture_temp)
     }
   }
-  
-  # Calculate the dry weights
-  pasture_inputs <- pasture_inputs %>% mutate(
-    dry_harvest = harvest * dry_weight,
-    dry_grazing = grazing * dry_weight,
-    dry_residue = residue * dry_weight,
-    dry_agb_peak = agb_peak * dry_weight
-  )
-  
+
   if(length(pasture_inputs)==0) {
     pasture_inputs <- expand_grid(
       scenario = year_strings, parcel_ID = parcel_names, grass = "Generic grasses", perennial_frac = 0, 
       n_fixing_frac = 0, grazing = 0, residue = 0,
       harvest = 0, agb_peak = 0, dry_grazing = 0, dry_residue = 0,
       dry_harvest = 0, dry_agb_peak = 0, pasture_efficiency = 0, dry_weight =0
+    )
+  } else {
+    # Calculate the dry weights
+    pasture_inputs <- pasture_inputs %>% mutate(
+      dry_harvest = harvest * dry_weight,
+      dry_grazing = grazing * dry_weight,
+      dry_residue = residue * dry_weight,
+      dry_agb_peak = agb_peak * dry_weight
     )
   }
   
